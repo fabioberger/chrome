@@ -2,6 +2,11 @@ package chrome
 
 import "github.com/gopherjs/gopherjs/js"
 
+const (
+	WINDOW_ID_NONE    = -1
+	WINDOW_ID_CURRENT = -2
+)
+
 type Windows struct {
 	o js.Object
 }
