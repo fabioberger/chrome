@@ -11,6 +11,10 @@ type Windows struct {
 	o js.Object
 }
 
+/*
+* Methods
+ */
+
 func (w *Windows) Get(windowId int, getInfo interface{}, callback func(js.Object)) {
 	w.o.Call("get", windowId, getInfo, callback)
 }
@@ -37,4 +41,20 @@ func (w *Windows) Update(windowId int, updateInfo interface{}, callback func(js.
 
 func (w *Windows) Remove(windowId int, callback func(js.Object)) {
 	w.o.Call("remove", windowId, callback)
+}
+
+/*
+* Events
+ */
+
+func (w *Windows) OnCreated(callback func(window js.Object)) {
+	w.o.Get("onCreated").Call("addListener", callback)
+}
+
+func (w *Windows) OnRemoved(callback func(windowId int)) {
+	w.o.Get("onRemoved").Call("addListener", callback)
+}
+
+func (w *Windows) onFocusChanged(callback func(windowId int)) {
+	w.o.Get("onFocusChanged").Call("addListener", callback)
 }
