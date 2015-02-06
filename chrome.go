@@ -17,6 +17,6 @@ func NewChrome() Chrome {
 	c := Chrome{o: js.Global.Get(CHROME)}
 	c.Tabs = Tabs{o: js.Global.Get(CHROME).Get("tabs")}
 	c.Windows = Windows{o: js.Global.Get(CHROME).Get("windows")}
-	c.Runtime = Runtime{O: js.Global.Get(CHROME).Get("runtime")}
+	c.Runtime = Runtime{o: js.Global.Get(CHROME).Get("runtime")}
 	return c
 }
