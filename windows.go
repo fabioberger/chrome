@@ -47,7 +47,7 @@ func (w *Windows) Remove(windowId int, callback func(js.Object)) {
 * Events
  */
 
-func (w *Windows) OnCreated(callback func(window js.Object)) {
+func (w *Windows) OnCreated(callback func(window map[string]interface{})) {
 	w.o.Get("onCreated").Call("addListener", callback)
 }
 

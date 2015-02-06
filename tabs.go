@@ -115,12 +115,12 @@ func (t *Tabs) InsertCss(tabId int, details interface{}, callback func(js.Object
 
 // OnCreated is fired when a tab is created. Note that the tab's URL may not be set at the time
 // this event fired, but you can listen to onUpdated events to be notified when a URL is set.
-func (t *Tabs) OnCreated(callback func(js.Object)) {
+func (t *Tabs) OnCreated(callback func(map[string]interface{})) {
 	t.o.Get("onCreated").Call("addListener", callback)
 }
 
 // OnUpdated fired when a tab is updated.
-func (t *Tabs) OnUpdated(callback func(tabId int, changeInfo interface{}, tab js.Object)) {
+func (t *Tabs) OnUpdated(callback func(tabId int, changeInfo interface{}, tab map[string]interface{})) {
 	t.o.Get("onUpdated").Call("addListener", callback)
 }
 

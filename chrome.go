@@ -11,12 +11,14 @@ type Chrome struct {
 	Tabs    Tabs
 	Windows Windows
 	Runtime Runtime
+	Alarms  Alarms
 }
 
 func NewChrome() Chrome {
 	c := Chrome{o: js.Global.Get(CHROME)}
-	c.Tabs = Tabs{o: js.Global.Get(CHROME).Get("tabs")}
-	c.Windows = Windows{o: js.Global.Get(CHROME).Get("windows")}
-	c.Runtime = Runtime{o: js.Global.Get(CHROME).Get("runtime")}
+	c.Tabs = Tabs{o: c.o.Get("tabs")}
+	c.Windows = Windows{o: c.o.Get("windows")}
+	c.Runtime = Runtime{o: c.o.Get("runtime")}
+	c.Alarms = Alarms{o: c.o.Get("alarms")}
 	return c
 }
