@@ -56,7 +56,7 @@ func (r *Runtime) GetPlatformInfo(callback func(platformInfo map[string]string))
 }
 
 func (r *Runtime) GetPackageDirectoryEntry(callback func(directoryEntry interface{})) {
-	r.o.Call("getPackageDirectoryEntry", directoryEntry)
+	r.o.Call("getPackageDirectoryEntry", callback)
 }
 
 /*
