@@ -7,11 +7,12 @@ const (
 )
 
 type Chrome struct {
-	o       js.Object
-	Tabs    Tabs
-	Windows Windows
-	Runtime Runtime
-	Alarms  Alarms
+	o         js.Object
+	Tabs      Tabs
+	Windows   Windows
+	Runtime   Runtime
+	Alarms    Alarms
+	Bookmarks Bookmarks
 }
 
 func NewChrome() Chrome {
@@ -20,5 +21,6 @@ func NewChrome() Chrome {
 	c.Windows = Windows{o: c.o.Get("windows")}
 	c.Runtime = Runtime{o: c.o.Get("runtime")}
 	c.Alarms = Alarms{o: c.o.Get("alarms")}
+	c.Bookmarks = Bookmarks{o: c.o.Get("bookmarks")}
 	return c
 }
