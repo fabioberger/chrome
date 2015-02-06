@@ -59,29 +59,29 @@ func (b *Bookmarks) RemoveTree(id string, callback func()) {
  */
 
 func (b *Bookmarks) OnCreated(callback func(id string, bookmark map[string]interface{})) {
-	t.o.Get("onCreated").Call("addListener", callback)
+	b.o.Get("onCreated").Call("addListener", callback)
 }
 
 func (b *Bookmarks) OnRemoved(callback func(id string, removeInfo map[string]interface{})) {
-	t.o.Get("onRemoved").Call("addListener", callback)
+	b.o.Get("onRemoved").Call("addListener", callback)
 }
 
 func (b *Bookmarks) onChanged(callback func(id string, changeInfo map[string]interface{})) {
-	t.o.Get("onChanged").Call("addListener", callback)
+	b.o.Get("onChanged").Call("addListener", callback)
 }
 
 func (b *Bookmarks) OnMoved(callback func(id string, moveInfo map[string]interface{})) {
-	t.o.Get("onMoved").Call("addListener", callback)
+	b.o.Get("onMoved").Call("addListener", callback)
 }
 
 func (b *Bookmarks) OnChildrenReordered(callback func(id string, reorderInfo map[string]interface{})) {
-	t.o.Get("onChildrenReordered").Call("addListener", callback)
+	b.o.Get("onChildrenReordered").Call("addListener", callback)
 }
 
 func (b *Bookmarks) OnImportBegan(callback func()) {
-	t.o.Get("onImportBegan").Call("addListener", callback)
+	b.o.Get("onImportBegan").Call("addListener", callback)
 }
 
 func (b *Bookmarks) OnImportEnded(callback func()) {
-	t.o.Get("onImportEnded").Call("addListener", callback)
+	b.o.Get("onImportEnded").Call("addListener", callback)
 }
