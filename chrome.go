@@ -20,6 +20,7 @@ type Chrome struct {
 	Cookies            Cookies
 	Debugger           Debugger
 	DeclarativeContent DeclarativeContent
+	DesktopCapture     DesktopCapture
 }
 
 func NewChrome() Chrome {
@@ -39,5 +40,6 @@ func NewChrome() Chrome {
 		o:             c.o.Get("declarativeContent"),
 		OnPageChanged: OnPageChanged{o: c.o.Get("declarativeContent").Get("onPageChanged")},
 	}
+	c.DesktopCapture = DesktopCapture{o: c.o.Get("desktopCapture")}
 	return c
 }
