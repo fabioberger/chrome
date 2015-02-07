@@ -22,6 +22,7 @@ type Chrome struct {
 	DeclarativeContent DeclarativeContent
 	DesktopCapture     DesktopCapture
 	Downloads          Downloads
+	Enterprise         Enterprise
 }
 
 func NewChrome() Chrome {
@@ -43,5 +44,9 @@ func NewChrome() Chrome {
 	}
 	c.DesktopCapture = DesktopCapture{o: c.o.Get("desktopCapture")}
 	c.Downloads = Downloads{o: c.o.Get("downloads")}
+	c.Enterprise = Enterprise{
+		o:            c.o.Get("enterprise"),
+		PlatformKeys: PlatformKeys{o: c.o.Get("enterprise").Get("platformKeys")},
+	}
 	return c
 }
