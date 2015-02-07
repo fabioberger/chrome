@@ -18,6 +18,7 @@ type Chrome struct {
 	Commands      Commands
 	ContextMenus  ContextMenus
 	Cookies       Cookies
+	Debugger      Debugger
 }
 
 func NewChrome() Chrome {
@@ -32,5 +33,6 @@ func NewChrome() Chrome {
 	c.Commands = Commands{o: c.o.Get("commands")}
 	c.ContextMenus = ContextMenus{o: c.o.Get("contextMenus")}
 	c.Cookies = Cookies{o: c.o.Get("cookies")}
+	c.Debugger = Debugger{o: c.o.Get("debugger")}
 	return c
 }
