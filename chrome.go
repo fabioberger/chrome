@@ -15,6 +15,7 @@ type Chrome struct {
 	Bookmarks     Bookmarks
 	BrowserAction BrowserAction
 	BrowsingData  BrowsingData
+	Commands      Commands
 }
 
 func NewChrome() Chrome {
@@ -26,5 +27,6 @@ func NewChrome() Chrome {
 	c.Bookmarks = Bookmarks{o: c.o.Get("bookmarks")}
 	c.BrowserAction = BrowserAction{o: c.o.Get("browserAction")}
 	c.BrowsingData = BrowsingData{o: c.o.Get("browsingData")}
+	c.Commands = Commands{o: c.o.Get("commands")}
 	return c
 }
