@@ -7,18 +7,19 @@ const (
 )
 
 type Chrome struct {
-	o             js.Object
-	Tabs          Tabs
-	Windows       Windows
-	Runtime       Runtime
-	Alarms        Alarms
-	Bookmarks     Bookmarks
-	BrowserAction BrowserAction
-	BrowsingData  BrowsingData
-	Commands      Commands
-	ContextMenus  ContextMenus
-	Cookies       Cookies
-	Debugger      Debugger
+	o                  js.Object
+	Tabs               Tabs
+	Windows            Windows
+	Runtime            Runtime
+	Alarms             Alarms
+	Bookmarks          Bookmarks
+	BrowserAction      BrowserAction
+	BrowsingData       BrowsingData
+	Commands           Commands
+	ContextMenus       ContextMenus
+	Cookies            Cookies
+	Debugger           Debugger
+	DeclarativeContent DeclarativeContent
 }
 
 func NewChrome() Chrome {
@@ -34,5 +35,9 @@ func NewChrome() Chrome {
 	c.ContextMenus = ContextMenus{o: c.o.Get("contextMenus")}
 	c.Cookies = Cookies{o: c.o.Get("cookies")}
 	c.Debugger = Debugger{o: c.o.Get("debugger")}
+	c.DeclarativeContent = DeclarativeContent{
+		o:             c.o.Get("declarativeContent"),
+		OnPageChanged: OnPageChanged{o: c.o.Get("declarativeContent").Get("onPageChanged")},
+	}
 	return c
 }
