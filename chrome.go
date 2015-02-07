@@ -17,6 +17,7 @@ type Chrome struct {
 	BrowsingData  BrowsingData
 	Commands      Commands
 	ContextMenus  ContextMenus
+	Cookies       Cookies
 }
 
 func NewChrome() Chrome {
@@ -30,5 +31,6 @@ func NewChrome() Chrome {
 	c.BrowsingData = BrowsingData{o: c.o.Get("browsingData")}
 	c.Commands = Commands{o: c.o.Get("commands")}
 	c.ContextMenus = ContextMenus{o: c.o.Get("contextMenus")}
+	c.Cookies = Cookies{o: c.o.Get("cookies")}
 	return c
 }
