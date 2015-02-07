@@ -16,6 +16,7 @@ type Chrome struct {
 	BrowserAction BrowserAction
 	BrowsingData  BrowsingData
 	Commands      Commands
+	ContextMenus  ContextMenus
 }
 
 func NewChrome() Chrome {
@@ -28,5 +29,6 @@ func NewChrome() Chrome {
 	c.BrowserAction = BrowserAction{o: c.o.Get("browserAction")}
 	c.BrowsingData = BrowsingData{o: c.o.Get("browsingData")}
 	c.Commands = Commands{o: c.o.Get("commands")}
+	c.ContextMenus = ContextMenus{o: c.o.Get("contextMenus")}
 	return c
 }
