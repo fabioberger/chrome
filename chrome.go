@@ -25,6 +25,7 @@ type Chrome struct {
 	Enterprise         *Enterprise
 	Extension          *Extension
 	FileBrowserHandler *FileBrowserHandler
+	FileSystemProvider *FileSystemProvider
 }
 
 func NewChrome() *Chrome {
@@ -46,5 +47,6 @@ func NewChrome() *Chrome {
 	c.Enterprise = NewEnterprise(c.o.Get("enterprise"))
 	c.Extension = &Extension{o: c.o.Get("extension")}
 	c.FileBrowserHandler = &FileBrowserHandler{o: c.o.Get("fileBrowserHandler")}
+	c.FileSystemProvider = &FileSystemProvider{o: c.o.Get("fileSystemProvider")}
 	return c
 }
