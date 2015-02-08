@@ -24,6 +24,7 @@ type Chrome struct {
 	Downloads          *Downloads
 	Enterprise         *Enterprise
 	Extension          *Extension
+	FileBrowserHandler *FileBrowserHandler
 }
 
 func NewChrome() *Chrome {
@@ -44,5 +45,6 @@ func NewChrome() *Chrome {
 	c.Downloads = &Downloads{o: c.o.Get("downloads")}
 	c.Enterprise = NewEnterprise(c.o.Get("enterprise"))
 	c.Extension = &Extension{o: c.o.Get("extension")}
+	c.FileBrowserHandler = &FileBrowserHandler{o: c.o.Get("fileBrowserHandler")}
 	return c
 }
