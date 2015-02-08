@@ -4,11 +4,22 @@ import "github.com/gopherjs/gopherjs/js"
 
 type Enterprise struct {
 	o            js.Object
-	PlatformKeys PlatformKeys
+	PlatformKeys *PlatformKeys
 }
 
 type PlatformKeys struct {
 	o js.Object
+}
+
+func NewEnterprise(enterpriseObj js.Object) *Enterprise {
+	e := new(Enterprise)
+	e.o = enterpriseObj
+	if e.o.String() == "undefined" {
+		e.PlatformKeys = &PlatformKeys{o: nil}
+	} else {
+		e.PlatformKeys = &PlatformKeys{o: e.o.Get("platformKeys")}
+	}
+	return e
 }
 
 /*

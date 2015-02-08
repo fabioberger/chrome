@@ -1,14 +1,30 @@
 package chrome
 
-import "github.com/gopherjs/gopherjs/js"
+import (
+	"fmt"
+
+	"github.com/gopherjs/gopherjs/js"
+)
 
 type DeclarativeContent struct {
 	o             js.Object
-	OnPageChanged OnPageChanged
+	OnPageChanged *OnPageChanged //Need to remove this and fix methods below...
 }
 
 type OnPageChanged struct {
 	o js.Object
+}
+
+func NewDeclarativeContent(declarativeContentObj js.Object) *DeclarativeContent {
+	d := new(DeclarativeContent)
+	d.o = declarativeContentObj
+	fmt.Println(d.o.String())
+	if d.o.String() != "undefined" {
+		d.OnPageChanged = &OnPageChanged{o: d.o.Get("onPageChanged")}
+	} else {
+		d.OnPageChanged = &OnPageChanged{o: nil}
+	}
+	return d
 }
 
 /*
