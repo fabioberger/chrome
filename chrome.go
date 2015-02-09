@@ -29,6 +29,7 @@ type Chrome struct {
 	FontSettings       *FontSettings
 	Gcm                *Gcm
 	History            *History
+	I18n               *I18n
 }
 
 func NewChrome() *Chrome {
@@ -54,5 +55,6 @@ func NewChrome() *Chrome {
 	c.FontSettings = &FontSettings{o: c.o.Get("fontSettings")}
 	c.Gcm = &Gcm{o: c.o.Get("gcm")}
 	c.History = &History{o: c.o.Get("history")}
+	c.I18n = &I18n{o: c.o.Get("i18n")}
 	return c
 }
