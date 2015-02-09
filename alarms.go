@@ -2,18 +2,19 @@ package chrome
 
 import "github.com/gopherjs/gopherjs/js"
 
+type Alarms struct {
+	o js.Object
+}
+
 /*
 * Types
  */
+
 type Alarm struct {
 	js.Object
 	Name            string `js:"name"`
 	ScheduledTime   string `js:"scheduledTime"`
-	PeriodInMinutes string `js:"periodInMinutes"`
-}
-
-type Alarms struct {
-	o js.Object
+	PeriodInMinutes string `js:"periodInMinutes,omitempty"`
 }
 
 /*

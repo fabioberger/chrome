@@ -7,54 +7,71 @@ type Bookmarks struct {
 }
 
 /*
+* Types
+ */
+
+type BookmarkTreeNode struct {
+	js.Object
+	Id                string             `js:"id"`
+	ParentId          string             `js:"parentId,omitempty"`
+	Index             int                `js:"index,omitempty"`
+	Url               string             `js:"url,omitempty"`
+	Title             string             `js:"title"`
+	DateAdded         float64            `js:"dateAdded,omitempty"`
+	DateGroupModified float64            `js:"dateGroupModified,omitempty"`
+	Unmodifiable      string             `js:"unmodifiable,omitempty"`
+	Children          []BookmarkTreeNode `js:"children,omitempty"`
+}
+
+/*
 * Methods:
  */
 
 // Get retrieves the specified BookmarkTreeNode(s).
-func (b *Bookmarks) Get(idList []string, callback func(results []map[string]interface{})) {
+func (b *Bookmarks) Get(idList []string, callback func(results []BookmarkTreeNode)) {
 	b.o.Call("get", idList, callback)
 }
 
 // GetChildren retrieves the children of the specified BookmarkTreeNode id.
-func (b *Bookmarks) GetChildren(id string, callback func(results []map[string]interface{})) {
+func (b *Bookmarks) GetChildren(id string, callback func(results []BookmarkTreeNode)) {
 	b.o.Call("getChildren", id, callback)
 }
 
 // GetRecent retrieves the recently added bookmarks.
-func (b *Bookmarks) GetRecent(numberOfItems int, callback func(results []map[string]interface{})) {
+func (b *Bookmarks) GetRecent(numberOfItems int, callback func(results []BookmarkTreeNode)) {
 	b.o.Call("getRecent", numberOfItems, callback)
 }
 
 // GetTree retrieves the entire Bookmarks hierarchy.
-func (b *Bookmarks) GetTree(callback func(results []map[string]interface{})) {
+func (b *Bookmarks) GetTree(callback func(results []BookmarkTreeNode)) {
 	b.o.Call("getTree", callback)
 }
 
 // GetSubTree retrieves part of the Bookmarks hierarchy, starting at the specified node.
-func (b *Bookmarks) GetSubTree(id string, callback func(results []map[string]interface{})) {
+func (b *Bookmarks) GetSubTree(id string, callback func(results []BookmarkTreeNode)) {
 	b.o.Call("getSubTree", id, callback)
 }
 
 // Search searches for BookmarkTreeNodes matching the given query. Queries specified
 // with an object produce BookmarkTreeNodes matching all specified properties.
-func (b *Bookmarks) Search(query interface{}, callback func(results []map[string]interface{})) {
+func (b *Bookmarks) Search(query interface{}, callback func(results []BookmarkTreeNode)) {
 	b.o.Call("search", query, callback)
 }
 
 // Create creates a bookmark or folder under the specified parentId.
 // If url is nil or missing, it will be a folder.
-func (b *Bookmarks) Create(bookmark interface{}, callback func(result map[string]interface{})) {
+func (b *Bookmarks) Create(bookmark interface{}, callback func(result BookmarkTreeNode)) {
 	b.o.Call("create", bookmark, callback)
 }
 
 // Move moves the specified BookmarkTreeNode to the provided location.
-func (b *Bookmarks) Move(id string, destination interface{}, callback func(result map[string]interface{})) {
+func (b *Bookmarks) Move(id string, destination interface{}, callback func(result BookmarkTreeNode)) {
 	b.o.Call("move", id, destination, callback)
 }
 
 // Update updates the properties of a bookmark or folder. Specify only the properties that you want
 // to change; unspecified properties will be left unchanged. Note: Currently, only 'title' and 'url' are supported.
-func (b *Bookmarks) Update(id string, changes interface{}, callback func(result map[string]interface{})) {
+func (b *Bookmarks) Update(id string, changes interface{}, callback func(result BookmarkTreeNode)) {
 	b.o.Call("update", id, changes, callback)
 }
 
@@ -73,7 +90,7 @@ func (b *Bookmarks) RemoveTree(id string, callback func()) {
  */
 
 // OnCreated fired when a bookmark or folder is created.
-func (b *Bookmarks) OnCreated(callback func(id string, bookmark map[string]interface{})) {
+func (b *Bookmarks) OnCreated(callback func(id string, bookmark BookmarkTreeNode)) {
 	b.o.Get("onCreated").Call("addListener", callback)
 }
 
