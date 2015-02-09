@@ -28,6 +28,7 @@ type Chrome struct {
 	FileSystemProvider *FileSystemProvider
 	FontSettings       *FontSettings
 	Gcm                *Gcm
+	History            *History
 }
 
 func NewChrome() *Chrome {
@@ -52,5 +53,6 @@ func NewChrome() *Chrome {
 	c.FileSystemProvider = &FileSystemProvider{o: c.o.Get("fileSystemProvider")}
 	c.FontSettings = &FontSettings{o: c.o.Get("fontSettings")}
 	c.Gcm = &Gcm{o: c.o.Get("gcm")}
+	c.History = &History{o: c.o.Get("history")}
 	return c
 }
