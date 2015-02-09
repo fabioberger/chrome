@@ -9,6 +9,15 @@ type FileBrowserHandler struct {
 }
 
 /*
+* Types
+ */
+
+type FileHandlerExecuteEventDetails struct {
+	Entries []interface{} `js:"entries"`
+	Tab_id  int           `js:"tab_id"`
+}
+
+/*
 * Methods:
  */
 
@@ -22,6 +31,6 @@ func (f *FileBrowserHandler) SelectFile(selectionParams map[string]interface{}, 
  */
 
 // OnExecute fired when file system action is executed from ChromeOS file browser.
-func (f *FileBrowserHandler) OnExecute(callback func(id string, details map[string]interface{})) {
+func (f *FileBrowserHandler) OnExecute(callback func(id string, details FileHandlerExecuteEventDetails)) {
 	f.o.Get("onExecute").Call("addListener", callback)
 }
