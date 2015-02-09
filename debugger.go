@@ -7,26 +7,47 @@ type Debugger struct {
 }
 
 /*
+* Types
+ */
+
+type Debugee struct {
+	TabId       int    `js:"tabId"`
+	ExtensionId string `js:"extensionId"`
+	TargetId    string `js:"targetId"`
+}
+
+type TargetInfo struct {
+	Type        string `js:"type"`
+	Id          string `js:"id"`
+	TabId       int    `js:"tabId"`
+	ExtensionId string `js:"extensionId"`
+	Attached    bool   `js:"attached"`
+	Title       string `js:"title"`
+	Url         string `js:"url"`
+	FaviconUrl  string `js:"faviconUrl"`
+}
+
+/*
 * Methods:
  */
 
 // Attach attaches debugger to the given target.
-func (d *Debugger) Attach(target map[string]interface{}, requiredVersion string, callback func()) {
+func (d *Debugger) Attach(target Debugee, requiredVersion string, callback func()) {
 	d.o.Call("attach", target, requiredVersion, callback)
 }
 
 // Detach detaches debugger from the given target.
-func (d *Debugger) Detach(target map[string]interface{}, callback func()) {
+func (d *Debugger) Detach(target Debugee, callback func()) {
 	d.o.Call("detach", target, callback)
 }
 
 // SendCommand sends given command to the debugging target.
-func (d *Debugger) SendCommand(target map[string]interface{}, method string, commandParams map[string]interface{}, callback func(result map[string]interface{})) {
+func (d *Debugger) SendCommand(target Debugee, method string, commandParams map[string]interface{}, callback func(result map[string]interface{})) {
 	d.o.Call("sendCommand", target, method, commandParams, callback)
 }
 
 // GetTargets returns the list of available debug targets.
-func (d *Debugger) GetTargets(callback func(result []map[string]interface{})) {
+func (d *Debugger) GetTargets(callback func(result []TargetInfo)) {
 	d.o.Call("getTargets", callback)
 }
 
@@ -35,12 +56,12 @@ func (d *Debugger) GetTargets(callback func(result []map[string]interface{})) {
  */
 
 // OnEvent fired whenever debugging target issues instrumentation event.
-func (d *Debugger) OnEvent(callback func(source map[string]interface{}, method string, params map[string]interface{})) {
+func (d *Debugger) OnEvent(callback func(source Debugee, method string, params map[string]interface{})) {
 	d.o.Get("onEvent").Call("addListener", callback)
 }
 
 // OnDetach fired when browser terminates debugging session for the tab. This happens when
 // either the tab is being closed or Chrome DevTools is being invoked for the attached tab.
-func (d *Debugger) OnDetach(callback func(source map[string]interface{}, reason string)) {
+func (d *Debugger) OnDetach(callback func(source Debugee, reason string)) {
 	d.o.Get("onDetach").Call("addListener", callback)
 }
