@@ -7,11 +7,17 @@ type Commands struct {
 }
 
 /*
+* Types
+ */
+
+type Command map[string]string
+
+/*
 * Methods:
  */
 
 // GetAll returns all the registered extension commands for this extension and their shortcut (if active).
-func (c *Commands) GetAll(callback func(commands []map[string]interface{})) {
+func (c *Commands) GetAll(callback func(commands []Command)) {
 	c.o.Call("getAll", callback)
 }
 
