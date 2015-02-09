@@ -26,6 +26,7 @@ type Chrome struct {
 	Extension          *Extension
 	FileBrowserHandler *FileBrowserHandler
 	FileSystemProvider *FileSystemProvider
+	FontSettings       *FontSettings
 }
 
 func NewChrome() *Chrome {
@@ -48,5 +49,6 @@ func NewChrome() *Chrome {
 	c.Extension = &Extension{o: c.o.Get("extension")}
 	c.FileBrowserHandler = &FileBrowserHandler{o: c.o.Get("fileBrowserHandler")}
 	c.FileSystemProvider = &FileSystemProvider{o: c.o.Get("fileSystemProvider")}
+	c.FontSettings = &FontSettings{o: c.o.Get("fontSettings")}
 	return c
 }
