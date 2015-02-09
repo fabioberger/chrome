@@ -12,37 +12,57 @@ type Windows struct {
 }
 
 /*
+* Types
+ */
+
+type Window struct {
+	js.Object
+	Id          int    `js:"id"`
+	Focused     bool   `js:"focused"`
+	Top         int    `js:"top"`
+	Left        int    `js:"left"`
+	Width       int    `js:"width"`
+	Height      int    `js:"height"`
+	Tabs        []Tab  `js:"tabs"`
+	Incognito   bool   `js:"incognito"`
+	Type        string `js:"type"`
+	State       string `js:"state"`
+	AlwaysOnTop bool   `js:"alwaysOnTop"`
+	SessionId   string `js:"sessionId"`
+}
+
+/*
 * Methods
  */
 
 // Get gets details about a window.
-func (w *Windows) Get(windowId int, getInfo interface{}, callback func(js.Object)) {
+func (w *Windows) Get(windowId int, getInfo interface{}, callback func(window Window)) {
 	w.o.Call("get", windowId, getInfo, callback)
 }
 
 // GetCurrent gets the current window.
-func (w *Windows) GetCurrent(getInfo interface{}, callback func(js.Object)) {
+func (w *Windows) GetCurrent(getInfo interface{}, callback func(window Window)) {
 	w.o.Call("getCurrent", getInfo, callback)
 }
 
 // GetLastFocused gets the window that was most recently focused — typically the window 'on top'.
-func (w *Windows) GetLastFocused(getInfo interface{}, callback func(js.Object)) {
+func (w *Windows) GetLastFocused(getInfo interface{}, callback func(window Window)) {
 	w.o.Call("getLastFocused", getInfo, callback)
 }
 
 // GetAll gets all windows.
-func (w *Windows) GetAll(getInfo interface{}, callback func(js.Object)) {
+func (w *Windows) GetAll(getInfo interface{}, callback func(windows []Window)) {
 	w.o.Call("getAll", getInfo, callback)
 }
 
 // Create creates (opens) a new browser with any optional sizing, position or default URL provided.
-func (w *Windows) Create(createData interface{}, callback func(js.Object)) {
+func (w *Windows) Create(createData interface{}, callback func(window Window)) {
 	w.o.Call("create", createData, callback)
 }
 
 // Update updates the properties of a window. Specify only the properties that you
 // want to change; unspecified properties will be left unchanged.
-func (w *Windows) Update(windowId int, updateInfo interface{}, callback func(js.Object)) {
+func (w *Windows) Update(windowId int, updateInfo interface{}, callback func(window Window)) {
 	w.o.Call("update", windowId, updateInfo, callback)
 }
 
@@ -56,7 +76,7 @@ func (w *Windows) Remove(windowId int, callback func(js.Object)) {
  */
 
 // OnCreated fired when a window is created.
-func (w *Windows) OnCreated(callback func(window map[string]interface{})) {
+func (w *Windows) OnCreated(callback func(window Window)) {
 	w.o.Get("onCreated").Call("addListener", callback)
 }
 
