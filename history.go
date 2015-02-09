@@ -7,16 +7,39 @@ type History struct {
 }
 
 /*
+* Types
+ */
+
+type HistoryItem struct {
+	js.Object
+	Id            string `js:"id"`
+	Url           string `js:"url"`
+	Title         string `js:"title"`
+	LastVisitTime int64  `js:"lastVisitTime"`
+	VisitCount    int    `js:"visitCount"`
+	TypedCount    int    `js:"typedCount"`
+}
+
+type VisitItem struct {
+	js.Object
+	Id               string `js:"id"`
+	VisitId          string `js:"visitId"`
+	VisitTime        int64  `js:"visitTime"`
+	ReferringVisitId string `js:"referringVisitId"`
+	Transition       string `js:"transition"`
+}
+
+/*
 * Methods:
  */
 
 // Search searches the history for the last visit time of each page matching the query.
-func (h *History) Search(query map[string]interface{}, callback func(results []map[string]interface{})) {
+func (h *History) Search(query map[string]interface{}, callback func(results []HistoryItem)) {
 	h.o.Call("search", query, callback)
 }
 
 // GetVisits retrieves information about visits to a URL.
-func (h *History) GetVisits(details map[string]interface{}, callback func(results []map[string]interface{})) {
+func (h *History) GetVisits(details map[string]interface{}, callback func(results []VisitItem)) {
 	h.o.Call("getVisits", details, callback)
 }
 
@@ -47,7 +70,7 @@ func (h *History) DeleteAll(callback func()) {
 
 // OnVisited fired when a URL is visited, providing the HistoryItem data for that URL.
 // This event fires before the page has loaded.
-func (h *History) OnVisited(callback func(result map[string]interface{})) {
+func (h *History) OnVisited(callback func(result HistoryItem)) {
 	h.o.Get("onVisited").Call("addListener", callback)
 }
 
