@@ -135,18 +135,23 @@ func (t *Tabs) InsertCss(tabId int, details interface{}, callback func()) {
 	t.o.Call("insertCss", tabId, details, callback)
 }
 
+// SetZoom zooms a specified tab.
 func (t *Tabs) SetZoom(tabId int, zoomFactor int64, callback func()) {
 	t.o.Call("setZoom", tabId, zoomFactor, callback)
 }
 
+// GetZoom gets the current zoom factor of a specified tab.
 func (t *Tabs) GetZoom(tabId int, callback func(zoomFactor int64)) {
 	t.o.Call("getZoom", tabId, callback)
 }
 
+// SetZoomSettings sets the zoom settings for a specified tab, which define how zoom changes are handled.
+// These settings are reset to defaults upon navigating the tab.
 func (t *Tabs) SetZoomSettings(tabId int, zoomSettings ZoomSettings, callback func()) {
 	t.o.Call("setZoomSettings", tabId, zoomSettings, callback)
 }
 
+// GetZoomSettings gets the current zoom settings of a specified tab.
 func (t *Tabs) GetZoomSettings(tabId int, callback func(zoomSettings ZoomSettings)) {
 	t.o.Call("getZoomSettings", tabId, callback)
 }
