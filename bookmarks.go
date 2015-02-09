@@ -13,14 +13,14 @@ type Bookmarks struct {
 type BookmarkTreeNode struct {
 	js.Object
 	Id                string             `js:"id"`
-	ParentId          string             `js:"parentId,omitempty"`
-	Index             int                `js:"index,omitempty"`
-	Url               string             `js:"url,omitempty"`
+	ParentId          string             `js:"parentId"`
+	Index             int                `js:"index"`
+	Url               string             `js:"url"`
 	Title             string             `js:"title"`
-	DateAdded         float64            `js:"dateAdded,omitempty"`
-	DateGroupModified float64            `js:"dateGroupModified,omitempty"`
-	Unmodifiable      string             `js:"unmodifiable,omitempty"`
-	Children          []BookmarkTreeNode `js:"children,omitempty"`
+	DateAdded         int64              `js:"dateAdded"`
+	DateGroupModified int64              `js:"dateGroupModified"`
+	Unmodifiable      string             `js:"unmodifiable"`
+	Children          []BookmarkTreeNode `js:"children"`
 }
 
 /*

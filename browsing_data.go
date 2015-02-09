@@ -12,8 +12,8 @@ type BrowsingData struct {
 
 type RemovalOptions struct {
 	js.Object
-	Since       float64         `js:"since,omitempty"`
-	OriginTypes map[string]bool `js:"originTypes,omitempty"`
+	Since       float64         `js:"since"`
+	OriginTypes map[string]bool `js:"originTypes"`
 }
 
 type DataTypeSet map[string]bool
