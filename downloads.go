@@ -7,6 +7,40 @@ type Downloads struct {
 }
 
 /*
+* Types
+ */
+
+type DownloadItem struct {
+	js.Object
+	Id               int    `js:"id"`
+	Url              string `js:"url"`
+	Referrer         string `js:"referrer"`
+	Filename         string `js:"filename"`
+	Incognito        bool   `js:"incognito"`
+	Danger           string `js:"danger"`
+	Mime             string `js:"mime"`
+	StartTime        string `js:"startTime"`
+	EndTime          string `js:"endTime"`
+	EstimatedEndTime string `js:"estimatedEndTime"`
+	State            string `js:"state"`
+	Paused           bool   `js:"paused"`
+	CanResume        bool   `js:"canResume"`
+	Error            string `js:"error"`
+	BytesReceived    int64  `js:"bytesReceived"`
+	TotalBytes       int64  `js:"totalBytes"`
+	FileSize         int64  `js:"fileSize"`
+	Exists           bool   `js:"exists"`
+	ByExtensionId    string `js:"byExtensionId"`
+	ByExtensionName  string `js:"byExtensionName"`
+}
+
+type StringDelta map[string]string
+
+type DoubleDelta map[string]int64
+
+type BooleanDelta map[string]bool
+
+/*
 * Methods:
  */
 
@@ -16,7 +50,7 @@ func (d *Downloads) Download(options map[string]interface{}, callback func(downl
 }
 
 /* Search find DownloadItem. Set query to the empty object to get all DownloadItem. To get a specific DownloadItem, set only the id field. To page through a large number of items, set orderBy: ['-startTime'], set limit to the number of items per page, and set startedAfter to the startTime of the last item from the last page. */
-func (d *Downloads) Search(query map[string]interface{}, callback func(results []map[string]interface{})) {
+func (d *Downloads) Search(query map[string]interface{}, callback func(results []DownloadItem)) {
 	d.o.Call("search", query, callback)
 }
 
@@ -85,7 +119,7 @@ func (d *Downloads) SetShelfEnabled(enabled bool) {
  */
 
 /* OnCreated this event fires with the DownloadItem object when a download begins. */
-func (d *Downloads) OnCreated(callback func(downloadItem map[string]interface{})) {
+func (d *Downloads) OnCreated(callback func(downloadItem DownloadItem)) {
 	d.o.Get("onCreated").Call("addListener", callback)
 }
 
@@ -100,6 +134,6 @@ func (d *Downloads) OnChanged(callback func(downloadDelta map[string]interface{}
 }
 
 /* OnDeterminingFilename during the filename determination process, extensions will be given the opportunity to override the target DownloadItem.filename. Each extension may not register more than one listener for this event. Each listener must call suggest exactly once, either synchronously or asynchronously. If the listener calls suggest asynchronously, then it must return true. If the listener neither calls suggest synchronously nor returns true, then suggest will be called automatically. The DownloadItem will not complete until all listeners have called suggest. Listeners may call suggest without any arguments in order to allow the download to use downloadItem.filename for its filename, or pass a suggestion object to suggest in order to override the target filename. If more than one extension overrides the filename, then the last extension installed whose listener passes a suggestion object to suggest wins. In order to avoid confusion regarding which extension will win, users should not install extensions that may conflict. If the download is initiated by download and the target filename is known before the MIME type and tentative filename have been determined, pass filename to download instead. */
-func (d *Downloads) OnDeterminingFilename(callback func(downloadItem map[string]interface{}, suggest func(suggestion map[string]interface{}))) {
+func (d *Downloads) OnDeterminingFilename(callback func(downloadItem DownloadItem, suggest func(suggestion map[string]interface{}))) {
 	d.o.Get("onDeterminingFilename").Call("addListener", callback)
 }
