@@ -7,6 +7,16 @@ type FontSettings struct {
 }
 
 /*
+* Types
+ */
+
+type FontName struct {
+	js.Object
+	FontId      string `js:"fontId"`
+	DisplayName string `js:"displayName"`
+}
+
+/*
 * Methods:
  */
 
@@ -26,7 +36,7 @@ func (f *FontSettings) SetFont(details map[string]interface{}, callback func()) 
 }
 
 // GetFontList gets a list of fonts on the system.
-func (f *FontSettings) GetFontList(callback func(results []map[string]interface{})) {
+func (f *FontSettings) GetFontList(callback func(results []FontName)) {
 	f.o.Call("getFontList", callback)
 }
 
