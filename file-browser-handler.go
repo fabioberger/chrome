@@ -13,6 +13,7 @@ type FileBrowserHandler struct {
  */
 
 type FileHandlerExecuteEventDetails struct {
+	js.Object
 	Entries []interface{} `js:"entries"`
 	Tab_id  int           `js:"tab_id"`
 }

@@ -2,10 +2,64 @@
 
 package chrome
 
-import "github.com/gopherjs/gopherjs/js"
+import (
+	"time"
+
+	"github.com/gopherjs/gopherjs/js"
+)
 
 type FileSystemProvider struct {
 	o js.Object
+}
+
+/*
+* Types
+ */
+
+type EntryMetadata struct {
+	js.Object
+	IsDirectory      bool      `js:"isDirectory"`
+	Name             string    `js:"name"`
+	Size             int64     `js:"size"`
+	ModificationTime time.Time `js:"modificationTime"`
+	MimeType         string    `js:"mimeType"`
+	Thumbnail        string    `js:"thumbnail"`
+}
+
+type Watcher struct {
+	js.Object
+	EntryPath string `js:"entryPath"`
+	Recursive bool   `js:"recursive"`
+	LastTag   string `js:"lastTag"`
+}
+
+type FileSystemInfo struct {
+	js.Object
+	FileSystemId    string                   `js:"fileSystemId"`
+	DisplayName     string                   `js:"displayName"`
+	Writable        bool                     `js:"writable"`
+	OpenedFileLimit int64                    `js:"openedFileLimit"`
+	OpenedFiles     []map[string]interface{} `js:"openedFiles"`
+}
+
+type AddWatcherRequestedOptions struct {
+	js.Object
+	FilesystemId string `js:"fileSystemId"`
+	RequestId    int    `js:"requestId"`
+	EntryPath    string `js:"entryPath"`
+	Recursive    bool   `js:"recursive"`
+}
+
+type RemoveWatcherRequestedOptions AddWatcherRequestedOptions
+
+type NotifyOptions struct {
+	js.Object
+	FilesystemId string                   `js:"fileSystemId"`
+	ObservedPath string                   `js:"observedPath"`
+	Recursive    bool                     `js:"recursive"`
+	ChangeType   string                   `js:"changeType"`
+	Changes      []map[string]interface{} `js:"changes"`
+	Tag          string                   `js:"tag"`
 }
 
 /*
@@ -24,12 +78,12 @@ func (f *FileSystemProvider) Unmount(options map[string]interface{}, callback fu
 }
 
 // GetAll returns all file systems mounted by the extension.
-func (f *FileSystemProvider) GetAll(callback func(fileSystems []map[string]interface{})) {
+func (f *FileSystemProvider) GetAll(callback func(fileSystems []FileSystemInfo)) {
 	f.o.Call("getAll", callback)
 }
 
 // Get returns information about a file system with the passed fileSystemId.
-func (f *FileSystemProvider) Get(fileSystemId string, callback func(fileSystemInfo map[string]interface{})) {
+func (f *FileSystemProvider) Get(fileSystemId string, callback func(fileSystemInfo FileSystemInfo)) {
 	f.o.Call("get", fileSystemId, callback)
 }
 
@@ -46,13 +100,13 @@ func (f *FileSystemProvider) OnUnmountRequested(callback func(options map[string
 
 // OnGetMetadataRequested raised when metadata of a file or a directory at entryPath is requested.
 // The metadata must be returned with the successCallback call. In case of an error, errorCallback must be called.
-func (f *FileSystemProvider) OnGetMetadataRequested(callback func(options map[string]interface{}, successCallback func(metadata map[string]interface{}), errorCallback func(err string))) {
+func (f *FileSystemProvider) OnGetMetadataRequested(callback func(options map[string]interface{}, successCallback func(metadata EntryMetadata), errorCallback func(err string))) {
 	f.o.Get("onGetMetadataRequested").Call("addListener", callback)
 }
 
 // OnReadDirectoryRequested raised when contents of a directory at directoryPath are requested.
 // The results must be returned in chunks by calling the successCallback several times. In case of an error, errorCallback must be called.
-func (f *FileSystemProvider) OnReadDirectoryRequested(callback func(options map[string]interface{}, successCallback func(entries []map[string]interface{}, hasMore bool), errorCallback func(err string))) {
+func (f *FileSystemProvider) OnReadDirectoryRequested(callback func(options map[string]interface{}, successCallback func(entries []EntryMetadata, hasMore bool), errorCallback func(err string))) {
 	f.o.Get("onReadDirectoryRequested").Call("addListener", callback)
 }
 
