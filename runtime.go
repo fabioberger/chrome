@@ -7,6 +7,29 @@ type Runtime struct {
 }
 
 /*
+* Types
+ */
+
+type Port struct {
+	js.Object
+	Name         string        `js:"name"`
+	OnDisconnect js.Object     `js:"onDisconnect"`
+	OnMessage    js.Object     `js:"onMessage"`
+	Sender       MessageSender `js:"sender"`
+}
+
+type MessageSender struct {
+	js.Object
+	tab          Tab    `js:"tab"`
+	FrameId      int    `js:"frameId"`
+	Id           string `js:"id"`
+	Url          string `js:"url"`
+	TlsChannelId string `js:"tlsChannelId"`
+}
+
+type PlatformInfo map[string]string
+
+/*
 * Methods
  */
 
@@ -35,12 +58,12 @@ func (r *Runtime) Restart() {
 	r.o.Call("restart")
 }
 
-func (r *Runtime) Connect(extensionId string, connectInfo interface{}) {
-	r.o.Call("connect", extensionId, connectInfo)
+func (r *Runtime) Connect(extensionId string, connectInfo interface{}) Port {
+	return r.o.Call("connect", extensionId, connectInfo).(Port)
 }
 
-func (r *Runtime) ConnectNative(application string) {
-	r.o.Call("connectNative", application)
+func (r *Runtime) ConnectNative(application string) Port {
+	return r.o.Call("connectNative", application).(Port)
 }
 
 func (r *Runtime) SendMessage(extensionId string, message interface{}, options interface{}, responseCallback func(response interface{})) {
@@ -51,7 +74,7 @@ func (r *Runtime) SendNativeMessage(application string, message interface{}, res
 	r.o.Call("sendNativeMessage", application, message, responseCallback)
 }
 
-func (r *Runtime) GetPlatformInfo(callback func(platformInfo map[string]string)) {
+func (r *Runtime) GetPlatformInfo(callback func(platformInfo PlatformInfo)) {
 	r.o.Call("getPlatformInfo", callback)
 }
 
@@ -83,19 +106,19 @@ func (r *Runtime) OnUpdateAvailable(callback func(details map[string]string)) {
 	r.o.Get("onUpdateAvailable").Call("addListener", callback)
 }
 
-func (r *Runtime) OnConnect(callback func(port interface{})) {
+func (r *Runtime) OnConnect(callback func(port Port)) {
 	r.o.Get("onConnect").Call("addListener", callback)
 }
 
-func (r *Runtime) OnConnectExternal(callback func(port interface{})) {
+func (r *Runtime) OnConnectExternal(callback func(port Port)) {
 	r.o.Get("onConnectExternal").Call("addListener", callback)
 }
 
-func (r *Runtime) OnMessage(callback func(message interface{}, sender js.Object, sendResponse func(interface{}))) {
+func (r *Runtime) OnMessage(callback func(message interface{}, sender MessageSender, sendResponse func(interface{}))) {
 	r.o.Get("onMessage").Call("addListener", callback)
 }
 
-func (r *Runtime) OnMessageExternal(callback func(message interface{}, sender js.Object, sendResponse func(interface{}))) {
+func (r *Runtime) OnMessageExternal(callback func(message interface{}, sender MessageSender, sendResponse func(interface{}))) {
 	r.o.Get("onMessageExternal").Call("addListener", callback)
 }
 
