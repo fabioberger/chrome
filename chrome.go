@@ -32,6 +32,7 @@ type Chrome struct {
 	I18n               *I18n
 	Identity           *Identity
 	Idle               *Idle
+	Input              *Input
 }
 
 func NewChrome() *Chrome {
@@ -60,5 +61,6 @@ func NewChrome() *Chrome {
 	c.I18n = &I18n{o: c.o.Get("i18n")}
 	c.Identity = &Identity{o: c.o.Get("identity")}
 	c.Idle = &Idle{o: c.o.Get("idle")}
+	c.Input = NewInput(c.o.Get("input"))
 	return c
 }
