@@ -16,14 +16,33 @@ func (e *Extension) GetURL(path string) {
 }
 
 // GetViews returns an array of the JavaScript 'window' objects for each of the pages running inside the current extension.
-func (e *Extension) GetViews(fetchProperties map[string]interface{}) interface{} {
-	return e.o.Call("getViews", fetchProperties).Interface()
+// Fix this and the other functions to return Window objects instead of js.Object or whatever else
+func (e *Extension) GetViews(fetchProperties map[string]interface{}) []Window {
+	windows := []Window{}
+	windowObjs := e.o.Call("getViews", fetchProperties)
+	for i := 0; i < windowObjs.Length(); i++ {
+		window := windowObjs.Index(i)
+		windows = append(windows, Window{Object: window})
+	}
+	return windows
 }
 
 // GetBackgroundPage returns the JavaScript 'window' object for the background page running inside
 // the current extension. Returns null if the extension has no background page.
-func (e *Extension) GetBackgroundPage() interface{} {
-	return e.o.Call("getBackgroundPage").Interface()
+func (e *Extension) GetBackgroundPage() Window {
+	return Window{Object: e.o.Call("getBackgroundPage")}
+}
+
+// GetExtensionTabs returns an array of the JavaScript 'window' objects for each of the tabs running inside
+// the current extension. If windowId is specified, returns only the 'window' objects of tabs attached to the specified window.
+func (e *Extension) GetExtensionTabs(windowId int) []Window {
+	windows := []Window{}
+	windowObjs := e.o.Call("getExtensionTabs", windowId)
+	for i := 0; i < windowObjs.Length(); i++ {
+		window := windowObjs.Index(i)
+		windows = append(windows, Window{Object: window})
+	}
+	return windows
 }
 
 // IsAllowedIncognitoAccess retrieves the state of the extension's access to Incognito-mode
