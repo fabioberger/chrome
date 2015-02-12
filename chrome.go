@@ -34,6 +34,7 @@ type Chrome struct {
 	Idle               *Idle
 	Input              *Input
 	Notification       *Notification
+	Omnibox            *Omnibox
 }
 
 func NewChrome() *Chrome {
@@ -64,5 +65,6 @@ func NewChrome() *Chrome {
 	c.Idle = &Idle{o: c.o.Get("idle")}
 	c.Input = NewInput(c.o.Get("input"))
 	c.Notification = &Notification{o: c.o.Get("notification")}
+	c.Omnibox = &Omnibox{o: c.o.Get("omnibox")}
 	return c
 }
