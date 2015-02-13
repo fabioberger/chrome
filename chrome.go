@@ -35,6 +35,7 @@ type Chrome struct {
 	Input              *Input
 	Notification       *Notification
 	Omnibox            *Omnibox
+	PageAction         *PageAction
 }
 
 func NewChrome() *Chrome {
@@ -66,5 +67,6 @@ func NewChrome() *Chrome {
 	c.Input = NewInput(c.o.Get("input"))
 	c.Notification = &Notification{o: c.o.Get("notification")}
 	c.Omnibox = &Omnibox{o: c.o.Get("omnibox")}
+	c.PageAction = &PageAction{o: c.o.Get("pageAction")}
 	return c
 }
