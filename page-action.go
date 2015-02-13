@@ -7,7 +7,7 @@ type PageAction struct {
 }
 
 /*
-* Types
+* Methods
  */
 
 // Show shows the page action. The page action is shown whenever the tab is selected.
