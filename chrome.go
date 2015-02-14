@@ -37,6 +37,8 @@ type Chrome struct {
 	Omnibox            *Omnibox
 	PageAction         *PageAction
 	PageCapture        *PageCapture
+	Permissions        *Permissions
+	Power              *Power
 }
 
 func NewChrome() *Chrome {
@@ -70,5 +72,7 @@ func NewChrome() *Chrome {
 	c.Omnibox = &Omnibox{o: c.o.Get("omnibox")}
 	c.PageAction = &PageAction{o: c.o.Get("pageAction")}
 	c.PageCapture = &PageCapture{o: c.o.Get("pageCapture")}
+	c.Permissions = &Permissions{o: c.o.Get("permissions")}
+	c.Power = &Power{o: c.o.Get("power")}
 	return c
 }
