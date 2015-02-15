@@ -75,6 +75,6 @@ func NewChrome() *Chrome {
 	c.PageCapture = &PageCapture{o: c.o.Get("pageCapture")}
 	c.Permissions = &Permissions{o: c.o.Get("permissions")}
 	c.Power = &Power{o: c.o.Get("power")}
-	c.Privacy = &Privacy{o: c.o.Get("privacy")}
+	c.Privacy = NewPrivacy(c.o.Get("privacy"))
 	return c
 }
