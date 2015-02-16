@@ -40,6 +40,7 @@ type Chrome struct {
 	Permissions        *Permissions
 	Power              *Power
 	Privacy            *Privacy
+	Proxy              *Proxy
 }
 
 func NewChrome() *Chrome {
@@ -76,5 +77,6 @@ func NewChrome() *Chrome {
 	c.Permissions = &Permissions{o: c.o.Get("permissions")}
 	c.Power = &Power{o: c.o.Get("power")}
 	c.Privacy = NewPrivacy(c.o.Get("privacy"))
+	c.Proxy = NewProxy(c.o.Get("proxy"))
 	return c
 }
