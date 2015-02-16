@@ -48,6 +48,7 @@ type Chrome struct {
 	TopSites           *TopSites
 	Tts                *Tts
 	TtsEngine          *TtsEngine
+	WebNavigation      *WebNavigation
 }
 
 func NewChrome() *Chrome {
@@ -92,5 +93,6 @@ func NewChrome() *Chrome {
 	c.TopSites = &TopSites{o: c.o.Get("topSites")}
 	c.Tts = &Tts{o: c.o.Get("tts")}
 	c.TtsEngine = &TtsEngine{o: c.o.Get("ttsEngine")}
+	c.WebNavigation = &WebNavigation{o: c.o.Get("webNavigation")}
 	return c
 }
