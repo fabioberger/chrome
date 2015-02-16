@@ -47,6 +47,7 @@ type Chrome struct {
 	TabCapture         *TabCapture
 	TopSites           *TopSites
 	Tts                *Tts
+	TtsEngine          *TtsEngine
 }
 
 func NewChrome() *Chrome {
@@ -90,5 +91,6 @@ func NewChrome() *Chrome {
 	c.TabCapture = &TabCapture{o: c.o.Get("tabCapture")}
 	c.TopSites = &TopSites{o: c.o.Get("topSites")}
 	c.Tts = &Tts{o: c.o.Get("tts")}
+	c.TtsEngine = &TtsEngine{o: c.o.Get("ttsEngine")}
 	return c
 }
