@@ -44,6 +44,7 @@ type Chrome struct {
 	Sessions           *Sessions
 	Storage            *Storage
 	System             *System
+	TabCapture         *TabCapture
 }
 
 func NewChrome() *Chrome {
@@ -84,5 +85,6 @@ func NewChrome() *Chrome {
 	c.Sessions = &Sessions{o: c.o.Get("sessions")}
 	c.Storage = NewStorage(c.o.Get("storage"))
 	c.System = NewSystem(c.o.Get("system"))
+	c.TabCapture = &TabCapture{o: c.o.Get("tabCapture")}
 	return c
 }
