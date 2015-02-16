@@ -42,6 +42,7 @@ type Chrome struct {
 	Privacy            *Privacy
 	Proxy              *Proxy
 	Sessions           *Sessions
+	Storage            *Storage
 }
 
 func NewChrome() *Chrome {
@@ -80,5 +81,6 @@ func NewChrome() *Chrome {
 	c.Privacy = NewPrivacy(c.o.Get("privacy"))
 	c.Proxy = NewProxy(c.o.Get("proxy"))
 	c.Sessions = &Sessions{o: c.o.Get("sessions")}
+	c.Storage = NewStorage(c.o.Get("storage"))
 	return c
 }
