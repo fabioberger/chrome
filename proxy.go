@@ -43,6 +43,7 @@ type PacScript struct {
 }
 
 type ProxyConfig struct {
+	js.Object
 	Rules     ProxyRules `js:"rules"`
 	PacScript PacScript  `js:"pacScript"`
 	Mode      string     `js:"mode"`
