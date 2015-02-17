@@ -4,7 +4,7 @@ import "github.com/gopherjs/gopherjs/js"
 
 type Runtime struct {
 	o         js.Object
-	LastError map[string]string
+	LastError js.Object
 	Id        string
 }
 
@@ -12,7 +12,7 @@ func NewRuntime(runtimeObj js.Object) *Runtime {
 	r := new(Runtime)
 	r.o = runtimeObj
 	if r.o.String() != "undefined" {
-		r.LastError = r.o.Get("lastError").Interface().(map[string]string)
+		r.LastError = r.o.Get("lastError")
 		r.Id = r.o.Get("id").String()
 	}
 	return r

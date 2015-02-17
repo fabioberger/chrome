@@ -4,7 +4,7 @@ import "github.com/gopherjs/gopherjs/js"
 
 type Extension struct {
 	o                  js.Object
-	LastError          map[string]string
+	LastError          js.Object
 	InIncognitoContext bool
 }
 
@@ -12,7 +12,7 @@ func NewExtension(extensionObj js.Object) *Extension {
 	e := new(Extension)
 	e.o = extensionObj
 	if extensionObj.String() != "undefined" {
-		e.LastError = e.o.Get("lastError").Interface().(map[string]string)
+		e.LastError = e.o.Get("lastError")
 		e.InIncognitoContext = e.o.Get("inIncognitoContext").Bool()
 	}
 	return e

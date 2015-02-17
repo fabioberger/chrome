@@ -2,17 +2,10 @@ package chrome
 
 import "github.com/gopherjs/gopherjs/js"
 
-const (
-	CHROME = "chrome"
-)
-
 type Object map[string]interface{}
 
 type Chrome struct {
 	o                  js.Object
-	Tabs               *Tabs
-	Windows            *Windows
-	Runtime            *Runtime
 	Alarms             *Alarms
 	Bookmarks          *Bookmarks
 	BrowserAction      *BrowserAction
@@ -43,9 +36,11 @@ type Chrome struct {
 	Power              *Power
 	Privacy            *Privacy
 	Proxy              *Proxy
+	Runtime            *Runtime
 	Sessions           *Sessions
 	Storage            *Storage
 	System             *System
+	Tabs               *Tabs
 	TabCapture         *TabCapture
 	TopSites           *TopSites
 	Tts                *Tts
@@ -53,12 +48,12 @@ type Chrome struct {
 	WebNavigation      *WebNavigation
 	WebRequest         *WebRequest
 	WebStore           *WebStore
+	Windows            *Windows
 }
 
 func NewChrome() *Chrome {
-	c := &Chrome{o: js.Global.Get(CHROME)}
-	c.Tabs = &Tabs{o: c.o.Get("tabs")}
-	c.Runtime = NewRuntime(c.o.Get("runtime"))
+	c := new(Chrome)
+	c.o = js.Global.Get("chrome")
 	c.Alarms = &Alarms{o: c.o.Get("alarms")}
 	c.Bookmarks = &Bookmarks{o: c.o.Get("bookmarks")}
 	c.BrowserAction = &BrowserAction{o: c.o.Get("browserAction")}
@@ -89,9 +84,11 @@ func NewChrome() *Chrome {
 	c.Power = &Power{o: c.o.Get("power")}
 	c.Privacy = NewPrivacy(c.o.Get("privacy"))
 	c.Proxy = NewProxy(c.o.Get("proxy"))
+	c.Runtime = NewRuntime(c.o.Get("runtime"))
 	c.Sessions = NewSessions(c.o.Get("sessions"))
 	c.Storage = NewStorage(c.o.Get("storage"))
 	c.System = NewSystem(c.o.Get("system"))
+	c.Tabs = &Tabs{o: c.o.Get("tabs")}
 	c.TabCapture = &TabCapture{o: c.o.Get("tabCapture")}
 	c.TopSites = &TopSites{o: c.o.Get("topSites")}
 	c.Tts = &Tts{o: c.o.Get("tts")}
