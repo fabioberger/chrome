@@ -10,7 +10,9 @@ type Proxy struct {
 func NewProxy(proxyObj js.Object) *Proxy {
 	p := new(Proxy)
 	p.o = proxyObj
-	p.Settings = proxyObj.Get("settings")
+	if proxyObj.String() != "undefined" {
+		p.Settings = proxyObj.Get("settings")
+	}
 	return p
 }
 

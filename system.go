@@ -12,9 +12,11 @@ type System struct {
 func NewSystem(systemObj js.Object) *System {
 	s := new(System)
 	s.o = systemObj
-	s.Cpu = &Cpu{o: systemObj.Get("cpu")}
-	s.Memory = &Memory{o: systemObj.Get("memory")}
-	s.Storage = &SysStorage{o: systemObj.Get("storage")}
+	if systemObj.String() != "undefined" {
+		s.Cpu = &Cpu{o: systemObj.Get("cpu")}
+		s.Memory = &Memory{o: systemObj.Get("memory")}
+		s.Storage = &SysStorage{o: systemObj.Get("storage")}
+	}
 	return s
 }
 

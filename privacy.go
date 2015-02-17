@@ -10,9 +10,11 @@ type Privacy struct {
 
 func NewPrivacy(privacyObj js.Object) *Privacy {
 	p := new(Privacy)
-	p.Services = privacyObj.Get("services")
-	p.Network = privacyObj.Get("network")
-	p.Websites = privacyObj.Get("websites")
+	if privacyObj.String() != "undefined" {
+		p.Services = privacyObj.Get("services")
+		p.Network = privacyObj.Get("network")
+		p.Websites = privacyObj.Get("websites")
+	}
 	return p
 }
 
