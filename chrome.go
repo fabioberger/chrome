@@ -49,6 +49,7 @@ type Chrome struct {
 	Tts                *Tts
 	TtsEngine          *TtsEngine
 	WebNavigation      *WebNavigation
+	WebRequest         *WebRequest
 }
 
 func NewChrome() *Chrome {
@@ -94,5 +95,6 @@ func NewChrome() *Chrome {
 	c.Tts = &Tts{o: c.o.Get("tts")}
 	c.TtsEngine = &TtsEngine{o: c.o.Get("ttsEngine")}
 	c.WebNavigation = &WebNavigation{o: c.o.Get("webNavigation")}
+	c.WebRequest = &WebRequest{o: c.o.Get("webRequest")}
 	return c
 }
