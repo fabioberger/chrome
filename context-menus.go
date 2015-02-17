@@ -3,12 +3,18 @@ package chrome
 import "github.com/gopherjs/gopherjs/js"
 
 type ContextMenus struct {
-	o js.Object
+	o                           js.Object
+	ACTION_MENU_TOP_LEVEL_LIMIT int
 }
 
-const (
-	ACTION_MENU_TOP_LEVEL_LIMIT = 6
-)
+func NewContextMenus(contextMenusObj js.Object) *ContextMenus {
+	c := new(ContextMenus)
+	c.o = contextMenusObj
+	if c.o.String() != "undefined" {
+		c.ACTION_MENU_TOP_LEVEL_LIMIT = contextMenusObj.Get("ACTION_MENU_TOP_LEVEL_LIMIT").Int()
+	}
+	return c
+}
 
 /*
 * Methods:
@@ -16,12 +22,12 @@ const (
 
 // Create creates a new context menu item. Note that if an error occurs during creation,
 // you may not find out until the creation callback fires (the details will be in chrome.Runtime.LastError).
-func (c *ContextMenus) Create(createProperties map[string]interface{}, callback func()) {
+func (c *ContextMenus) Create(createProperties Object, callback func()) {
 	c.o.Call("create", createProperties, callback)
 }
 
 // Update updates a previously created context menu item.
-func (c *ContextMenus) Update(id interface{}, updateProperties map[string]interface{}, callback func()) {
+func (c *ContextMenus) Update(id interface{}, updateProperties Object, callback func()) {
 	c.o.Call("update", id, updateProperties, callback)
 }
 
@@ -40,6 +46,6 @@ func (c *ContextMenus) RemoveAll(callback func()) {
  */
 
 // OnClicked fired when a context menu item is clicked.
-func (c *ContextMenus) OnClicked(callback func(info map[string]interface{}, tab map[string]interface{})) {
+func (c *ContextMenus) OnClicked(callback func(info Object, tab Tab)) {
 	c.o.Get("onClicked").Call("addListener", callback)
 }

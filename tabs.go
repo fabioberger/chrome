@@ -167,46 +167,46 @@ func (t *Tabs) OnCreated(callback func(tab Tab)) {
 }
 
 // OnUpdated fired when a tab is updated.
-func (t *Tabs) OnUpdated(callback func(tabId int, changeInfo map[string]interface{}, tab Tab)) {
+func (t *Tabs) OnUpdated(callback func(tabId int, changeInfo Object, tab Tab)) {
 	t.o.Get("onUpdated").Call("addListener", callback)
 }
 
 // OnMoved fired when a tab is moved within a window. Only one move event is fired,
 // representing the tab the user directly moved. Move events are not fired for the
 // other tabs that must move in response. This event is not fired when a tab is moved between windows.
-func (t *Tabs) OnMoved(callback func(tabId int, movedInfo map[string]interface{})) {
+func (t *Tabs) OnMoved(callback func(tabId int, movedInfo Object)) {
 	t.o.Get("onMoved").Call("addListener", callback)
 }
 
 // OnActivated fires when the active tab in a window changes. Note that the tab's URL
 // may not be set at the time this event fired, but you can listen to onUpdated events
 // to be notified when a URL is set.
-func (t *Tabs) OnActivated(callback func(activeInfo map[string]interface{})) {
+func (t *Tabs) OnActivated(callback func(activeInfo Object)) {
 	t.o.Get("onActivated").Call("addListener", callback)
 }
 
 // OnHighlightChanged fired when the highlighted or selected tabs in a window changes.
-func (t *Tabs) OnHighlightChanged(callback func(selectInfo map[string]interface{})) {
+func (t *Tabs) OnHighlightChanged(callback func(selectInfo Object)) {
 	t.o.Get("onHighlightChanged").Call("addListener", callback)
 }
 
 // OnHighlighted fired when the highlighted or selected tabs in a window changes.
-func (t *Tabs) OnHighlighted(callback func(highlightInfo map[string]interface{})) {
+func (t *Tabs) OnHighlighted(callback func(highlightInfo Object)) {
 	t.o.Get("onHighlighted").Call("addListener", callback)
 }
 
 // OnDetached fired when a tab is detached from a window, for example because it is being moved between windows.
-func (t *Tabs) OnDetached(callback func(tabId int, detachInfo map[string]interface{})) {
+func (t *Tabs) OnDetached(callback func(tabId int, detachInfo Object)) {
 	t.o.Get("onDetached").Call("addListener", callback)
 }
 
 // OnAttached fired when a tab is attached to a window, for example because it was moved between windows.
-func (t *Tabs) OnAttached(callback func(tabId int, attachInfo map[string]interface{})) {
+func (t *Tabs) OnAttached(callback func(tabId int, attachInfo Object)) {
 	t.o.Get("onAttached").Call("addListener", callback)
 }
 
 // OnRemoved fired when a tab is closed.
-func (t *Tabs) OnRemoved(callback func(tabId int, removeInfo map[string]interface{})) {
+func (t *Tabs) OnRemoved(callback func(tabId int, removeInfo Object)) {
 	t.o.Get("onRemoved").Call("addListener", callback)
 }
 
@@ -216,6 +216,6 @@ func (t *Tabs) OnReplaced(callback func(addedTabId int, removedTabId int)) {
 }
 
 // OnZoomChange fired when a tab is zoomed.
-func (t *Tabs) OnZoomChange(callback func(zoomChangeInfo map[string]interface{})) {
+func (t *Tabs) OnZoomChange(callback func(zoomChangeInfo Object)) {
 	t.o.Get("onZoomChange").Call("addListener", callback)
 }

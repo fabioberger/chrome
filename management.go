@@ -78,13 +78,13 @@ func (m *Management) SetEnabled(id, string, enabled bool, callback func()) {
 }
 
 // Uninstall uninstalls a currently installed app or extension.
-func (m *Management) Uninstall(id string, options map[string]interface{}, callback func()) {
+func (m *Management) Uninstall(id string, options Object, callback func()) {
 	m.o.Call("uninstall", id, options, callback)
 }
 
 // UninstallSelf uninstalls the calling extension. Note: This function can be used without
 // requesting the 'management' permission in the manifest.
-func (m *Management) UninstallSelf(options map[string]interface{}, callback func()) {
+func (m *Management) UninstallSelf(options Object, callback func()) {
 	m.o.Call("uninstallSelf", options, callback)
 }
 

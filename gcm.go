@@ -7,7 +7,17 @@ const (
 )
 
 type Gcm struct {
-	o js.Object
+	o                js.Object
+	MAX_MESSAGE_SIZE int
+}
+
+func NewGcm(gcmObj js.Object) *Gcm {
+	g := new(Gcm)
+	g.o = gcmObj
+	if g.o.String() != "undefined" {
+		g.MAX_MESSAGE_SIZE = g.o.Get("MAX_MESSAGE_SIZE").Int()
+	}
+	return g
 }
 
 /*
@@ -26,7 +36,7 @@ func (g *Gcm) Unregister(callback func()) {
 }
 
 // Send sends a message according to its contents.
-func (g *Gcm) Send(message map[string]interface{}, callback func(messageId string)) {
+func (g *Gcm) Send(message Object, callback func(messageId string)) {
 	g.o.Call("send", message, callback)
 }
 
@@ -35,7 +45,7 @@ func (g *Gcm) Send(message map[string]interface{}, callback func(messageId strin
  */
 
 // OnMessage fired when a message is received through GCM.
-func (g *Gcm) OnMessage(callback func(message map[string]interface{})) {
+func (g *Gcm) OnMessage(callback func(message Object)) {
 	g.o.Get("onMessage").Call("addListener", callback)
 }
 
@@ -46,6 +56,6 @@ func (g *Gcm) OnMessageDeleted(callback func()) {
 }
 
 // OnSendError fired when it was not possible to send a message to the GCM server.
-func (g *Gcm) OnSendError(callback func(error map[string]interface{})) {
+func (g *Gcm) OnSendError(callback func(error Object)) {
 	g.o.Get("onSendError").Call("addListener", callback)
 }

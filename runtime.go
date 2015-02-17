@@ -3,7 +3,19 @@ package chrome
 import "github.com/gopherjs/gopherjs/js"
 
 type Runtime struct {
-	o js.Object
+	o         js.Object
+	LastError map[string]string
+	Id        string
+}
+
+func NewRuntime(runtimeObj js.Object) *Runtime {
+	r := new(Runtime)
+	r.o = runtimeObj
+	if r.o.String() != "undefined" {
+		r.LastError = r.o.Get("lastError").Interface().(map[string]string)
+		r.Id = r.o.Get("id").String()
+	}
+	return r
 }
 
 /*

@@ -25,7 +25,7 @@ type Alarm struct {
 // If there is another alarm with the same name (or no name if none is specified), it will be
 // cancelled and replaced by this alarm.
 // You must use time.Now().UnixNano() for "when" timestamp in alarmInfo for this to work.
-func (a *Alarms) Create(name string, alarmInfo interface{}) {
+func (a *Alarms) Create(name string, alarmInfo Object) {
 	a.o.Call("create", name, alarmInfo)
 }
 

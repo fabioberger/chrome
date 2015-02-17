@@ -29,7 +29,7 @@ type MediaStreamConstraint struct {
 // Capture captures the visible area of the currently active tab. Capture can only be started on
 // the currently active tab after the extension has been invoked. Capture is maintained across page
 // navigations within the tab, and stops when the tab is closed, or the media stream is closed by the extension.
-func (t *TabCapture) Capture(options map[string]interface{}, callback func(stream interface{})) {
+func (t *TabCapture) Capture(options Object, callback func(stream interface{})) {
 	t.o.Call("capture", options, callback)
 }
 

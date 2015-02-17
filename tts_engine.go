@@ -12,7 +12,7 @@ type TtsEngine struct {
 
 // OnSpeak called when the user makes a call to tts.speak() and one of the voices from this
 // extension's manifest is the first to match the options object.
-func (t *TtsEngine) OnSpeak(callback func(utterance string, options map[string]interface{}, sendItsEvent func(event TtsEvent))) {
+func (t *TtsEngine) OnSpeak(callback func(utterance string, options Object, sendItsEvent func(event TtsEvent))) {
 	t.o.Get("onSpeak").Call("addListener", callback)
 }
 

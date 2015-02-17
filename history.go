@@ -34,28 +34,28 @@ type VisitItem struct {
  */
 
 // Search searches the history for the last visit time of each page matching the query.
-func (h *History) Search(query map[string]interface{}, callback func(results []HistoryItem)) {
+func (h *History) Search(query Object, callback func(results []HistoryItem)) {
 	h.o.Call("search", query, callback)
 }
 
 // GetVisits retrieves information about visits to a URL.
-func (h *History) GetVisits(details map[string]interface{}, callback func(results []VisitItem)) {
+func (h *History) GetVisits(details Object, callback func(results []VisitItem)) {
 	h.o.Call("getVisits", details, callback)
 }
 
 // AddUrl adds a URL to the history at the current time with a transition type of "link".
-func (h *History) AddUrl(details map[string]interface{}, callback func()) {
+func (h *History) AddUrl(details Object, callback func()) {
 	h.o.Call("addUrl", details, callback)
 }
 
 // DeleteUrl removes all occurrences of the given URL from the history.
-func (h *History) DeleteUrl(details map[string]interface{}, callback func()) {
+func (h *History) DeleteUrl(details Object, callback func()) {
 	h.o.Call("deleteUrl", details, callback)
 }
 
 // DeleteRange removes all items within the specified date range from the history.
 // Pages will not be removed from the history unless all visits fall within the range.
-func (h *History) DeleteRange(rang map[string]interface{}, callback func()) {
+func (h *History) DeleteRange(rang Object, callback func()) {
 	h.o.Call("deleteRange", rang, callback)
 }
 
@@ -76,6 +76,6 @@ func (h *History) OnVisited(callback func(result HistoryItem)) {
 
 // OnVisitedRemoved fired when one or more URLs are removed from the history service.
 // When all visits have been removed the URL is purged from history.
-func (h *History) OnVisitedRemoved(callback func(removed map[string]interface{})) {
+func (h *History) OnVisitedRemoved(callback func(removed Object)) {
 	h.o.Get("onVisitedRemoved").Call("addListener", callback)
 }

@@ -22,7 +22,7 @@ type SuggestResult struct {
 
 // SetDefaultSuggestion sets the description and styling for the default suggestion.
 // The default suggestion is the text that is displayed in the first suggestion row underneath the URL bar.
-func (m *Omnibox) SetDefaultSuggestion(suggestion map[string]interface{}) {
+func (m *Omnibox) SetDefaultSuggestion(suggestion Object) {
 	m.o.Call("setDefaultSuggestion", suggestion)
 }
 

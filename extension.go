@@ -3,7 +3,19 @@ package chrome
 import "github.com/gopherjs/gopherjs/js"
 
 type Extension struct {
-	o js.Object
+	o                  js.Object
+	LastError          map[string]string
+	InIncognitoContext bool
+}
+
+func NewExtension(extensionObj js.Object) *Extension {
+	e := new(Extension)
+	e.o = extensionObj
+	if extensionObj.String() != "undefined" {
+		e.LastError = e.o.Get("lastError").Interface().(map[string]string)
+		e.InIncognitoContext = e.o.Get("inIncognitoContext").Bool()
+	}
+	return e
 }
 
 /*
@@ -17,7 +29,7 @@ func (e *Extension) GetURL(path string) {
 
 // GetViews returns an array of the JavaScript 'window' objects for each of the pages running inside the current extension.
 // Fix this and the other functions to return Window objects instead of js.Object or whatever else
-func (e *Extension) GetViews(fetchProperties map[string]interface{}) []Window {
+func (e *Extension) GetViews(fetchProperties Object) []Window {
 	windows := []Window{}
 	windowObjs := e.o.Call("getViews", fetchProperties)
 	for i := 0; i < windowObjs.Length(); i++ {

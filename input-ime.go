@@ -64,23 +64,23 @@ type MenuItem struct {
  */
 
 // SetComposition set the current composition. If this extension does not own the active IME, this fails.
-func (i *Ime) SetComposition(parameters map[string]interface{}, callback func(success bool)) {
+func (i *Ime) SetComposition(parameters Object, callback func(success bool)) {
 	i.o.Call("setComposition", parameters, callback)
 }
 
 // ClearComposition clear the current composition. If this extension does not own the active IME, this fails.
-func (i *Ime) ClearComposition(parameters map[string]interface{}, callback func(success bool)) {
+func (i *Ime) ClearComposition(parameters Object, callback func(success bool)) {
 	i.o.Call("clearComposition", parameters, callback)
 }
 
 // CommitText commits the provided text to the current input.
-func (i *Ime) CommitText(parameters map[string]interface{}, callback func(success bool)) {
+func (i *Ime) CommitText(parameters Object, callback func(success bool)) {
 	i.o.Call("commitText", parameters, callback)
 }
 
 // SendKeyEvents sends the key events. This function is expected to be used by virtual keyboards.
 // When key(s) on a virtual keyboard is pressed by a user, this function is used to propagate that event to the system.
-func (i *Ime) SendKeyEvents(parameters map[string]interface{}, callback func()) {
+func (i *Ime) SendKeyEvents(parameters Object, callback func()) {
 	i.o.Call("sendKeyEvents", parameters, callback)
 }
 
@@ -91,32 +91,32 @@ func (i *Ime) HideInputView() {
 }
 
 // SetCandidateWindowProperties sets the properties of the candidate window. This fails if the extension doesn't own the active IME
-func (i *Ime) SetCandidateWindowProperties(parameters map[string]interface{}, callback func(success bool)) {
+func (i *Ime) SetCandidateWindowProperties(parameters Object, callback func(success bool)) {
 	i.o.Call("setCandidateWindowProperties", parameters, callback)
 }
 
 // SetCandidates sets the current candidate list. This fails if this extension doesn't own the active IME
-func (i *Ime) SetCandidates(parameters map[string]interface{}, callback func(success bool)) {
+func (i *Ime) SetCandidates(parameters Object, callback func(success bool)) {
 	i.o.Call("setCandidates", parameters, callback)
 }
 
 // SetCursorPosition set the position of the cursor in the candidate window. This is a no-op if this extension does not own the active IME.
-func (i *Ime) SetCursorPosition(parameters map[string]interface{}, callback func(success bool)) {
+func (i *Ime) SetCursorPosition(parameters Object, callback func(success bool)) {
 	i.o.Call("setCursorPosition", parameters, callback)
 }
 
 // SetMenuItems adds the provided menu items to the language menu when this IME is active.
-func (i *Ime) SetMenuItems(parameters map[string]interface{}, callback func()) {
+func (i *Ime) SetMenuItems(parameters Object, callback func()) {
 	i.o.Call("setMenuItems", parameters, callback)
 }
 
 // UpdateMenuItems updates the state of the MenuItems specified
-func (i *Ime) UpdateMenuItems(parameters map[string]interface{}, callback func()) {
+func (i *Ime) UpdateMenuItems(parameters Object, callback func()) {
 	i.o.Call("updateMenuItems", parameters, callback)
 }
 
 // DeleteSurroundingText deletes the text around the caret.
-func (i *Ime) DeleteSurroundingText(parameters map[string]interface{}, callback func()) {
+func (i *Ime) DeleteSurroundingText(parameters Object, callback func()) {
 	i.o.Call("deleteSurroundingText", parameters, callback)
 }
 
@@ -177,7 +177,7 @@ func (i *Ime) OnMenuItemActivated(callback func(engineID string, name string)) {
 
 // OnSurroundingTextChanged called when the editable string around caret is changed or when the caret
 // position is moved. The text length is limited to 100 characters for each back and forth direction.
-func (i *Ime) OnSurroundingTextChanged(callback func(engineID string, surroundingInfo map[string]interface{})) {
+func (i *Ime) OnSurroundingTextChanged(callback func(engineID string, surroundingInfo Object)) {
 	i.o.Get("onSurroundingTextChanged").Call("addListener", callback)
 }
 

@@ -23,7 +23,7 @@ type FileHandlerExecuteEventDetails struct {
  */
 
 /* SelectFile prompts user to select file path under which file should be saved. When the file is selected, file access permission required to use the file (read, write and create) are granted to the caller. The file will not actually get created during the function call, so function caller must ensure its existence before using it. The function has to be invoked with a user gesture. */
-func (f *FileBrowserHandler) SelectFile(selectionParams map[string]interface{}, callback func(result map[string]interface{})) {
+func (f *FileBrowserHandler) SelectFile(selectionParams Object, callback func(result Object)) {
 	f.o.Call("selectFile", selectionParams, callback)
 }
 

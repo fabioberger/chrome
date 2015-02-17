@@ -6,6 +6,8 @@ const (
 	CHROME = "chrome"
 )
 
+type Object map[string]interface{}
+
 type Chrome struct {
 	o                  js.Object
 	Tabs               *Tabs
@@ -56,25 +58,24 @@ type Chrome struct {
 func NewChrome() *Chrome {
 	c := &Chrome{o: js.Global.Get(CHROME)}
 	c.Tabs = &Tabs{o: c.o.Get("tabs")}
-	c.Windows = &Windows{o: c.o.Get("windows")}
-	c.Runtime = &Runtime{o: c.o.Get("runtime")}
+	c.Runtime = NewRuntime(c.o.Get("runtime"))
 	c.Alarms = &Alarms{o: c.o.Get("alarms")}
 	c.Bookmarks = &Bookmarks{o: c.o.Get("bookmarks")}
 	c.BrowserAction = &BrowserAction{o: c.o.Get("browserAction")}
 	c.BrowsingData = &BrowsingData{o: c.o.Get("browsingData")}
 	c.Commands = &Commands{o: c.o.Get("commands")}
-	c.ContextMenus = &ContextMenus{o: c.o.Get("contextMenus")}
+	c.ContextMenus = NewContextMenus(c.o.Get("contextMenus"))
 	c.Cookies = &Cookies{o: c.o.Get("cookies")}
 	c.Debugger = &Debugger{o: c.o.Get("debugger")}
 	c.DeclarativeContent = NewDeclarativeContent(c.o.Get("declarativeContent"))
 	c.DesktopCapture = &DesktopCapture{o: c.o.Get("desktopCapture")}
 	c.Downloads = &Downloads{o: c.o.Get("downloads")}
 	c.Enterprise = NewEnterprise(c.o.Get("enterprise"))
-	c.Extension = &Extension{o: c.o.Get("extension")}
+	c.Extension = NewExtension(c.o.Get("extension"))
 	c.FileBrowserHandler = &FileBrowserHandler{o: c.o.Get("fileBrowserHandler")}
 	c.FileSystemProvider = &FileSystemProvider{o: c.o.Get("fileSystemProvider")}
 	c.FontSettings = &FontSettings{o: c.o.Get("fontSettings")}
-	c.Gcm = &Gcm{o: c.o.Get("gcm")}
+	c.Gcm = NewGcm(c.o.Get("gcm"))
 	c.History = &History{o: c.o.Get("history")}
 	c.I18n = &I18n{o: c.o.Get("i18n")}
 	c.Identity = &Identity{o: c.o.Get("identity")}
@@ -88,7 +89,7 @@ func NewChrome() *Chrome {
 	c.Power = &Power{o: c.o.Get("power")}
 	c.Privacy = NewPrivacy(c.o.Get("privacy"))
 	c.Proxy = NewProxy(c.o.Get("proxy"))
-	c.Sessions = &Sessions{o: c.o.Get("sessions")}
+	c.Sessions = NewSessions(c.o.Get("sessions"))
 	c.Storage = NewStorage(c.o.Get("storage"))
 	c.System = NewSystem(c.o.Get("system"))
 	c.TabCapture = &TabCapture{o: c.o.Get("tabCapture")}
@@ -96,7 +97,8 @@ func NewChrome() *Chrome {
 	c.Tts = &Tts{o: c.o.Get("tts")}
 	c.TtsEngine = &TtsEngine{o: c.o.Get("ttsEngine")}
 	c.WebNavigation = &WebNavigation{o: c.o.Get("webNavigation")}
-	c.WebRequest = &WebRequest{o: c.o.Get("webRequest")}
+	c.WebRequest = NewWebRequest(c.o.Get("webRequest"))
 	c.WebStore = &WebStore{o: c.o.Get("webstore")}
+	c.Windows = NewWindows(c.o.Get("windows"))
 	return c
 }

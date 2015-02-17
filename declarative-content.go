@@ -28,6 +28,24 @@ func NewDeclarativeContent(declarativeContentObj js.Object) *DeclarativeContent 
 }
 
 /*
+* Types
+ */
+
+type PageStateMatcher struct {
+	js.Object
+	PageUrl Object   `js:"pageUrl"`
+	Css     []string `js:"css"`
+}
+
+type RequestContentScript struct {
+	js.Object
+	Css             []string `js:"css"`
+	Js              []string `js:"js"`
+	AllFrames       bool     `js:"allFrames"`
+	MatchAboutBlank bool     `js:"matchAboutBlank"`
+}
+
+/*
 * Events
  */
 

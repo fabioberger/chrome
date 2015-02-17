@@ -11,7 +11,7 @@ type DesktopCapture struct {
  */
 
 // ChooseDesktopMedia shows desktop media picker UI with the specified set of sources.
-func (d *DesktopCapture) ChooseDesktopMedia(sources []map[string]interface{}, targetTab map[string]interface{}, callback func(streamId string)) int {
+func (d *DesktopCapture) ChooseDesktopMedia(sources []string, targetTab Tab, callback func(streamId string)) int {
 	return d.o.Call("chooseDesktopMedia", sources, targetTab, callback).Int()
 }
 

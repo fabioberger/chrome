@@ -44,7 +44,7 @@ func (d *Debugger) Detach(target Debugee, callback func()) {
 }
 
 // SendCommand sends given command to the debugging target.
-func (d *Debugger) SendCommand(target Debugee, method string, commandParams map[string]interface{}, callback func(result map[string]interface{})) {
+func (d *Debugger) SendCommand(target Debugee, method string, commandParams Object, callback func(result Object)) {
 	d.o.Call("sendCommand", target, method, commandParams, callback)
 }
 
@@ -58,7 +58,7 @@ func (d *Debugger) GetTargets(callback func(result []TargetInfo)) {
  */
 
 // OnEvent fired whenever debugging target issues instrumentation event.
-func (d *Debugger) OnEvent(callback func(source Debugee, method string, params map[string]interface{})) {
+func (d *Debugger) OnEvent(callback func(source Debugee, method string, params Object)) {
 	d.o.Get("onEvent").Call("addListener", callback)
 }
 

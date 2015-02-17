@@ -45,12 +45,12 @@ type BooleanDelta map[string]bool
  */
 
 /* Download download a URL. If the URL uses the HTTP[S] protocol, then the request will include all cookies currently set for its hostname. If both filename and saveAs are specified, then the Save As dialog will be displayed, pre-populated with the specified filename. If the download started successfully, callback will be called with the new DownloadItem's downloadId. If there was an error starting the download, then callback will be called with downloadId=undefined and runtime.lastError will contain a descriptive string. The error strings are not guaranteed to remain backwards compatible between releases. Extensions must not parse it. */
-func (d *Downloads) Download(options map[string]interface{}, callback func(downloadId int)) {
+func (d *Downloads) Download(options Object, callback func(downloadId int)) {
 	d.o.Call("download", options, callback)
 }
 
 /* Search find DownloadItem. Set query to the empty object to get all DownloadItem. To get a specific DownloadItem, set only the id field. To page through a large number of items, set orderBy: ['-startTime'], set limit to the number of items per page, and set startedAfter to the startTime of the last item from the last page. */
-func (d *Downloads) Search(query map[string]interface{}, callback func(results []DownloadItem)) {
+func (d *Downloads) Search(query Object, callback func(results []DownloadItem)) {
 	d.o.Call("search", query, callback)
 }
 
@@ -70,7 +70,7 @@ func (d *Downloads) Cancel(downloadId int, callback func()) {
 }
 
 /* GetFileIcon retrieve an icon for the specified download. For new downloads, file icons are available after the onCreated event has been received. The image returned by this function while a download is in progress may be different from the image returned after the download is complete. Icon retrieval is done by querying the underlying operating system or toolkit depending on the platform. The icon that is returned will therefore depend on a number of factors including state of the download, platform, registered file types and visual theme. If a file icon cannot be determined, runtime.lastError will contain an error message. */
-func (d *Downloads) GetFileIcon(downloadId int, options map[string]interface{}, callback func(iconURL string)) {
+func (d *Downloads) GetFileIcon(downloadId int, options Object, callback func(iconURL string)) {
 	d.o.Call("getFileIcon", downloadId, options, callback)
 }
 
@@ -90,7 +90,7 @@ func (d *Downloads) ShowDefaultFolder() {
 }
 
 /* Erase rrase matching DownloadItem from history without deleting the downloaded file. An onErased event will fire for each DownloadItem that matches query, then callback will be called. */
-func (d *Downloads) Erase(query map[string]interface{}, callback func(erasedIds []int)) {
+func (d *Downloads) Erase(query Object, callback func(erasedIds []int)) {
 	d.o.Call("erase", query, callback)
 }
 
@@ -129,11 +129,11 @@ func (d *Downloads) OnErased(callback func(downloadId int)) {
 }
 
 /* OnChanged when any of a DownloadItem's properties except bytesReceived and estimatedEndTime changes, this event fires with the downloadId and an object containing the properties that changed. */
-func (d *Downloads) OnChanged(callback func(downloadDelta map[string]interface{})) {
+func (d *Downloads) OnChanged(callback func(downloadDelta Object)) {
 	d.o.Get("onChanged").Call("addListener", callback)
 }
 
 /* OnDeterminingFilename during the filename determination process, extensions will be given the opportunity to override the target DownloadItem.filename. Each extension may not register more than one listener for this event. Each listener must call suggest exactly once, either synchronously or asynchronously. If the listener calls suggest asynchronously, then it must return true. If the listener neither calls suggest synchronously nor returns true, then suggest will be called automatically. The DownloadItem will not complete until all listeners have called suggest. Listeners may call suggest without any arguments in order to allow the download to use downloadItem.filename for its filename, or pass a suggestion object to suggest in order to override the target filename. If more than one extension overrides the filename, then the last extension installed whose listener passes a suggestion object to suggest wins. In order to avoid confusion regarding which extension will win, users should not install extensions that may conflict. If the download is initiated by download and the target filename is known before the MIME type and tentative filename have been determined, pass filename to download instead. */
-func (d *Downloads) OnDeterminingFilename(callback func(downloadItem DownloadItem, suggest func(suggestion map[string]interface{}))) {
+func (d *Downloads) OnDeterminingFilename(callback func(downloadItem DownloadItem, suggest func(suggestion Object))) {
 	d.o.Get("onDeterminingFilename").Call("addListener", callback)
 }

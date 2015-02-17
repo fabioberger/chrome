@@ -2,13 +2,20 @@ package chrome
 
 import "github.com/gopherjs/gopherjs/js"
 
-const (
-	WINDOW_ID_NONE    = -1
-	WINDOW_ID_CURRENT = -2
-)
-
 type Windows struct {
-	o js.Object
+	o                 js.Object
+	WINDOW_ID_NONE    int
+	WINDOW_ID_CURRENT int
+}
+
+func NewWindows(windowsObj js.Object) *Windows {
+	w := new(Windows)
+	w.o = windowsObj
+	if w.o.String() != "undefined" {
+		w.WINDOW_ID_CURRENT = w.o.Get("WINDOW_ID_CURRENT").Int()
+		w.WINDOW_ID_NONE = w.o.Get("WINDOW_ID_NONE").Int()
+	}
+	return w
 }
 
 /*
@@ -36,33 +43,33 @@ type Window struct {
  */
 
 // Get gets details about a window.
-func (w *Windows) Get(windowId int, getInfo interface{}, callback func(window Window)) {
+func (w *Windows) Get(windowId int, getInfo Object, callback func(window Window)) {
 	w.o.Call("get", windowId, getInfo, callback)
 }
 
 // GetCurrent gets the current window.
-func (w *Windows) GetCurrent(getInfo interface{}, callback func(window Window)) {
+func (w *Windows) GetCurrent(getInfo Object, callback func(window Window)) {
 	w.o.Call("getCurrent", getInfo, callback)
 }
 
 // GetLastFocused gets the window that was most recently focused — typically the window 'on top'.
-func (w *Windows) GetLastFocused(getInfo interface{}, callback func(window Window)) {
+func (w *Windows) GetLastFocused(getInfo Object, callback func(window Window)) {
 	w.o.Call("getLastFocused", getInfo, callback)
 }
 
 // GetAll gets all windows.
-func (w *Windows) GetAll(getInfo interface{}, callback func(windows []Window)) {
+func (w *Windows) GetAll(getInfo Object, callback func(windows []Window)) {
 	w.o.Call("getAll", getInfo, callback)
 }
 
 // Create creates (opens) a new browser with any optional sizing, position or default URL provided.
-func (w *Windows) Create(createData interface{}, callback func(window Window)) {
+func (w *Windows) Create(createData Object, callback func(window Window)) {
 	w.o.Call("create", createData, callback)
 }
 
 // Update updates the properties of a window. Specify only the properties that you
 // want to change; unspecified properties will be left unchanged.
-func (w *Windows) Update(windowId int, updateInfo interface{}, callback func(window Window)) {
+func (w *Windows) Update(windowId int, updateInfo Object, callback func(window Window)) {
 	w.o.Call("update", windowId, updateInfo, callback)
 }
 

@@ -11,6 +11,6 @@ type PageCapture struct {
  */
 
 // SaveAsMHTML saves the content of the tab with given id as MHTML.
-func (p *PageCapture) SaveAsMHTML(details map[string]interface{}, callback func(mhtmlData interface{})) {
+func (p *PageCapture) SaveAsMHTML(details Object, callback func(mhtmlData interface{})) {
 	p.o.Call("saveAsMHTML", details, callback)
 }

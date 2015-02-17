@@ -12,9 +12,11 @@ type Storage struct {
 func NewStorage(storageObj js.Object) *Storage {
 	s := new(Storage)
 	s.o = storageObj
-	s.Sync = storageObj.Get("sync")
-	s.Local = storageObj.Get("local")
-	s.Managed = storageObj.Get("managed")
+	if s.o.String() != "undefined" {
+		s.Sync = storageObj.Get("sync")
+		s.Local = storageObj.Get("local")
+		s.Managed = storageObj.Get("managed")
+	}
 	return s
 }
 

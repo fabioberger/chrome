@@ -60,18 +60,18 @@ func (b *Bookmarks) Search(query interface{}, callback func(results []BookmarkTr
 
 // Create creates a bookmark or folder under the specified parentId.
 // If url is nil or missing, it will be a folder.
-func (b *Bookmarks) Create(bookmark interface{}, callback func(result BookmarkTreeNode)) {
+func (b *Bookmarks) Create(bookmark Object, callback func(result BookmarkTreeNode)) {
 	b.o.Call("create", bookmark, callback)
 }
 
 // Move moves the specified BookmarkTreeNode to the provided location.
-func (b *Bookmarks) Move(id string, destination interface{}, callback func(result BookmarkTreeNode)) {
+func (b *Bookmarks) Move(id string, destination Object, callback func(result BookmarkTreeNode)) {
 	b.o.Call("move", id, destination, callback)
 }
 
 // Update updates the properties of a bookmark or folder. Specify only the properties that you want
 // to change; unspecified properties will be left unchanged. Note: Currently, only 'title' and 'url' are supported.
-func (b *Bookmarks) Update(id string, changes interface{}, callback func(result BookmarkTreeNode)) {
+func (b *Bookmarks) Update(id string, changes Object, callback func(result BookmarkTreeNode)) {
 	b.o.Call("update", id, changes, callback)
 }
 
@@ -96,23 +96,23 @@ func (b *Bookmarks) OnCreated(callback func(id string, bookmark BookmarkTreeNode
 
 // OnRemoved fired when a bookmark or folder is removed. When a folder is removed recursively,
 // a single notification is fired for the folder, and none for its contents.
-func (b *Bookmarks) OnRemoved(callback func(id string, removeInfo map[string]interface{})) {
+func (b *Bookmarks) OnRemoved(callback func(id string, removeInfo Object)) {
 	b.o.Get("onRemoved").Call("addListener", callback)
 }
 
 // onChanged fired when a bookmark or folder changes. Note: Currently, only title and url changes trigger this.
-func (b *Bookmarks) onChanged(callback func(id string, changeInfo map[string]interface{})) {
+func (b *Bookmarks) onChanged(callback func(id string, changeInfo Object)) {
 	b.o.Get("onChanged").Call("addListener", callback)
 }
 
 // OnMoved fired when a bookmark or folder is moved to a different parent folder.
-func (b *Bookmarks) OnMoved(callback func(id string, moveInfo map[string]interface{})) {
+func (b *Bookmarks) OnMoved(callback func(id string, moveInfo Object)) {
 	b.o.Get("onMoved").Call("addListener", callback)
 }
 
 // OnChildrenReordered fired when the children of a folder have changed their order due to
 // the order being sorted in the UI. This is not called as a result of a move().
-func (b *Bookmarks) OnChildrenReordered(callback func(id string, reorderInfo map[string]interface{})) {
+func (b *Bookmarks) OnChildrenReordered(callback func(id string, reorderInfo Object)) {
 	b.o.Get("onChildrenReordered").Call("addListener", callback)
 }
 

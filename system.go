@@ -49,7 +49,7 @@ type StorageUnitInfo struct {
  */
 
 // GetInfo queries basic CPU information of the system.
-func (c *Cpu) GetInfo(callback func(info map[string]interface{})) {
+func (c *Cpu) GetInfo(callback func(info Object)) {
 	c.o.Call("getInfo", callback)
 }
 
@@ -71,7 +71,7 @@ func (s *SysStorage) EjectDevice(id string, callback func(result string)) {
 
 // GetAvailableCapacity get the available capacity of a specified |id| storage device.
 // The |id| is the transient device ID from StorageUnitInfo.
-func (s *SysStorage) GetAvailableCapacity(callback func(info map[string]interface{})) {
+func (s *SysStorage) GetAvailableCapacity(callback func(info Object)) {
 	s.o.Call("getAvailableCapacity", callback)
 }
 
