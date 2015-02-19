@@ -5,7 +5,7 @@ Gopherjs Chrome Bindings
 
 Write Chrome extensions in Golang! This library contains the necessary bindings to interact with the Chrome Javascript API in an easy and intuitive way.
 
-**Warning:** This library is not yet complete. If there are any bindings missing that you would like to contribute, feel free to submit a pull request!
+**Warning:** This library is still a work in progress. If an endpoint fails for some reason, please submit an issue and i'll have a look ASAP. Pull requests are also welcomed!
 
 # Installation
 
