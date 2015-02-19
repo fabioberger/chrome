@@ -1,3 +1,6 @@
+// This example is a Go implementation of the Getting Started Sample Extension from
+// this tutorial: https://developer.chrome.com/extensions/getstarted
+
 package main
 
 import (
