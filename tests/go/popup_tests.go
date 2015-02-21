@@ -15,11 +15,11 @@ var (
 
 func main() {
 	c := chrome.NewChrome()
-	/*
-	* Alarm Tests
-	 */
 
-	QUnit.Module("Alarms")
+	/*
+	* Alarm Method Tests
+	 */
+	QUnit.Module("Chrome")
 
 	// Create New Alarm
 	alarmOps := chrome.Object{
@@ -29,13 +29,13 @@ func main() {
 
 	// Get the Alarm created above
 	c.Alarms.Get("test_alarm", func(alarm chrome.Alarm) {
-		QUnit.Test("Get()", func(assert QUnit.QUnitAssert) {
+		QUnit.Test("Alarm.Get()", func(assert QUnit.QUnitAssert) {
 			assert.Equal(alarm.Name, "test_alarm", "Get")
 		})
 
 		// Clear the Alarm retrieved above
 		c.Alarms.Clear("test_alarm", func(wasCleared bool) {
-			QUnit.Test("Clear()", func(assert QUnit.QUnitAssert) {
+			QUnit.Test("Alarm.Clear()", func(assert QUnit.QUnitAssert) {
 				assert.Equal(wasCleared, true, "Clear")
 			})
 
@@ -45,17 +45,94 @@ func main() {
 
 			// Get both Alarms created above
 			c.Alarms.GetAll(func(alarms []chrome.Alarm) {
-				QUnit.Test("GetAll()", func(assert QUnit.QUnitAssert) {
+				QUnit.Test("Alarm.GetAll()", func(assert QUnit.QUnitAssert) {
 					assert.Equal(alarms[0].Name, "test_alarm2", "GetAll")
 					assert.Equal(alarms[1].Name, "test_alarm3", "GetAll")
 				})
 				fmt.Println("finished running getAll")
 				// Clear both Alarms above
 				c.Alarms.ClearAll(func(wasCleared bool) {
-					QUnit.Test("Clear()", func(assert QUnit.QUnitAssert) {
+					QUnit.Test("Alarm.ClearAll()", func(assert QUnit.QUnitAssert) {
 						assert.Equal(wasCleared, true, "Clear")
 					})
 				})
+			})
+		})
+	})
+
+	/*
+	* Bookmarks Method Test
+	 */
+	bookmark := chrome.Object{
+		"title": "Testing",
+		"url":   "http://www.testing.com/",
+	}
+	// Test Create New Bookmarks
+	c.Bookmarks.Create(bookmark, func(result chrome.BookmarkTreeNode) {
+		QUnit.Test("Bookmarks.Create()", func(assert QUnit.QUnitAssert) {
+			assert.Equal(result.Title, "Testing", "Create")
+		})
+
+		// Test Get Bookmark by List of Id's
+		c.Bookmarks.Get([]string{result.Id}, func(results []chrome.BookmarkTreeNode) {
+			QUnit.Test("Bookmarks.Get()", func(assert QUnit.QUnitAssert) {
+				assert.Equal(results[0].Url, "http://www.testing.com/", "Get")
+			})
+		})
+	})
+
+	/*
+	* BrowserAction Method Tests
+	 */
+
+	change := chrome.Object{
+		"title": "Testing",
+	}
+	c.BrowserAction.SetTitle(change)
+	c.BrowserAction.GetTitle(chrome.Object{}, func(result string) {
+		QUnit.Test("BrowserAction.GetTitle()", func(assert QUnit.QUnitAssert) {
+			assert.Equal(result, "Testing", "GetTitle")
+		})
+	})
+
+	/*
+	* BrowsingData Method Tests
+	 */
+
+	// Test Retrieving BrowserData Settings
+	c.BrowsingData.Settings(func(result chrome.Object) {
+		for key, _ := range result {
+			QUnit.Test("BrowsingData.Settings()", func(assert QUnit.QUnitAssert) {
+				assert.Equal(key, "dataRemovalPermitted", "Settings")
+			})
+			break
+		}
+	})
+
+	/*
+	* Cookies Method Tests
+	 */
+
+	// Set a new Cookie
+	cookie := chrome.Object{
+		"url":   "http://www.google.com",
+		"name":  "testing",
+		"value": "testvalue",
+	}
+	c.Cookies.Set(cookie, func(c chrome.Cookie) {
+		QUnit.Test("Cookies.Set()", func(assert QUnit.QUnitAssert) {
+			assert.Equal(c.Name, "testing", "Set")
+			assert.Equal(c.Value, "testvalue", "Set")
+		})
+
+		// Get the cookie set previously
+		cookieInfo := chrome.Object{
+			"url":  "http://www.google.com",
+			"name": "testing",
+		}
+		c.Cookies.Get(cookieInfo, func(cookie chrome.Cookie) {
+			QUnit.Test("Cookies.Get()", func(assert QUnit.QUnitAssert) {
+				assert.Equal(c.Name, "testing", "Get")
 			})
 		})
 	})

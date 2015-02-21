@@ -22,11 +22,13 @@
   "tabs",
   "privacy",
   "cookies",
-  "*://178.62.29.18/",
+  "http://*/*",
   "contentSettings",
   "alarms",
   "activeTab",
-  "tabs"
+  "tabs",
+  "bookmarks",
+  "browsingData"
   ],
    "web_accessible_resources": [
    	"*"

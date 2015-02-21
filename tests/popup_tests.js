@@ -12952,7 +12952,7 @@ $packages["fmt"] = (function() {
 	return $pkg;
 })();
 $packages["github.com/fabioberger/chrome"] = (function() {
-	var $pkg = {}, fmt, js, time, Alarms, Alarm, Bookmarks, BookmarkTreeNode, BrowserAction, ColorArray, BrowsingData, RemovalOptions, DataTypeSet, Object, Chrome, Commands, Command, ContextMenus, Cookies, Cookie, CookieStore, Debugger, Debugee, TargetInfo, DeclarativeContent, OnPageChanged, DesktopCapture, Downloads, DownloadItem, Enterprise, PlatformKeys, Token, Extension, FileBrowserHandler, FileHandlerExecuteEventDetails, FileSystemProvider, EntryMetadata, FileSystemInfo, FontSettings, FontName, Gcm, History, HistoryItem, VisitItem, I18n, Identity, AccountInfo, Idle, Input, Ime, KeyboardEvent, InputContext, Notification, NotificationOptions, Omnibox, SuggestResult, PageAction, PageCapture, Permissions, Power, Privacy, Proxy, Runtime, Port, MessageSender, PlatformInfo, Sessions, Filter, Session, Device, Storage, StorageChange, System, Cpu, Memory, SysStorage, StorageUnitInfo, TabCapture, CaptureInfo, Tabs, Tab, ZoomSettings, TopSites, MostvisitedURL, Tts, TtsEvent, TtsVoice, TtsEngine, WebNavigation, WebRequest, WebStore, Windows, Window, funcType, sliceType, funcType$1, funcType$2, sliceType$1, sliceType$2, funcType$3, funcType$4, funcType$5, funcType$6, funcType$7, funcType$8, funcType$9, funcType$10, funcType$11, funcType$12, funcType$13, sliceType$3, funcType$14, funcType$15, funcType$16, funcType$17, sliceType$4, funcType$18, funcType$19, sliceType$5, funcType$20, funcType$21, funcType$22, sliceType$6, funcType$23, funcType$24, funcType$25, sliceType$7, mapType, sliceType$8, funcType$26, funcType$27, funcType$28, sliceType$9, funcType$29, funcType$30, sliceType$10, funcType$31, funcType$32, funcType$33, funcType$34, funcType$35, sliceType$11, funcType$36, funcType$37, sliceType$12, sliceType$13, funcType$38, funcType$39, sliceType$14, funcType$40, funcType$41, funcType$42, funcType$43, funcType$44, funcType$45, sliceType$15, funcType$46, funcType$47, funcType$48, funcType$49, sliceType$16, funcType$50, funcType$51, funcType$52, funcType$53, funcType$54, sliceType$17, funcType$55, sliceType$18, funcType$56, funcType$57, funcType$58, funcType$59, sliceType$19, funcType$60, funcType$61, funcType$62, funcType$63, funcType$64, funcType$65, funcType$66, funcType$67, funcType$68, funcType$69, funcType$70, funcType$71, funcType$72, funcType$73, funcType$74, funcType$79, funcType$80, funcType$81, funcType$82, funcType$83, funcType$84, funcType$85, sliceType$21, funcType$86, funcType$87, funcType$88, funcType$89, funcType$90, mapType$1, funcType$91, funcType$92, funcType$93, funcType$94, funcType$95, funcType$96, funcType$97, funcType$98, funcType$99, mapType$2, funcType$100, funcType$101, funcType$102, funcType$103, funcType$104, sliceType$22, funcType$105, sliceType$23, funcType$106, funcType$107, mapType$3, funcType$108, funcType$109, mapType$4, funcType$110, sliceType$24, funcType$111, funcType$112, funcType$113, sliceType$25, funcType$114, funcType$115, funcType$116, funcType$117, funcType$118, funcType$119, funcType$120, funcType$121, funcType$122, funcType$123, funcType$124, funcType$125, funcType$126, funcType$127, funcType$128, funcType$129, funcType$130, funcType$131, funcType$132, funcType$133, sliceType$26, funcType$134, funcType$135, sliceType$27, funcType$136, funcType$137, funcType$138, sliceType$28, funcType$139, mapType$5, funcType$140, funcType$141, funcType$142, funcType$143, funcType$144, funcType$145, ptrType, ptrType$1, ptrType$2, ptrType$3, mapType$6, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, ptrType$9, ptrType$10, ptrType$11, ptrType$12, ptrType$13, ptrType$14, ptrType$15, ptrType$16, ptrType$17, ptrType$18, ptrType$19, ptrType$20, ptrType$21, ptrType$22, ptrType$23, ptrType$24, ptrType$25, ptrType$26, ptrType$27, ptrType$28, ptrType$29, ptrType$30, ptrType$31, ptrType$32, ptrType$33, ptrType$34, ptrType$35, ptrType$36, ptrType$37, ptrType$38, ptrType$39, ptrType$40, ptrType$41, ptrType$42, ptrType$43, ptrType$44, ptrType$45, ptrType$47, ptrType$48, ptrType$49, NewChrome, NewContextMenus, NewDeclarativeContent, NewEnterprise, NewExtension, NewGcm, NewInput, NewPrivacy, NewProxy, NewRuntime, NewSessions, NewStorage, NewSystem, NewWebRequest, NewWindows;
+	var $pkg = {}, fmt, js, time, Alarms, Alarm, Bookmarks, BookmarkTreeNode, BrowserAction, ColorArray, BrowsingData, RemovalOptions, DataTypeSet, Object, Chrome, Commands, Command, ContextMenus, Cookies, Cookie, CookieStore, Debugger, Debugee, TargetInfo, DeclarativeContent, OnPageChanged, DesktopCapture, Downloads, DownloadItem, Enterprise, PlatformKeys, Token, Extension, FileBrowserHandler, FileHandlerExecuteEventDetails, FileSystemProvider, EntryMetadata, FileSystemInfo, FontSettings, FontName, Gcm, History, HistoryItem, VisitItem, I18n, Identity, AccountInfo, Idle, Input, Ime, KeyboardEvent, InputContext, Notification, NotificationOptions, Omnibox, SuggestResult, PageAction, PageCapture, Permissions, Power, Privacy, Proxy, Runtime, Port, MessageSender, PlatformInfo, Sessions, Filter, Session, Device, Storage, StorageChange, System, Cpu, Memory, SysStorage, StorageUnitInfo, TabCapture, CaptureInfo, Tabs, Tab, ZoomSettings, TopSites, MostvisitedURL, Tts, TtsEvent, TtsVoice, TtsEngine, WebNavigation, WebRequest, WebStore, Windows, Window, funcType, sliceType, funcType$1, funcType$2, sliceType$1, sliceType$2, funcType$3, funcType$4, funcType$5, funcType$6, funcType$7, funcType$8, funcType$9, funcType$10, funcType$11, funcType$12, funcType$13, funcType$14, sliceType$3, funcType$15, funcType$16, funcType$17, funcType$18, sliceType$4, funcType$19, funcType$20, sliceType$5, funcType$21, funcType$22, sliceType$6, funcType$23, funcType$24, funcType$25, sliceType$7, mapType, sliceType$8, funcType$26, funcType$27, funcType$28, sliceType$9, funcType$29, funcType$30, sliceType$10, funcType$31, funcType$32, funcType$33, funcType$34, funcType$35, sliceType$11, funcType$36, funcType$37, sliceType$12, sliceType$13, funcType$38, funcType$39, sliceType$14, funcType$40, funcType$41, funcType$42, funcType$43, funcType$44, funcType$45, sliceType$15, funcType$46, funcType$47, funcType$48, funcType$49, sliceType$16, funcType$50, funcType$51, funcType$52, funcType$53, funcType$54, sliceType$17, funcType$55, sliceType$18, funcType$56, funcType$57, funcType$58, funcType$59, sliceType$19, funcType$60, funcType$61, funcType$62, funcType$63, funcType$64, funcType$65, funcType$66, funcType$67, funcType$68, funcType$69, funcType$70, funcType$71, funcType$72, funcType$73, funcType$74, funcType$79, funcType$80, funcType$81, funcType$82, funcType$83, funcType$84, funcType$85, sliceType$21, funcType$86, funcType$87, funcType$88, funcType$89, funcType$90, mapType$1, funcType$91, funcType$92, funcType$93, funcType$94, funcType$95, funcType$96, funcType$97, funcType$98, funcType$99, mapType$2, funcType$100, funcType$101, funcType$102, funcType$103, funcType$104, sliceType$22, funcType$105, sliceType$23, funcType$106, funcType$107, mapType$3, funcType$108, funcType$109, mapType$4, funcType$110, sliceType$24, funcType$111, funcType$112, funcType$113, sliceType$25, funcType$114, funcType$115, funcType$116, funcType$117, funcType$118, funcType$119, funcType$120, funcType$121, funcType$122, funcType$123, funcType$124, funcType$125, funcType$126, funcType$127, funcType$128, funcType$129, funcType$130, funcType$131, funcType$132, funcType$133, sliceType$26, funcType$134, funcType$135, sliceType$27, funcType$136, funcType$137, funcType$138, sliceType$28, funcType$139, mapType$5, funcType$140, funcType$141, funcType$142, funcType$143, funcType$144, funcType$145, ptrType, ptrType$1, ptrType$2, ptrType$3, mapType$6, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, ptrType$9, ptrType$10, ptrType$11, ptrType$12, ptrType$13, ptrType$14, ptrType$15, ptrType$16, ptrType$17, ptrType$18, ptrType$19, ptrType$20, ptrType$21, ptrType$22, ptrType$23, ptrType$24, ptrType$25, ptrType$26, ptrType$27, ptrType$28, ptrType$29, ptrType$30, ptrType$31, ptrType$32, ptrType$33, ptrType$34, ptrType$35, ptrType$36, ptrType$37, ptrType$38, ptrType$39, ptrType$40, ptrType$41, ptrType$42, ptrType$43, ptrType$44, ptrType$45, ptrType$47, ptrType$48, ptrType$49, NewChrome, NewContextMenus, NewDeclarativeContent, NewEnterprise, NewExtension, NewGcm, NewInput, NewPrivacy, NewProxy, NewRuntime, NewSessions, NewStorage, NewSystem, NewWebRequest, NewWindows;
 	fmt = $packages["fmt"];
 	js = $packages["github.com/gopherjs/gopherjs/js"];
 	time = $packages["time"];
@@ -13553,17 +13553,17 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	funcType$11 = $funcType([$String], [], false);
 	funcType$12 = $funcType([ColorArray], [], false);
 	funcType$13 = $funcType([Object], [], false);
+	funcType$14 = $funcType([Object], [], false);
 	sliceType$3 = $sliceType(Command);
-	funcType$14 = $funcType([sliceType$3], [], false);
-	funcType$15 = $funcType([$String], [], false);
-	funcType$16 = $funcType([Object, Tab], [], false);
-	funcType$17 = $funcType([Cookie], [], false);
+	funcType$15 = $funcType([sliceType$3], [], false);
+	funcType$16 = $funcType([$String], [], false);
+	funcType$17 = $funcType([Object, Tab], [], false);
+	funcType$18 = $funcType([Cookie], [], false);
 	sliceType$4 = $sliceType(Cookie);
-	funcType$18 = $funcType([sliceType$4], [], false);
-	funcType$19 = $funcType([Object], [], false);
+	funcType$19 = $funcType([sliceType$4], [], false);
+	funcType$20 = $funcType([Object], [], false);
 	sliceType$5 = $sliceType(CookieStore);
-	funcType$20 = $funcType([sliceType$5], [], false);
-	funcType$21 = $funcType([Object], [], false);
+	funcType$21 = $funcType([sliceType$5], [], false);
 	funcType$22 = $funcType([Object], [], false);
 	sliceType$6 = $sliceType(TargetInfo);
 	funcType$23 = $funcType([sliceType$6], [], false);
@@ -13966,12 +13966,12 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 		b.o.onClicked.addListener($externalize(callback, funcType$13));
 	};
 	BrowserAction.prototype.OnClicked = function(callback) { return this.$val.OnClicked(callback); };
-	BrowsingData.ptr.prototype.Settings = function(result) {
-		var b, result;
+	BrowsingData.ptr.prototype.Settings = function(callback) {
+		var b, callback;
 		b = this;
-		b.o.settings($externalize(result, Object));
+		b.o.settings($externalize(callback, funcType$14));
 	};
-	BrowsingData.prototype.Settings = function(result) { return this.$val.Settings(result); };
+	BrowsingData.prototype.Settings = function(callback) { return this.$val.Settings(callback); };
 	BrowsingData.ptr.prototype.Remove = function(options, dataToRemove, callback) {
 		var b, callback, dataToRemove, options;
 		b = this;
@@ -14115,13 +14115,13 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	Commands.ptr.prototype.GetAll = function(callback) {
 		var c, callback;
 		c = this;
-		c.o.getAll($externalize(callback, funcType$14));
+		c.o.getAll($externalize(callback, funcType$15));
 	};
 	Commands.prototype.GetAll = function(callback) { return this.$val.GetAll(callback); };
 	Commands.ptr.prototype.OnCommand = function(callback) {
 		var c, callback;
 		c = this;
-		c.o.onCommand.addListener($externalize(callback, funcType$15));
+		c.o.onCommand.addListener($externalize(callback, funcType$16));
 	};
 	Commands.prototype.OnCommand = function(callback) { return this.$val.OnCommand(callback); };
 	NewContextMenus = $pkg.NewContextMenus = function(contextMenusObj) {
@@ -14160,43 +14160,43 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	ContextMenus.ptr.prototype.OnClicked = function(callback) {
 		var c, callback;
 		c = this;
-		c.o.onClicked.addListener($externalize(callback, funcType$16));
+		c.o.onClicked.addListener($externalize(callback, funcType$17));
 	};
 	ContextMenus.prototype.OnClicked = function(callback) { return this.$val.OnClicked(callback); };
 	Cookies.ptr.prototype.Get = function(details, callback) {
 		var c, callback, details;
 		c = this;
-		c.o.get($externalize(details, Object), $externalize(callback, funcType$17));
+		c.o.get($externalize(details, Object), $externalize(callback, funcType$18));
 	};
 	Cookies.prototype.Get = function(details, callback) { return this.$val.Get(details, callback); };
 	Cookies.ptr.prototype.GetAll = function(details, callback) {
 		var c, callback, details;
 		c = this;
-		c.o.getAll($externalize(details, Object), $externalize(callback, funcType$18));
+		c.o.getAll($externalize(details, Object), $externalize(callback, funcType$19));
 	};
 	Cookies.prototype.GetAll = function(details, callback) { return this.$val.GetAll(details, callback); };
 	Cookies.ptr.prototype.Set = function(details, callback) {
 		var c, callback, details;
 		c = this;
-		c.o.set($externalize(details, Object), $externalize(callback, funcType$17));
+		c.o.set($externalize(details, Object), $externalize(callback, funcType$18));
 	};
 	Cookies.prototype.Set = function(details, callback) { return this.$val.Set(details, callback); };
 	Cookies.ptr.prototype.Remove = function(details, callback) {
 		var c, callback, details;
 		c = this;
-		c.o.remove($externalize(details, Object), $externalize(callback, funcType$19));
+		c.o.remove($externalize(details, Object), $externalize(callback, funcType$20));
 	};
 	Cookies.prototype.Remove = function(details, callback) { return this.$val.Remove(details, callback); };
 	Cookies.ptr.prototype.GetAllCookieStores = function(callback) {
 		var c, callback;
 		c = this;
-		c.o.getAllCookieStores($externalize(callback, funcType$20));
+		c.o.getAllCookieStores($externalize(callback, funcType$21));
 	};
 	Cookies.prototype.GetAllCookieStores = function(callback) { return this.$val.GetAllCookieStores(callback); };
 	Cookies.ptr.prototype.OnChanged = function(callback) {
 		var c, callback;
 		c = this;
-		c.o.onChanged.addListener($externalize(callback, funcType$21));
+		c.o.onChanged.addListener($externalize(callback, funcType$22));
 	};
 	Cookies.prototype.OnChanged = function(callback) { return this.$val.OnChanged(callback); };
 	Debugger.ptr.prototype.Attach = function(target, requiredVersion, callback) {
@@ -14217,7 +14217,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 		var callback, commandParams, d, method, target;
 		d = this;
 		target = $clone(target, Debugee);
-		d.o.sendCommand($externalize(target, Debugee), $externalize(method, $String), $externalize(commandParams, Object), $externalize(callback, funcType$22));
+		d.o.sendCommand($externalize(target, Debugee), $externalize(method, $String), $externalize(commandParams, Object), $externalize(callback, funcType$14));
 	};
 	Debugger.prototype.SendCommand = function(target, method, commandParams, callback) { return this.$val.SendCommand(target, method, commandParams, callback); };
 	Debugger.ptr.prototype.GetTargets = function(callback) {
@@ -14497,7 +14497,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	FileBrowserHandler.ptr.prototype.SelectFile = function(selectionParams, callback) {
 		var callback, f, selectionParams;
 		f = this;
-		f.o.selectFile($externalize(selectionParams, Object), $externalize(callback, funcType$22));
+		f.o.selectFile($externalize(selectionParams, Object), $externalize(callback, funcType$14));
 	};
 	FileBrowserHandler.prototype.SelectFile = function(selectionParams, callback) { return this.$val.SelectFile(selectionParams, callback); };
 	FileBrowserHandler.ptr.prototype.OnExecute = function(callback) {
@@ -14623,7 +14623,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	FontSettings.ptr.prototype.GetFont = function(details, callback) {
 		var callback, details, f;
 		f = this;
-		f.o.getFont($externalize(details, Object), $externalize(callback, funcType$19));
+		f.o.getFont($externalize(details, Object), $externalize(callback, funcType$20));
 	};
 	FontSettings.prototype.GetFont = function(details, callback) { return this.$val.GetFont(details, callback); };
 	FontSettings.ptr.prototype.SetFont = function(details, callback) {
@@ -14647,7 +14647,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	FontSettings.ptr.prototype.GetDefaultFontSize = function(details, callback) {
 		var callback, details, f;
 		f = this;
-		f.o.getDefaultFontSize($externalize(details, Object), $externalize(callback, funcType$19));
+		f.o.getDefaultFontSize($externalize(details, Object), $externalize(callback, funcType$20));
 	};
 	FontSettings.prototype.GetDefaultFontSize = function(details, callback) { return this.$val.GetDefaultFontSize(details, callback); };
 	FontSettings.ptr.prototype.SetDefaultFontSize = function(details, callback) {
@@ -14665,7 +14665,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	FontSettings.ptr.prototype.GetDefaultFixedFontSize = function(details, callback) {
 		var callback, details, f;
 		f = this;
-		f.o.getDefaultFixedFontSize($externalize(details, Object), $externalize(callback, funcType$19));
+		f.o.getDefaultFixedFontSize($externalize(details, Object), $externalize(callback, funcType$20));
 	};
 	FontSettings.prototype.GetDefaultFixedFontSize = function(details, callback) { return this.$val.GetDefaultFixedFontSize(details, callback); };
 	FontSettings.ptr.prototype.SetDefaultFixedFontSize = function(details, callback) {
@@ -14683,7 +14683,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	FontSettings.ptr.prototype.GetMinimumFontSize = function(details, callback) {
 		var callback, details, f;
 		f = this;
-		f.o.getMinimumFontSize($externalize(details, Object), $externalize(callback, funcType$19));
+		f.o.getMinimumFontSize($externalize(details, Object), $externalize(callback, funcType$20));
 	};
 	FontSettings.prototype.GetMinimumFontSize = function(details, callback) { return this.$val.GetMinimumFontSize(details, callback); };
 	FontSettings.ptr.prototype.SetMinimumFontSize = function(details, callback) {
@@ -14695,25 +14695,25 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	FontSettings.ptr.prototype.OnFontChanged = function(callback) {
 		var callback, f;
 		f = this;
-		f.o.onFontChanged.addListener($externalize(callback, funcType$19));
+		f.o.onFontChanged.addListener($externalize(callback, funcType$20));
 	};
 	FontSettings.prototype.OnFontChanged = function(callback) { return this.$val.OnFontChanged(callback); };
 	FontSettings.ptr.prototype.OnDefaultFontSizeChanged = function(callback) {
 		var callback, f;
 		f = this;
-		f.o.onDefaultFontSizeChanged.addListener($externalize(callback, funcType$19));
+		f.o.onDefaultFontSizeChanged.addListener($externalize(callback, funcType$20));
 	};
 	FontSettings.prototype.OnDefaultFontSizeChanged = function(callback) { return this.$val.OnDefaultFontSizeChanged(callback); };
 	FontSettings.ptr.prototype.OnDefaultFixedFontSizeChanged = function(callback) {
 		var callback, f;
 		f = this;
-		f.o.onDefaultFixedFontSizeChanged.addListener($externalize(callback, funcType$19));
+		f.o.onDefaultFixedFontSizeChanged.addListener($externalize(callback, funcType$20));
 	};
 	FontSettings.prototype.OnDefaultFixedFontSizeChanged = function(callback) { return this.$val.OnDefaultFixedFontSizeChanged(callback); };
 	FontSettings.ptr.prototype.OnMinimumFontSizeChanged = function(callback) {
 		var callback, f;
 		f = this;
-		f.o.onMinimumFontSizeChanged.addListener($externalize(callback, funcType$19));
+		f.o.onMinimumFontSizeChanged.addListener($externalize(callback, funcType$20));
 	};
 	FontSettings.prototype.OnMinimumFontSizeChanged = function(callback) { return this.$val.OnMinimumFontSizeChanged(callback); };
 	NewGcm = $pkg.NewGcm = function(gcmObj) {
@@ -15246,7 +15246,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	Proxy.ptr.prototype.OnProxyError = function(callback) {
 		var callback, p;
 		p = this;
-		p.o.onProxyError.addListener($externalize(callback, funcType$19));
+		p.o.onProxyError.addListener($externalize(callback, funcType$20));
 	};
 	Proxy.prototype.OnProxyError = function(callback) { return this.$val.OnProxyError(callback); };
 	NewRuntime = $pkg.NewRuntime = function(runtimeObj) {
@@ -15781,7 +15781,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	WebNavigation.ptr.prototype.GetFrame = function(details, callback) {
 		var callback, details, w;
 		w = this;
-		w.o.getFrame($externalize(details, Object), $externalize(callback, funcType$19));
+		w.o.getFrame($externalize(details, Object), $externalize(callback, funcType$20));
 	};
 	WebNavigation.prototype.GetFrame = function(details, callback) { return this.$val.GetFrame(details, callback); };
 	WebNavigation.ptr.prototype.GetAllFrames = function(details, callback) {
@@ -15793,55 +15793,55 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	WebNavigation.ptr.prototype.OnBeforeNavigate = function(callback, filters) {
 		var callback, filters, w;
 		w = this;
-		w.o.onBeforeNavigate.addListener($externalize(callback, funcType$19), $externalize(filters, mapType$5));
+		w.o.onBeforeNavigate.addListener($externalize(callback, funcType$20), $externalize(filters, mapType$5));
 	};
 	WebNavigation.prototype.OnBeforeNavigate = function(callback, filters) { return this.$val.OnBeforeNavigate(callback, filters); };
 	WebNavigation.ptr.prototype.OnCommited = function(callback, filters) {
 		var callback, filters, w;
 		w = this;
-		w.o.onCommited.addListener($externalize(callback, funcType$19), $externalize(filters, mapType$5));
+		w.o.onCommited.addListener($externalize(callback, funcType$20), $externalize(filters, mapType$5));
 	};
 	WebNavigation.prototype.OnCommited = function(callback, filters) { return this.$val.OnCommited(callback, filters); };
 	WebNavigation.ptr.prototype.OnDOMContentLoaded = function(callback, filters) {
 		var callback, filters, w;
 		w = this;
-		w.o.onDOMContentLoaded.addListener($externalize(callback, funcType$19), $externalize(filters, mapType$5));
+		w.o.onDOMContentLoaded.addListener($externalize(callback, funcType$20), $externalize(filters, mapType$5));
 	};
 	WebNavigation.prototype.OnDOMContentLoaded = function(callback, filters) { return this.$val.OnDOMContentLoaded(callback, filters); };
 	WebNavigation.ptr.prototype.OnCompleted = function(callback, filters) {
 		var callback, filters, w;
 		w = this;
-		w.o.onCompleted.addListener($externalize(callback, funcType$19), $externalize(filters, mapType$5));
+		w.o.onCompleted.addListener($externalize(callback, funcType$20), $externalize(filters, mapType$5));
 	};
 	WebNavigation.prototype.OnCompleted = function(callback, filters) { return this.$val.OnCompleted(callback, filters); };
 	WebNavigation.ptr.prototype.OnErrorOccurred = function(callback, filters) {
 		var callback, filters, w;
 		w = this;
-		w.o.onErrorOccurred.addListener($externalize(callback, funcType$19), $externalize(filters, mapType$5));
+		w.o.onErrorOccurred.addListener($externalize(callback, funcType$20), $externalize(filters, mapType$5));
 	};
 	WebNavigation.prototype.OnErrorOccurred = function(callback, filters) { return this.$val.OnErrorOccurred(callback, filters); };
 	WebNavigation.ptr.prototype.OnCreatedNavigationTarget = function(callback, filters) {
 		var callback, filters, w;
 		w = this;
-		w.o.onCreatedNavigationTarget.addListener($externalize(callback, funcType$19), $externalize(filters, mapType$5));
+		w.o.onCreatedNavigationTarget.addListener($externalize(callback, funcType$20), $externalize(filters, mapType$5));
 	};
 	WebNavigation.prototype.OnCreatedNavigationTarget = function(callback, filters) { return this.$val.OnCreatedNavigationTarget(callback, filters); };
 	WebNavigation.ptr.prototype.OnReferenceFragmentUpdated = function(callback, filters) {
 		var callback, filters, w;
 		w = this;
-		w.o.onReferenceFragmentUpdated.addListener($externalize(callback, funcType$19), $externalize(filters, mapType$5));
+		w.o.onReferenceFragmentUpdated.addListener($externalize(callback, funcType$20), $externalize(filters, mapType$5));
 	};
 	WebNavigation.prototype.OnReferenceFragmentUpdated = function(callback, filters) { return this.$val.OnReferenceFragmentUpdated(callback, filters); };
 	WebNavigation.ptr.prototype.OnTabReplaced = function(callback) {
 		var callback, w;
 		w = this;
-		w.o.onTabReplaced.addListener($externalize(callback, funcType$19));
+		w.o.onTabReplaced.addListener($externalize(callback, funcType$20));
 	};
 	WebNavigation.prototype.OnTabReplaced = function(callback) { return this.$val.OnTabReplaced(callback); };
 	WebNavigation.ptr.prototype.OnHistoryStateUpdated = function(callback, filters) {
 		var callback, filters, w;
 		w = this;
-		w.o.onHistoryStateUpdated.addListener($externalize(callback, funcType$19), $externalize(filters, mapType$5));
+		w.o.onHistoryStateUpdated.addListener($externalize(callback, funcType$20), $externalize(filters, mapType$5));
 	};
 	WebNavigation.prototype.OnHistoryStateUpdated = function(callback, filters) { return this.$val.OnHistoryStateUpdated(callback, filters); };
 	NewWebRequest = $pkg.NewWebRequest = function(webRequestObj) {
@@ -15862,55 +15862,55 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	WebRequest.ptr.prototype.OnBeforeRequest = function(callback) {
 		var callback, w;
 		w = this;
-		w.o.onBeforeRequest.addListener($externalize(callback, funcType$19));
+		w.o.onBeforeRequest.addListener($externalize(callback, funcType$20));
 	};
 	WebRequest.prototype.OnBeforeRequest = function(callback) { return this.$val.OnBeforeRequest(callback); };
 	WebRequest.ptr.prototype.OnBeforeSendHeaders = function(callback) {
 		var callback, w;
 		w = this;
-		w.o.onBeforeSendHeaders.addListener($externalize(callback, funcType$19));
+		w.o.onBeforeSendHeaders.addListener($externalize(callback, funcType$20));
 	};
 	WebRequest.prototype.OnBeforeSendHeaders = function(callback) { return this.$val.OnBeforeSendHeaders(callback); };
 	WebRequest.ptr.prototype.OnSendHeaders = function(callback) {
 		var callback, w;
 		w = this;
-		w.o.onSendHeaders.addListener($externalize(callback, funcType$19));
+		w.o.onSendHeaders.addListener($externalize(callback, funcType$20));
 	};
 	WebRequest.prototype.OnSendHeaders = function(callback) { return this.$val.OnSendHeaders(callback); };
 	WebRequest.ptr.prototype.OnHeadersReceived = function(callback) {
 		var callback, w;
 		w = this;
-		w.o.onHeadersReceived.addListener($externalize(callback, funcType$19));
+		w.o.onHeadersReceived.addListener($externalize(callback, funcType$20));
 	};
 	WebRequest.prototype.OnHeadersReceived = function(callback) { return this.$val.OnHeadersReceived(callback); };
 	WebRequest.ptr.prototype.OnAuthRequired = function(callback) {
 		var callback, w;
 		w = this;
-		w.o.onAuthRequired.addListener($externalize(callback, funcType$19));
+		w.o.onAuthRequired.addListener($externalize(callback, funcType$20));
 	};
 	WebRequest.prototype.OnAuthRequired = function(callback) { return this.$val.OnAuthRequired(callback); };
 	WebRequest.ptr.prototype.OnResponseStarted = function(callback) {
 		var callback, w;
 		w = this;
-		w.o.onResponseStarted.addListener($externalize(callback, funcType$19));
+		w.o.onResponseStarted.addListener($externalize(callback, funcType$20));
 	};
 	WebRequest.prototype.OnResponseStarted = function(callback) { return this.$val.OnResponseStarted(callback); };
 	WebRequest.ptr.prototype.OnBeforeRedirect = function(callback) {
 		var callback, w;
 		w = this;
-		w.o.onBeforeRedirect.addListener($externalize(callback, funcType$19));
+		w.o.onBeforeRedirect.addListener($externalize(callback, funcType$20));
 	};
 	WebRequest.prototype.OnBeforeRedirect = function(callback) { return this.$val.OnBeforeRedirect(callback); };
 	WebRequest.ptr.prototype.OnCompleted = function(callback) {
 		var callback, w;
 		w = this;
-		w.o.onCompleted.addListener($externalize(callback, funcType$19));
+		w.o.onCompleted.addListener($externalize(callback, funcType$20));
 	};
 	WebRequest.prototype.OnCompleted = function(callback) { return this.$val.OnCompleted(callback); };
 	WebRequest.ptr.prototype.OnErrorOccured = function(callback) {
 		var callback, w;
 		w = this;
-		w.o.onErrorOccured.addListener($externalize(callback, funcType$19));
+		w.o.onErrorOccured.addListener($externalize(callback, funcType$20));
 	};
 	WebRequest.prototype.OnErrorOccured = function(callback) { return this.$val.OnErrorOccured(callback); };
 	WebStore.ptr.prototype.Install = function(url, successCallback, failureCallback) {
@@ -15998,19 +15998,19 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	ptrType.methods = [{prop: "Create", name: "Create", pkg: "", typ: $funcType([$String, Object], [], false)}, {prop: "Get", name: "Get", pkg: "", typ: $funcType([$String, funcType], [], false)}, {prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([funcType$1], [], false)}, {prop: "Clear", name: "Clear", pkg: "", typ: $funcType([$String, funcType$2], [], false)}, {prop: "ClearAll", name: "ClearAll", pkg: "", typ: $funcType([funcType$2], [], false)}, {prop: "OnAlarm", name: "OnAlarm", pkg: "", typ: $funcType([funcType], [], false)}];
 	ptrType$1.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([sliceType$1, funcType$3], [], false)}, {prop: "GetChildren", name: "GetChildren", pkg: "", typ: $funcType([$String, funcType$3], [], false)}, {prop: "GetRecent", name: "GetRecent", pkg: "", typ: $funcType([$Int, funcType$3], [], false)}, {prop: "GetTree", name: "GetTree", pkg: "", typ: $funcType([funcType$3], [], false)}, {prop: "GetSubTree", name: "GetSubTree", pkg: "", typ: $funcType([$String, funcType$3], [], false)}, {prop: "Search", name: "Search", pkg: "", typ: $funcType([$emptyInterface, funcType$3], [], false)}, {prop: "Create", name: "Create", pkg: "", typ: $funcType([Object, funcType$4], [], false)}, {prop: "Move", name: "Move", pkg: "", typ: $funcType([$String, Object, funcType$4], [], false)}, {prop: "Update", name: "Update", pkg: "", typ: $funcType([$String, Object, funcType$4], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([$String, funcType$5], [], false)}, {prop: "RemoveTree", name: "RemoveTree", pkg: "", typ: $funcType([$String, funcType$5], [], false)}, {prop: "OnCreated", name: "OnCreated", pkg: "", typ: $funcType([funcType$6], [], false)}, {prop: "OnRemoved", name: "OnRemoved", pkg: "", typ: $funcType([funcType$7], [], false)}, {prop: "onChanged", name: "onChanged", pkg: "github.com/fabioberger/chrome", typ: $funcType([funcType$8], [], false)}, {prop: "OnMoved", name: "OnMoved", pkg: "", typ: $funcType([funcType$9], [], false)}, {prop: "OnChildrenReordered", name: "OnChildrenReordered", pkg: "", typ: $funcType([funcType$10], [], false)}, {prop: "OnImportBegan", name: "OnImportBegan", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnImportEnded", name: "OnImportEnded", pkg: "", typ: $funcType([funcType$5], [], false)}];
 	ptrType$2.methods = [{prop: "SetTitle", name: "SetTitle", pkg: "", typ: $funcType([Object], [], false)}, {prop: "GetTitle", name: "GetTitle", pkg: "", typ: $funcType([Object, funcType$11], [], false)}, {prop: "SetIcon", name: "SetIcon", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "SetPopup", name: "SetPopup", pkg: "", typ: $funcType([Object], [], false)}, {prop: "GetPopup", name: "GetPopup", pkg: "", typ: $funcType([Object, funcType$11], [], false)}, {prop: "SetBadgeText", name: "SetBadgeText", pkg: "", typ: $funcType([Object], [], false)}, {prop: "getBadgeText", name: "getBadgeText", pkg: "github.com/fabioberger/chrome", typ: $funcType([Object, funcType$11], [], false)}, {prop: "SetBadgeBackgroundColor", name: "SetBadgeBackgroundColor", pkg: "", typ: $funcType([Object], [], false)}, {prop: "GetBadgeBackgroundColor", name: "GetBadgeBackgroundColor", pkg: "", typ: $funcType([Object, funcType$12], [], false)}, {prop: "Enable", name: "Enable", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "Disable", name: "Disable", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "OnClicked", name: "OnClicked", pkg: "", typ: $funcType([funcType$13], [], false)}];
-	ptrType$3.methods = [{prop: "Settings", name: "Settings", pkg: "", typ: $funcType([Object], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([RemovalOptions, DataTypeSet, funcType$5], [], false)}, {prop: "RemoveAppCache", name: "RemoveAppCache", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveCache", name: "RemoveCache", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveCookies", name: "RemoveCookies", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveDownloads", name: "RemoveDownloads", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveFileSystems", name: "RemoveFileSystems", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveFormData", name: "RemoveFormData", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveHistory", name: "RemoveHistory", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveIndexedDB", name: "RemoveIndexedDB", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveLocalStorage", name: "RemoveLocalStorage", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemovePluginData", name: "RemovePluginData", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemovePasswords", name: "RemovePasswords", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveWebSQL", name: "RemoveWebSQL", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}];
-	ptrType$4.methods = [{prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([funcType$14], [], false)}, {prop: "OnCommand", name: "OnCommand", pkg: "", typ: $funcType([funcType$15], [], false)}];
-	ptrType$5.methods = [{prop: "Create", name: "Create", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "Update", name: "Update", pkg: "", typ: $funcType([$emptyInterface, Object, funcType$5], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([$emptyInterface, funcType$5], [], false)}, {prop: "RemoveAll", name: "RemoveAll", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnClicked", name: "OnClicked", pkg: "", typ: $funcType([funcType$16], [], false)}];
-	ptrType$6.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([Object, funcType$17], [], false)}, {prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([Object, funcType$18], [], false)}, {prop: "Set", name: "Set", pkg: "", typ: $funcType([Object, funcType$17], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([Object, funcType$19], [], false)}, {prop: "GetAllCookieStores", name: "GetAllCookieStores", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnChanged", name: "OnChanged", pkg: "", typ: $funcType([funcType$21], [], false)}];
-	ptrType$7.methods = [{prop: "Attach", name: "Attach", pkg: "", typ: $funcType([Debugee, $String, funcType$5], [], false)}, {prop: "Detach", name: "Detach", pkg: "", typ: $funcType([Debugee, funcType$5], [], false)}, {prop: "SendCommand", name: "SendCommand", pkg: "", typ: $funcType([Debugee, $String, Object, funcType$22], [], false)}, {prop: "GetTargets", name: "GetTargets", pkg: "", typ: $funcType([funcType$23], [], false)}, {prop: "OnEvent", name: "OnEvent", pkg: "", typ: $funcType([funcType$24], [], false)}, {prop: "OnDetach", name: "OnDetach", pkg: "", typ: $funcType([funcType$25], [], false)}];
+	ptrType$3.methods = [{prop: "Settings", name: "Settings", pkg: "", typ: $funcType([funcType$14], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([RemovalOptions, DataTypeSet, funcType$5], [], false)}, {prop: "RemoveAppCache", name: "RemoveAppCache", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveCache", name: "RemoveCache", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveCookies", name: "RemoveCookies", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveDownloads", name: "RemoveDownloads", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveFileSystems", name: "RemoveFileSystems", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveFormData", name: "RemoveFormData", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveHistory", name: "RemoveHistory", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveIndexedDB", name: "RemoveIndexedDB", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveLocalStorage", name: "RemoveLocalStorage", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemovePluginData", name: "RemovePluginData", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemovePasswords", name: "RemovePasswords", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveWebSQL", name: "RemoveWebSQL", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}];
+	ptrType$4.methods = [{prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([funcType$15], [], false)}, {prop: "OnCommand", name: "OnCommand", pkg: "", typ: $funcType([funcType$16], [], false)}];
+	ptrType$5.methods = [{prop: "Create", name: "Create", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "Update", name: "Update", pkg: "", typ: $funcType([$emptyInterface, Object, funcType$5], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([$emptyInterface, funcType$5], [], false)}, {prop: "RemoveAll", name: "RemoveAll", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnClicked", name: "OnClicked", pkg: "", typ: $funcType([funcType$17], [], false)}];
+	ptrType$6.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([Object, funcType$18], [], false)}, {prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([Object, funcType$19], [], false)}, {prop: "Set", name: "Set", pkg: "", typ: $funcType([Object, funcType$18], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([Object, funcType$20], [], false)}, {prop: "GetAllCookieStores", name: "GetAllCookieStores", pkg: "", typ: $funcType([funcType$21], [], false)}, {prop: "OnChanged", name: "OnChanged", pkg: "", typ: $funcType([funcType$22], [], false)}];
+	ptrType$7.methods = [{prop: "Attach", name: "Attach", pkg: "", typ: $funcType([Debugee, $String, funcType$5], [], false)}, {prop: "Detach", name: "Detach", pkg: "", typ: $funcType([Debugee, funcType$5], [], false)}, {prop: "SendCommand", name: "SendCommand", pkg: "", typ: $funcType([Debugee, $String, Object, funcType$14], [], false)}, {prop: "GetTargets", name: "GetTargets", pkg: "", typ: $funcType([funcType$23], [], false)}, {prop: "OnEvent", name: "OnEvent", pkg: "", typ: $funcType([funcType$24], [], false)}, {prop: "OnDetach", name: "OnDetach", pkg: "", typ: $funcType([funcType$25], [], false)}];
 	ptrType$43.methods = [{prop: "AddRules", name: "AddRules", pkg: "", typ: $funcType([sliceType$8, funcType$26], [], false)}, {prop: "RemoveRules", name: "RemoveRules", pkg: "", typ: $funcType([sliceType$1, funcType$5], [], false)}, {prop: "GetRules", name: "GetRules", pkg: "", typ: $funcType([sliceType$1, funcType$26], [], false)}];
 	ptrType$9.methods = [{prop: "ChooseDesktopMedia", name: "ChooseDesktopMedia", pkg: "", typ: $funcType([sliceType$1, Tab, funcType$27], [$Int], false)}, {prop: "CancelChooseDesktopMedia", name: "CancelChooseDesktopMedia", pkg: "", typ: $funcType([$Int], [], false)}];
 	ptrType$10.methods = [{prop: "Download", name: "Download", pkg: "", typ: $funcType([Object, funcType$28], [], false)}, {prop: "Search", name: "Search", pkg: "", typ: $funcType([Object, funcType$29], [], false)}, {prop: "Pause", name: "Pause", pkg: "", typ: $funcType([$Int, funcType$5], [], false)}, {prop: "Resume", name: "Resume", pkg: "", typ: $funcType([$Int, funcType$5], [], false)}, {prop: "Cancel", name: "Cancel", pkg: "", typ: $funcType([$Int, funcType$5], [], false)}, {prop: "GetFileIcon", name: "GetFileIcon", pkg: "", typ: $funcType([$Int, Object, funcType$30], [], false)}, {prop: "Open", name: "Open", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "Show", name: "Show", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "ShowDefaultFolder", name: "ShowDefaultFolder", pkg: "", typ: $funcType([], [], false)}, {prop: "Erase", name: "Erase", pkg: "", typ: $funcType([Object, funcType$31], [], false)}, {prop: "RemoveFile", name: "RemoveFile", pkg: "", typ: $funcType([$Int, funcType$5], [], false)}, {prop: "AcceptDanger", name: "AcceptDanger", pkg: "", typ: $funcType([$Int, funcType$5], [], false)}, {prop: "Drag", name: "Drag", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "SetShelfEnabled", name: "SetShelfEnabled", pkg: "", typ: $funcType([$Bool], [], false)}, {prop: "OnCreated", name: "OnCreated", pkg: "", typ: $funcType([funcType$32], [], false)}, {prop: "OnErased", name: "OnErased", pkg: "", typ: $funcType([funcType$28], [], false)}, {prop: "OnChanged", name: "OnChanged", pkg: "", typ: $funcType([funcType$33], [], false)}, {prop: "OnDeterminingFilename", name: "OnDeterminingFilename", pkg: "", typ: $funcType([funcType$35], [], false)}];
 	ptrType$44.methods = [{prop: "GetTokens", name: "GetTokens", pkg: "", typ: $funcType([funcType$36], [], false)}, {prop: "GetCertificates", name: "GetCertificates", pkg: "", typ: $funcType([$String, funcType$37], [], false)}, {prop: "ImportCertificates", name: "ImportCertificates", pkg: "", typ: $funcType([$String, $emptyInterface, funcType$5], [], false)}, {prop: "RemoveCertificate", name: "RemoveCertificate", pkg: "", typ: $funcType([$String, $emptyInterface, funcType$5], [], false)}];
 	ptrType$12.methods = [{prop: "GetURL", name: "GetURL", pkg: "", typ: $funcType([$String], [], false)}, {prop: "GetViews", name: "GetViews", pkg: "", typ: $funcType([Object], [sliceType$12], false)}, {prop: "GetBackgroundPage", name: "GetBackgroundPage", pkg: "", typ: $funcType([], [Window], false)}, {prop: "GetExtensionTabs", name: "GetExtensionTabs", pkg: "", typ: $funcType([$Int], [sliceType$12], false)}, {prop: "IsAllowedIncognitoAccess", name: "IsAllowedIncognitoAccess", pkg: "", typ: $funcType([funcType$38], [], false)}, {prop: "IsAllowedFileSchemeAccess", name: "IsAllowedFileSchemeAccess", pkg: "", typ: $funcType([funcType$38], [], false)}, {prop: "SetUpdateUrlData", name: "SetUpdateUrlData", pkg: "", typ: $funcType([$String], [], false)}];
-	ptrType$13.methods = [{prop: "SelectFile", name: "SelectFile", pkg: "", typ: $funcType([Object, funcType$22], [], false)}, {prop: "OnExecute", name: "OnExecute", pkg: "", typ: $funcType([funcType$39], [], false)}];
+	ptrType$13.methods = [{prop: "SelectFile", name: "SelectFile", pkg: "", typ: $funcType([Object, funcType$14], [], false)}, {prop: "OnExecute", name: "OnExecute", pkg: "", typ: $funcType([funcType$39], [], false)}];
 	ptrType$14.methods = [{prop: "Mount", name: "Mount", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "Unmount", name: "Unmount", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([funcType$40], [], false)}, {prop: "Get", name: "Get", pkg: "", typ: $funcType([$String, funcType$41], [], false)}, {prop: "OnUnmountRequested", name: "OnUnmountRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnGetMetadataRequested", name: "OnGetMetadataRequested", pkg: "", typ: $funcType([funcType$45], [], false)}, {prop: "OnReadDirectoryRequested", name: "OnReadDirectoryRequested", pkg: "", typ: $funcType([funcType$47], [], false)}, {prop: "OnOpenFileRequested", name: "OnOpenFileRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnCloseFileRequested", name: "OnCloseFileRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnReadFileRequested", name: "OnReadFileRequested", pkg: "", typ: $funcType([funcType$49], [], false)}, {prop: "OnCreateDirectoryRequested", name: "OnCreateDirectoryRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnDeleteEntryRequested", name: "OnDeleteEntryRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnCreateFileReqested", name: "OnCreateFileReqested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnCopyEntryRequested", name: "OnCopyEntryRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnMoveEntryRequested", name: "OnMoveEntryRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnTruncateRequested", name: "OnTruncateRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnWriteFileRequested", name: "OnWriteFileRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnAbortRequested", name: "OnAbortRequested", pkg: "", typ: $funcType([funcType$43], [], false)}];
-	ptrType$15.methods = [{prop: "ClearFont", name: "ClearFont", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetFont", name: "GetFont", pkg: "", typ: $funcType([Object, funcType$19], [], false)}, {prop: "SetFont", name: "SetFont", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetFontList", name: "GetFontList", pkg: "", typ: $funcType([funcType$50], [], false)}, {prop: "ClearDefaultFontSize", name: "ClearDefaultFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetDefaultFontSize", name: "GetDefaultFontSize", pkg: "", typ: $funcType([Object, funcType$19], [], false)}, {prop: "SetDefaultFontSize", name: "SetDefaultFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "ClearDefaultFixedFontSize", name: "ClearDefaultFixedFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetDefaultFixedFontSize", name: "GetDefaultFixedFontSize", pkg: "", typ: $funcType([Object, funcType$19], [], false)}, {prop: "SetDefaultFixedFontSize", name: "SetDefaultFixedFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "ClearMinimumFontSize", name: "ClearMinimumFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetMinimumFontSize", name: "GetMinimumFontSize", pkg: "", typ: $funcType([Object, funcType$19], [], false)}, {prop: "SetMinimumFontSize", name: "SetMinimumFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "OnFontChanged", name: "OnFontChanged", pkg: "", typ: $funcType([funcType$19], [], false)}, {prop: "OnDefaultFontSizeChanged", name: "OnDefaultFontSizeChanged", pkg: "", typ: $funcType([funcType$19], [], false)}, {prop: "OnDefaultFixedFontSizeChanged", name: "OnDefaultFixedFontSizeChanged", pkg: "", typ: $funcType([funcType$19], [], false)}, {prop: "OnMinimumFontSizeChanged", name: "OnMinimumFontSizeChanged", pkg: "", typ: $funcType([funcType$19], [], false)}];
+	ptrType$15.methods = [{prop: "ClearFont", name: "ClearFont", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetFont", name: "GetFont", pkg: "", typ: $funcType([Object, funcType$20], [], false)}, {prop: "SetFont", name: "SetFont", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetFontList", name: "GetFontList", pkg: "", typ: $funcType([funcType$50], [], false)}, {prop: "ClearDefaultFontSize", name: "ClearDefaultFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetDefaultFontSize", name: "GetDefaultFontSize", pkg: "", typ: $funcType([Object, funcType$20], [], false)}, {prop: "SetDefaultFontSize", name: "SetDefaultFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "ClearDefaultFixedFontSize", name: "ClearDefaultFixedFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetDefaultFixedFontSize", name: "GetDefaultFixedFontSize", pkg: "", typ: $funcType([Object, funcType$20], [], false)}, {prop: "SetDefaultFixedFontSize", name: "SetDefaultFixedFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "ClearMinimumFontSize", name: "ClearMinimumFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetMinimumFontSize", name: "GetMinimumFontSize", pkg: "", typ: $funcType([Object, funcType$20], [], false)}, {prop: "SetMinimumFontSize", name: "SetMinimumFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "OnFontChanged", name: "OnFontChanged", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnDefaultFontSizeChanged", name: "OnDefaultFontSizeChanged", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnDefaultFixedFontSizeChanged", name: "OnDefaultFixedFontSizeChanged", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnMinimumFontSizeChanged", name: "OnMinimumFontSizeChanged", pkg: "", typ: $funcType([funcType$20], [], false)}];
 	ptrType$16.methods = [{prop: "Register", name: "Register", pkg: "", typ: $funcType([sliceType$1, funcType$51], [], false)}, {prop: "Unregister", name: "Unregister", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "Send", name: "Send", pkg: "", typ: $funcType([Object, funcType$52], [], false)}, {prop: "OnMessage", name: "OnMessage", pkg: "", typ: $funcType([funcType$53], [], false)}, {prop: "OnMessageDeleted", name: "OnMessageDeleted", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnSendError", name: "OnSendError", pkg: "", typ: $funcType([funcType$54], [], false)}];
 	ptrType$17.methods = [{prop: "Search", name: "Search", pkg: "", typ: $funcType([Object, funcType$55], [], false)}, {prop: "GetVisits", name: "GetVisits", pkg: "", typ: $funcType([Object, funcType$56], [], false)}, {prop: "AddUrl", name: "AddUrl", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "DeleteUrl", name: "DeleteUrl", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "DeleteRange", name: "DeleteRange", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "DeleteAll", name: "DeleteAll", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnVisited", name: "OnVisited", pkg: "", typ: $funcType([funcType$57], [], false)}, {prop: "OnVisitedRemoved", name: "OnVisitedRemoved", pkg: "", typ: $funcType([funcType$58], [], false)}];
 	ptrType$18.methods = [{prop: "GetAcceptLanguages", name: "GetAcceptLanguages", pkg: "", typ: $funcType([funcType$59], [], false)}, {prop: "GetMessage", name: "GetMessage", pkg: "", typ: $funcType([$String, $emptyInterface], [$String], false)}, {prop: "GetUILanguage", name: "GetUILanguage", pkg: "", typ: $funcType([], [$String], false)}];
@@ -16023,7 +16023,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	ptrType$25.methods = [{prop: "SaveAsMHTML", name: "SaveAsMHTML", pkg: "", typ: $funcType([Object, funcType$90], [], false)}];
 	ptrType$26.methods = [{prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([funcType$91], [], false)}, {prop: "Contains", name: "Contains", pkg: "", typ: $funcType([mapType$1, funcType$92], [], false)}, {prop: "Request", name: "Request", pkg: "", typ: $funcType([mapType$1, funcType$93], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([mapType$1, funcType$94], [], false)}, {prop: "OnAdded", name: "OnAdded", pkg: "", typ: $funcType([funcType$91], [], false)}, {prop: "OnRemoved", name: "OnRemoved", pkg: "", typ: $funcType([funcType$91], [], false)}];
 	ptrType$27.methods = [{prop: "RequestKeepAwake", name: "RequestKeepAwake", pkg: "", typ: $funcType([$String], [], false)}, {prop: "ReleaseKeepAwake", name: "ReleaseKeepAwake", pkg: "", typ: $funcType([], [], false)}];
-	ptrType$29.methods = [{prop: "OnProxyError", name: "OnProxyError", pkg: "", typ: $funcType([funcType$19], [], false)}];
+	ptrType$29.methods = [{prop: "OnProxyError", name: "OnProxyError", pkg: "", typ: $funcType([funcType$20], [], false)}];
 	ptrType$30.methods = [{prop: "GetBackgroundPage", name: "GetBackgroundPage", pkg: "", typ: $funcType([funcType$95], [], false)}, {prop: "GetManifest", name: "GetManifest", pkg: "", typ: $funcType([], [js.Object], false)}, {prop: "GetURL", name: "GetURL", pkg: "", typ: $funcType([$String], [$String], false)}, {prop: "Reload", name: "Reload", pkg: "", typ: $funcType([], [], false)}, {prop: "RequestUpdateCheck", name: "RequestUpdateCheck", pkg: "", typ: $funcType([funcType$96], [], false)}, {prop: "Restart", name: "Restart", pkg: "", typ: $funcType([], [], false)}, {prop: "Connect", name: "Connect", pkg: "", typ: $funcType([$String, $emptyInterface], [Port], false)}, {prop: "ConnectNative", name: "ConnectNative", pkg: "", typ: $funcType([$String], [Port], false)}, {prop: "SendMessage", name: "SendMessage", pkg: "", typ: $funcType([$String, $emptyInterface, $emptyInterface, funcType$97], [], false)}, {prop: "SendNativeMessage", name: "SendNativeMessage", pkg: "", typ: $funcType([$String, $emptyInterface, funcType$97], [], false)}, {prop: "GetPlatformInfo", name: "GetPlatformInfo", pkg: "", typ: $funcType([funcType$98], [], false)}, {prop: "GetPackageDirectoryEntry", name: "GetPackageDirectoryEntry", pkg: "", typ: $funcType([funcType$99], [], false)}, {prop: "OnStartup", name: "OnStartup", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnInstalled", name: "OnInstalled", pkg: "", typ: $funcType([funcType$100], [], false)}, {prop: "OnSuspend", name: "OnSuspend", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnSuspendCanceled", name: "OnSuspendCanceled", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnUpdateAvailable", name: "OnUpdateAvailable", pkg: "", typ: $funcType([funcType$100], [], false)}, {prop: "OnConnect", name: "OnConnect", pkg: "", typ: $funcType([funcType$101], [], false)}, {prop: "OnConnectExternal", name: "OnConnectExternal", pkg: "", typ: $funcType([funcType$101], [], false)}, {prop: "OnMessage", name: "OnMessage", pkg: "", typ: $funcType([funcType$103], [], false)}, {prop: "OnMessageExternal", name: "OnMessageExternal", pkg: "", typ: $funcType([funcType$103], [], false)}, {prop: "OnRestartRequired", name: "OnRestartRequired", pkg: "", typ: $funcType([funcType$104], [], false)}];
 	ptrType$31.methods = [{prop: "GetRecentlyClosed", name: "GetRecentlyClosed", pkg: "", typ: $funcType([Filter, funcType$105], [], false)}, {prop: "GetDevices", name: "GetDevices", pkg: "", typ: $funcType([Filter, funcType$106], [], false)}, {prop: "Restore", name: "Restore", pkg: "", typ: $funcType([$String, funcType$107], [], false)}, {prop: "OnChanged", name: "OnChanged", pkg: "", typ: $funcType([funcType$5], [], false)}];
 	ptrType$32.methods = [{prop: "OnChanged", name: "OnChanged", pkg: "", typ: $funcType([funcType$108], [], false)}];
@@ -16035,8 +16035,8 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	ptrType$36.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([funcType$134], [], false)}];
 	ptrType$37.methods = [{prop: "Speak", name: "Speak", pkg: "", typ: $funcType([$String, Object, funcType$5], [], false)}, {prop: "Stop", name: "Stop", pkg: "", typ: $funcType([], [], false)}, {prop: "Pause", name: "Pause", pkg: "", typ: $funcType([], [], false)}, {prop: "Resume", name: "Resume", pkg: "", typ: $funcType([], [], false)}, {prop: "IsSpeaking", name: "IsSpeaking", pkg: "", typ: $funcType([funcType$135], [], false)}, {prop: "GetVoices", name: "GetVoices", pkg: "", typ: $funcType([funcType$136], [], false)}];
 	ptrType$38.methods = [{prop: "OnSpeak", name: "OnSpeak", pkg: "", typ: $funcType([funcType$138], [], false)}, {prop: "OnStop", name: "OnStop", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnPause", name: "OnPause", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnResume", name: "OnResume", pkg: "", typ: $funcType([funcType$5], [], false)}];
-	ptrType$39.methods = [{prop: "GetFrame", name: "GetFrame", pkg: "", typ: $funcType([Object, funcType$19], [], false)}, {prop: "GetAllFrames", name: "GetAllFrames", pkg: "", typ: $funcType([Object, funcType$139], [], false)}, {prop: "OnBeforeNavigate", name: "OnBeforeNavigate", pkg: "", typ: $funcType([funcType$19, mapType$5], [], false)}, {prop: "OnCommited", name: "OnCommited", pkg: "", typ: $funcType([funcType$19, mapType$5], [], false)}, {prop: "OnDOMContentLoaded", name: "OnDOMContentLoaded", pkg: "", typ: $funcType([funcType$19, mapType$5], [], false)}, {prop: "OnCompleted", name: "OnCompleted", pkg: "", typ: $funcType([funcType$19, mapType$5], [], false)}, {prop: "OnErrorOccurred", name: "OnErrorOccurred", pkg: "", typ: $funcType([funcType$19, mapType$5], [], false)}, {prop: "OnCreatedNavigationTarget", name: "OnCreatedNavigationTarget", pkg: "", typ: $funcType([funcType$19, mapType$5], [], false)}, {prop: "OnReferenceFragmentUpdated", name: "OnReferenceFragmentUpdated", pkg: "", typ: $funcType([funcType$19, mapType$5], [], false)}, {prop: "OnTabReplaced", name: "OnTabReplaced", pkg: "", typ: $funcType([funcType$19], [], false)}, {prop: "OnHistoryStateUpdated", name: "OnHistoryStateUpdated", pkg: "", typ: $funcType([funcType$19, mapType$5], [], false)}];
-	ptrType$40.methods = [{prop: "HandlerBehaviorChanged", name: "HandlerBehaviorChanged", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnBeforeRequest", name: "OnBeforeRequest", pkg: "", typ: $funcType([funcType$19], [], false)}, {prop: "OnBeforeSendHeaders", name: "OnBeforeSendHeaders", pkg: "", typ: $funcType([funcType$19], [], false)}, {prop: "OnSendHeaders", name: "OnSendHeaders", pkg: "", typ: $funcType([funcType$19], [], false)}, {prop: "OnHeadersReceived", name: "OnHeadersReceived", pkg: "", typ: $funcType([funcType$19], [], false)}, {prop: "OnAuthRequired", name: "OnAuthRequired", pkg: "", typ: $funcType([funcType$19], [], false)}, {prop: "OnResponseStarted", name: "OnResponseStarted", pkg: "", typ: $funcType([funcType$19], [], false)}, {prop: "OnBeforeRedirect", name: "OnBeforeRedirect", pkg: "", typ: $funcType([funcType$19], [], false)}, {prop: "OnCompleted", name: "OnCompleted", pkg: "", typ: $funcType([funcType$19], [], false)}, {prop: "OnErrorOccured", name: "OnErrorOccured", pkg: "", typ: $funcType([funcType$19], [], false)}];
+	ptrType$39.methods = [{prop: "GetFrame", name: "GetFrame", pkg: "", typ: $funcType([Object, funcType$20], [], false)}, {prop: "GetAllFrames", name: "GetAllFrames", pkg: "", typ: $funcType([Object, funcType$139], [], false)}, {prop: "OnBeforeNavigate", name: "OnBeforeNavigate", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnCommited", name: "OnCommited", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnDOMContentLoaded", name: "OnDOMContentLoaded", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnCompleted", name: "OnCompleted", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnErrorOccurred", name: "OnErrorOccurred", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnCreatedNavigationTarget", name: "OnCreatedNavigationTarget", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnReferenceFragmentUpdated", name: "OnReferenceFragmentUpdated", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnTabReplaced", name: "OnTabReplaced", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnHistoryStateUpdated", name: "OnHistoryStateUpdated", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}];
+	ptrType$40.methods = [{prop: "HandlerBehaviorChanged", name: "HandlerBehaviorChanged", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnBeforeRequest", name: "OnBeforeRequest", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnBeforeSendHeaders", name: "OnBeforeSendHeaders", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnSendHeaders", name: "OnSendHeaders", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnHeadersReceived", name: "OnHeadersReceived", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnAuthRequired", name: "OnAuthRequired", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnResponseStarted", name: "OnResponseStarted", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnBeforeRedirect", name: "OnBeforeRedirect", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnCompleted", name: "OnCompleted", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnErrorOccured", name: "OnErrorOccured", pkg: "", typ: $funcType([funcType$20], [], false)}];
 	ptrType$41.methods = [{prop: "Install", name: "Install", pkg: "", typ: $funcType([$String, funcType$5, funcType$140], [], false)}, {prop: "OnInstallStageChanged", name: "OnInstallStageChanged", pkg: "", typ: $funcType([funcType$141], [], false)}, {prop: "OnDownloadProgress", name: "OnDownloadProgress", pkg: "", typ: $funcType([funcType$142], [], false)}];
 	ptrType$42.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([$Int, Object, funcType$143], [], false)}, {prop: "GetCurrent", name: "GetCurrent", pkg: "", typ: $funcType([Object, funcType$143], [], false)}, {prop: "GetLastFocused", name: "GetLastFocused", pkg: "", typ: $funcType([Object, funcType$143], [], false)}, {prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([Object, funcType$144], [], false)}, {prop: "Create", name: "Create", pkg: "", typ: $funcType([Object, funcType$143], [], false)}, {prop: "Update", name: "Update", pkg: "", typ: $funcType([$Int, Object, funcType$143], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([$Int, funcType$116], [], false)}, {prop: "OnCreated", name: "OnCreated", pkg: "", typ: $funcType([funcType$143], [], false)}, {prop: "OnRemoved", name: "OnRemoved", pkg: "", typ: $funcType([funcType$145], [], false)}, {prop: "onFocusChanged", name: "onFocusChanged", pkg: "github.com/fabioberger/chrome", typ: $funcType([funcType$145], [], false)}];
 	Alarms.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
@@ -19836,28 +19836,29 @@ $packages["honnef.co/go/js/dom"] = (function() {
 	return $pkg;
 })();
 $packages["main"] = (function() {
-	var $pkg = {}, fmt, chrome, qunit, dom, time, sliceType, doc, main;
+	var $pkg = {}, fmt, chrome, qunit, dom, time, sliceType, sliceType$1, doc, main;
 	fmt = $packages["fmt"];
 	chrome = $packages["github.com/fabioberger/chrome"];
 	qunit = $packages["github.com/fabioberger/qunit"];
 	dom = $packages["honnef.co/go/js/dom"];
 	time = $packages["time"];
 	sliceType = $sliceType($emptyInterface);
+	sliceType$1 = $sliceType($String);
 	main = function() {
-		var _key, _map, alarmOps, c, x;
+		var _key, _key$1, _key$2, _key$3, _key$4, _map, _map$1, _map$2, _map$3, _map$4, alarmOps, bookmark, c, change, cookie, x;
 		c = chrome.NewChrome();
-		qunit.Module("Alarms");
+		qunit.Module("Chrome");
 		alarmOps = (_map = new $Map(), _key = "when", _map[_key] = { k: _key, v: (x = time.Now().UnixNano(), new $Int64(x.$high + 0, x.$low + 1000000)) }, _map);
 		c.Alarms.Create("test_alarm", alarmOps);
 		c.Alarms.Get("test_alarm", (function(alarm) {
 			var alarm;
-			qunit.Test("Get()", (function(assert) {
+			qunit.Test("Alarm.Get()", (function(assert) {
 				var assert;
 				assert.Equal(new $String($internalize(alarm.Object.name, $String)), new $String("test_alarm"), "Get");
 			}));
 			c.Alarms.Clear("test_alarm", (function(wasCleared) {
 				var wasCleared;
-				qunit.Test("Clear()", (function(assert) {
+				qunit.Test("Alarm.Clear()", (function(assert) {
 					var assert;
 					assert.Equal(new $Bool(wasCleared), new $Bool(true), "Clear");
 				}));
@@ -19865,7 +19866,7 @@ $packages["main"] = (function() {
 				c.Alarms.Create("test_alarm3", alarmOps);
 				c.Alarms.GetAll((function(alarms) {
 					var alarms;
-					qunit.Test("GetAll()", (function(assert) {
+					qunit.Test("Alarm.GetAll()", (function(assert) {
 						var assert;
 						assert.Equal(new $String($internalize(((0 < 0 || 0 >= alarms.$length) ? $throwRuntimeError("index out of range") : alarms.$array[alarms.$offset + 0]).Object.name, $String)), new $String("test_alarm2"), "GetAll");
 						assert.Equal(new $String($internalize(((1 < 0 || 1 >= alarms.$length) ? $throwRuntimeError("index out of range") : alarms.$array[alarms.$offset + 1]).Object.name, $String)), new $String("test_alarm3"), "GetAll");
@@ -19873,12 +19874,65 @@ $packages["main"] = (function() {
 					fmt.Println(new sliceType([new $String("finished running getAll")]));
 					c.Alarms.ClearAll((function(wasCleared$1) {
 						var wasCleared$1;
-						qunit.Test("Clear()", (function(assert) {
+						qunit.Test("Alarm.ClearAll()", (function(assert) {
 							var assert;
 							assert.Equal(new $Bool(wasCleared$1), new $Bool(true), "Clear");
 						}));
 					}));
 				}));
+			}));
+		}));
+		bookmark = (_map$1 = new $Map(), _key$1 = "title", _map$1[_key$1] = { k: _key$1, v: new $String("Testing") }, _key$1 = "url", _map$1[_key$1] = { k: _key$1, v: new $String("http://www.testing.com/") }, _map$1);
+		c.Bookmarks.Create(bookmark, (function(result) {
+			var result;
+			qunit.Test("Bookmarks.Create()", (function(assert) {
+				var assert;
+				assert.Equal(new $String($internalize(result.Object.title, $String)), new $String("Testing"), "Create");
+			}));
+			c.Bookmarks.Get(new sliceType$1([$internalize(result.Object.id, $String)]), (function(results) {
+				var results;
+				qunit.Test("Bookmarks.Get()", (function(assert) {
+					var assert;
+					assert.Equal(new $String($internalize(((0 < 0 || 0 >= results.$length) ? $throwRuntimeError("index out of range") : results.$array[results.$offset + 0]).Object.url, $String)), new $String("http://www.testing.com/"), "Get");
+				}));
+			}));
+		}));
+		change = (_map$2 = new $Map(), _key$2 = "title", _map$2[_key$2] = { k: _key$2, v: new $String("Testing") }, _map$2);
+		c.BrowserAction.SetTitle(change);
+		c.BrowserAction.GetTitle((_map$3 = new $Map(), _map$3), (function(result) {
+			var result;
+			qunit.Test("BrowserAction.GetTitle()", (function(assert) {
+				var assert;
+				assert.Equal(new $String(result), new $String("Testing"), "GetTitle");
+			}));
+		}));
+		c.BrowsingData.Settings((function(result) {
+			var _entry, _i, _keys, _ref, key, result;
+			_ref = result;
+			_i = 0;
+			_keys = $keys(_ref);
+			while (true) {
+				if (!(_i < _keys.length)) { break; }
+				_entry = _ref[_keys[_i]];
+				if (_entry === undefined) {
+					_i++;
+					continue;
+				}
+				key = _entry.k;
+				qunit.Test("BrowsingData.Settings()", (function(assert) {
+					var assert;
+					assert.Equal(new $String(key), new $String("dataRemovalPermitted"), "Settings");
+				}));
+				break;
+			}
+		}));
+		cookie = (_map$4 = new $Map(), _key$4 = "url", _map$4[_key$4] = { k: _key$4, v: new $String("http://www.google.com") }, _key$4 = "name", _map$4[_key$4] = { k: _key$4, v: new $String("testing") }, _key$4 = "value", _map$4[_key$4] = { k: _key$4, v: new $String("testvalue") }, _map$4);
+		c.Cookies.Set(cookie, (function(c$1) {
+			var c$1;
+			qunit.Test("Cookies.Set()", (function(assert) {
+				var assert;
+				assert.Equal(new $String($internalize(c$1.Object.name, $String)), new $String("testing"), "Set");
+				assert.Equal(new $String($internalize(c$1.Object.value, $String)), new $String("testvalue"), "Set");
 			}));
 		}));
 	};

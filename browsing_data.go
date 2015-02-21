@@ -25,8 +25,8 @@ type DataTypeSet map[string]bool
 // Settings reports which types of data are currently selected in the 'Clear browsing data'
 // settings UI. Note: some of the data types included in this API are not available in the
 // settings UI, and some UI settings control more than one data type listed here.
-func (b *BrowsingData) Settings(result Object) {
-	b.o.Call("settings", result)
+func (b *BrowsingData) Settings(callback func(result Object)) {
+	b.o.Call("settings", callback)
 }
 
 // Remove clears various types of browsing data stored in a user's profile.
