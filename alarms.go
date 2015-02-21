@@ -53,6 +53,6 @@ func (a *Alarms) ClearAll(callback func(wasCleared bool)) {
 * Events
  */
 // OnAlarm is fired when an alarm has elapsed. Useful for event pages.
-func (a *Alarms) OnAlarm(callback func(Alarm)) {
+func (a *Alarms) OnAlarm(callback func(alarm Alarm)) {
 	a.o.Get("onAlarm").Call("addListener", callback)
 }
