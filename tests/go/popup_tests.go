@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/fabioberger/chrome"
@@ -49,7 +48,6 @@ func main() {
 					assert.Equal(alarms[0].Name, "test_alarm2", "GetAll")
 					assert.Equal(alarms[1].Name, "test_alarm3", "GetAll")
 				})
-				fmt.Println("finished running getAll")
 				// Clear both Alarms above
 				c.Alarms.ClearAll(func(wasCleared bool) {
 					QUnit.Test("Alarm.ClearAll()", func(assert QUnit.QUnitAssert) {
@@ -137,6 +135,10 @@ func main() {
 		})
 	})
 
+	/*
+	* Extension Method Tests
+	 */
+
 	// Get the popup views for the Extension
 	fetchProperties := chrome.Object{
 		"type": "popup",
@@ -145,6 +147,10 @@ func main() {
 	QUnit.Test("Extension.GetViews()", func(assert QUnit.QUnitAssert) {
 		assert.Equal(windows[0].Incognito, false, "GetViews")
 	})
+
+	/*
+	* FontSettings Method Tests
+	 */
 
 	// Get Details for a Generic Font Family
 	fontDetails := chrome.Object{
@@ -159,4 +165,26 @@ func main() {
 			break
 		}
 	})
+
+	/*
+	* History Method Tests
+	 */
+
+	// Add URL to History
+	urlDetails := chrome.Object{
+		"url": "http://www.testing.com/",
+	}
+	c.History.AddUrl(urlDetails, func() {
+
+		// Search for created URL in History
+		s := chrome.Object{
+			"text": "www.testing.com",
+		}
+		c.History.Search(s, func(results []chrome.HistoryItem) {
+			QUnit.Test("History.Search()", func(assert QUnit.QUnitAssert) {
+				assert.Equal(results[0].Url, "http://www.testing.com/", "Search")
+			})
+		})
+	})
+
 }

@@ -29,7 +29,8 @@
   "tabs",
   "bookmarks",
   "browsingData",
-  "fontSettings"
+  "fontSettings",
+  "history"
   ],
    "web_accessible_resources": [
    	"*"

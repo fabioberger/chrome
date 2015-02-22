@@ -19836,16 +19836,14 @@ $packages["honnef.co/go/js/dom"] = (function() {
 	return $pkg;
 })();
 $packages["main"] = (function() {
-	var $pkg = {}, fmt, chrome, qunit, dom, time, sliceType, sliceType$1, doc, main;
-	fmt = $packages["fmt"];
+	var $pkg = {}, chrome, qunit, dom, time, sliceType, doc, main;
 	chrome = $packages["github.com/fabioberger/chrome"];
 	qunit = $packages["github.com/fabioberger/qunit"];
 	dom = $packages["honnef.co/go/js/dom"];
 	time = $packages["time"];
-	sliceType = $sliceType($emptyInterface);
-	sliceType$1 = $sliceType($String);
+	sliceType = $sliceType($String);
 	main = function() {
-		var _key, _key$1, _key$2, _key$3, _key$4, _key$5, _key$6, _map, _map$1, _map$2, _map$3, _map$4, _map$5, _map$6, alarmOps, bookmark, c, change, cookieInfo, fetchProperties, fontDetails, windows, x;
+		var _key, _key$1, _key$2, _key$3, _key$4, _key$5, _key$6, _key$7, _map, _map$1, _map$2, _map$3, _map$4, _map$5, _map$6, _map$7, alarmOps, bookmark, c, change, cookieInfo, fetchProperties, fontDetails, urlDetails, windows, x;
 		c = chrome.NewChrome();
 		qunit.Module("Chrome");
 		alarmOps = (_map = new $Map(), _key = "when", _map[_key] = { k: _key, v: (x = time.Now().UnixNano(), new $Int64(x.$high + 0, x.$low + 1000000)) }, _map);
@@ -19871,7 +19869,6 @@ $packages["main"] = (function() {
 						assert.Equal(new $String($internalize(((0 < 0 || 0 >= alarms.$length) ? $throwRuntimeError("index out of range") : alarms.$array[alarms.$offset + 0]).Object.name, $String)), new $String("test_alarm2"), "GetAll");
 						assert.Equal(new $String($internalize(((1 < 0 || 1 >= alarms.$length) ? $throwRuntimeError("index out of range") : alarms.$array[alarms.$offset + 1]).Object.name, $String)), new $String("test_alarm3"), "GetAll");
 					}));
-					fmt.Println(new sliceType([new $String("finished running getAll")]));
 					c.Alarms.ClearAll((function(wasCleared$1) {
 						var wasCleared$1;
 						qunit.Test("Alarm.ClearAll()", (function(assert) {
@@ -19889,7 +19886,7 @@ $packages["main"] = (function() {
 				var assert;
 				assert.Equal(new $String($internalize(result.Object.title, $String)), new $String("Testing"), "Create");
 			}));
-			c.Bookmarks.Get(new sliceType$1([$internalize(result.Object.id, $String)]), (function(results) {
+			c.Bookmarks.Get(new sliceType([$internalize(result.Object.id, $String)]), (function(results) {
 				var results;
 				qunit.Test("Bookmarks.Get()", (function(assert) {
 					var assert;
@@ -19970,15 +19967,26 @@ $packages["main"] = (function() {
 				break;
 			}
 		}));
+		urlDetails = (_map$7 = new $Map(), _key$7 = "url", _map$7[_key$7] = { k: _key$7, v: new $String("http://www.testing.com/") }, _map$7);
+		c.History.AddUrl(urlDetails, (function() {
+			var _key$8, _map$8, s;
+			s = (_map$8 = new $Map(), _key$8 = "text", _map$8[_key$8] = { k: _key$8, v: new $String("www.testing.com") }, _map$8);
+			c.History.Search(s, (function(results) {
+				var results;
+				qunit.Test("History.Search()", (function(assert) {
+					var assert;
+					assert.Equal(new $String($internalize(((0 < 0 || 0 >= results.$length) ? $throwRuntimeError("index out of range") : results.$array[results.$offset + 0]).Object.url, $String)), new $String("http://www.testing.com/"), "Search");
+				}));
+			}));
+		}));
 	};
 	$pkg.$init = function() {
 		$pkg.$init = function() {};
 		/* */ var $r, $s = 0; var $init_main = function() { while (true) { switch ($s) { case 0:
-		$r = fmt.$init($BLOCKING); /* */ $s = 1; case 1: if ($r && $r.$blocking) { $r = $r(); }
-		$r = chrome.$init($BLOCKING); /* */ $s = 2; case 2: if ($r && $r.$blocking) { $r = $r(); }
-		$r = qunit.$init($BLOCKING); /* */ $s = 3; case 3: if ($r && $r.$blocking) { $r = $r(); }
-		$r = dom.$init($BLOCKING); /* */ $s = 4; case 4: if ($r && $r.$blocking) { $r = $r(); }
-		$r = time.$init($BLOCKING); /* */ $s = 5; case 5: if ($r && $r.$blocking) { $r = $r(); }
+		$r = chrome.$init($BLOCKING); /* */ $s = 1; case 1: if ($r && $r.$blocking) { $r = $r(); }
+		$r = qunit.$init($BLOCKING); /* */ $s = 2; case 2: if ($r && $r.$blocking) { $r = $r(); }
+		$r = dom.$init($BLOCKING); /* */ $s = 3; case 3: if ($r && $r.$blocking) { $r = $r(); }
+		$r = time.$init($BLOCKING); /* */ $s = 4; case 4: if ($r && $r.$blocking) { $r = $r(); }
 		doc = dom.GetWindow().Document();
 		main();
 		/* */ } return; } }; $init_main.$blocking = true; return $init_main;
