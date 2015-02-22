@@ -19845,7 +19845,7 @@ $packages["main"] = (function() {
 	sliceType = $sliceType($emptyInterface);
 	sliceType$1 = $sliceType($String);
 	main = function() {
-		var _key, _key$1, _key$2, _key$3, _key$4, _map, _map$1, _map$2, _map$3, _map$4, alarmOps, bookmark, c, change, cookie, x;
+		var _key, _key$1, _key$2, _key$3, _key$4, _key$5, _key$6, _map, _map$1, _map$2, _map$3, _map$4, _map$5, _map$6, alarmOps, bookmark, c, change, cookieInfo, fetchProperties, fontDetails, windows, x;
 		c = chrome.NewChrome();
 		qunit.Module("Chrome");
 		alarmOps = (_map = new $Map(), _key = "when", _map[_key] = { k: _key, v: (x = time.Now().UnixNano(), new $Int64(x.$high + 0, x.$low + 1000000)) }, _map);
@@ -19926,14 +19926,49 @@ $packages["main"] = (function() {
 				break;
 			}
 		}));
-		cookie = (_map$4 = new $Map(), _key$4 = "url", _map$4[_key$4] = { k: _key$4, v: new $String("http://www.google.com") }, _key$4 = "name", _map$4[_key$4] = { k: _key$4, v: new $String("testing") }, _key$4 = "value", _map$4[_key$4] = { k: _key$4, v: new $String("testvalue") }, _map$4);
-		c.Cookies.Set(cookie, (function(c$1) {
-			var c$1;
+		cookieInfo = (_map$4 = new $Map(), _key$4 = "url", _map$4[_key$4] = { k: _key$4, v: new $String("http://www.google.com") }, _key$4 = "name", _map$4[_key$4] = { k: _key$4, v: new $String("testing") }, _key$4 = "value", _map$4[_key$4] = { k: _key$4, v: new $String("testvalue") }, _map$4);
+		c.Cookies.Set(cookieInfo, (function(cookie) {
+			var _key$5, _map$5, cookie;
 			qunit.Test("Cookies.Set()", (function(assert) {
 				var assert;
-				assert.Equal(new $String($internalize(c$1.Object.name, $String)), new $String("testing"), "Set");
-				assert.Equal(new $String($internalize(c$1.Object.value, $String)), new $String("testvalue"), "Set");
+				assert.Equal(new $String($internalize(cookie.Object.name, $String)), new $String("testing"), "Set");
+				assert.Equal(new $String($internalize(cookie.Object.value, $String)), new $String("testvalue"), "Set");
 			}));
+			cookieInfo = (_map$5 = new $Map(), _key$5 = "url", _map$5[_key$5] = { k: _key$5, v: new $String("http://www.google.com") }, _key$5 = "name", _map$5[_key$5] = { k: _key$5, v: new $String("testing") }, _map$5);
+			c.Cookies.Get(cookieInfo, (function(cookie$1) {
+				var cookie$1;
+				qunit.Test("Cookies.Get()", (function(assert) {
+					var assert;
+					assert.Equal(new $String($internalize(cookie$1.Object.name, $String)), new $String("testing"), "Get");
+				}));
+			}));
+		}));
+		fetchProperties = (_map$5 = new $Map(), _key$5 = "type", _map$5[_key$5] = { k: _key$5, v: new $String("popup") }, _map$5);
+		windows = c.Extension.GetViews(fetchProperties);
+		qunit.Test("Extension.GetViews()", (function(assert) {
+			var assert;
+			assert.Equal(new $Bool(!!(((0 < 0 || 0 >= windows.$length) ? $throwRuntimeError("index out of range") : windows.$array[windows.$offset + 0]).Object.incognito)), new $Bool(false), "GetViews");
+		}));
+		fontDetails = (_map$6 = new $Map(), _key$6 = "genericFamily", _map$6[_key$6] = { k: _key$6, v: new $String("standard") }, _key$6 = "script", _map$6[_key$6] = { k: _key$6, v: new $String("Arab") }, _map$6);
+		c.FontSettings.GetFont(fontDetails, (function(details) {
+			var _entry, _i, _keys, _ref, details, key;
+			_ref = details;
+			_i = 0;
+			_keys = $keys(_ref);
+			while (true) {
+				if (!(_i < _keys.length)) { break; }
+				_entry = _ref[_keys[_i]];
+				if (_entry === undefined) {
+					_i++;
+					continue;
+				}
+				key = _entry.k;
+				qunit.Test("FontSettings.GetFont()", (function(assert) {
+					var assert;
+					assert.Equal(new $String(key), new $String("fontId"), "GetFont");
+				}));
+				break;
+			}
 		}));
 	};
 	$pkg.$init = function() {

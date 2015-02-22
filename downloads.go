@@ -89,7 +89,7 @@ func (d *Downloads) ShowDefaultFolder() {
 	d.o.Call("showDefaultFolder")
 }
 
-/* Erase rrase matching DownloadItem from history without deleting the downloaded file. An onErased event will fire for each DownloadItem that matches query, then callback will be called. */
+/* Erase erases matching DownloadItem from history without deleting the downloaded file. An onErased event will fire for each DownloadItem that matches query, then callback will be called. */
 func (d *Downloads) Erase(query Object, callback func(erasedIds []int)) {
 	d.o.Call("erase", query, callback)
 }

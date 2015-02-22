@@ -2,10 +2,6 @@ package chrome
 
 import "github.com/gopherjs/gopherjs/js"
 
-const (
-	MAX_MESSAGE_SIZE = 4096
-)
-
 type Gcm struct {
 	o                js.Object
 	MAX_MESSAGE_SIZE int

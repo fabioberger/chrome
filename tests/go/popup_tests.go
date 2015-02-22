@@ -114,27 +114,49 @@ func main() {
 	 */
 
 	// Set a new Cookie
-	cookie := chrome.Object{
+	cookieInfo := chrome.Object{
 		"url":   "http://www.google.com",
 		"name":  "testing",
 		"value": "testvalue",
 	}
-	c.Cookies.Set(cookie, func(c chrome.Cookie) {
+	c.Cookies.Set(cookieInfo, func(cookie chrome.Cookie) {
 		QUnit.Test("Cookies.Set()", func(assert QUnit.QUnitAssert) {
-			assert.Equal(c.Name, "testing", "Set")
-			assert.Equal(c.Value, "testvalue", "Set")
+			assert.Equal(cookie.Name, "testing", "Set")
+			assert.Equal(cookie.Value, "testvalue", "Set")
 		})
 
 		// Get the cookie set previously
-		cookieInfo := chrome.Object{
+		cookieInfo = chrome.Object{
 			"url":  "http://www.google.com",
 			"name": "testing",
 		}
 		c.Cookies.Get(cookieInfo, func(cookie chrome.Cookie) {
 			QUnit.Test("Cookies.Get()", func(assert QUnit.QUnitAssert) {
-				assert.Equal(c.Name, "testing", "Get")
+				assert.Equal(cookie.Name, "testing", "Get")
 			})
 		})
 	})
 
+	// Get the popup views for the Extension
+	fetchProperties := chrome.Object{
+		"type": "popup",
+	}
+	windows := c.Extension.GetViews(fetchProperties)
+	QUnit.Test("Extension.GetViews()", func(assert QUnit.QUnitAssert) {
+		assert.Equal(windows[0].Incognito, false, "GetViews")
+	})
+
+	// Get Details for a Generic Font Family
+	fontDetails := chrome.Object{
+		"genericFamily": "standard",
+		"script":        "Arab",
+	}
+	c.FontSettings.GetFont(fontDetails, func(details chrome.Object) {
+		for key, _ := range details {
+			QUnit.Test("FontSettings.GetFont()", func(assert QUnit.QUnitAssert) {
+				assert.Equal(key, "fontId", "GetFont")
+			})
+			break
+		}
+	})
 }
