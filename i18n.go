@@ -3,7 +3,7 @@ package chrome
 import "github.com/gopherjs/gopherjs/js"
 
 type I18n struct {
-	o js.Object
+	o *js.Object
 }
 
 /*

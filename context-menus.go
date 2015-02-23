@@ -3,11 +3,11 @@ package chrome
 import "github.com/gopherjs/gopherjs/js"
 
 type ContextMenus struct {
-	o                           js.Object
+	o                           *js.Object
 	ACTION_MENU_TOP_LEVEL_LIMIT int
 }
 
-func NewContextMenus(contextMenusObj js.Object) *ContextMenus {
+func NewContextMenus(contextMenusObj *js.Object) *ContextMenus {
 	c := new(ContextMenus)
 	c.o = contextMenusObj
 	if c.o.String() != "undefined" {

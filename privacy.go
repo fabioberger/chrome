@@ -3,12 +3,12 @@ package chrome
 import "github.com/gopherjs/gopherjs/js"
 
 type Privacy struct {
-	Services js.Object
-	Network  js.Object
-	Websites js.Object
+	Services *js.Object
+	Network  *js.Object
+	Websites *js.Object
 }
 
-func NewPrivacy(privacyObj js.Object) *Privacy {
+func NewPrivacy(privacyObj *js.Object) *Privacy {
 	p := new(Privacy)
 	if privacyObj.String() != "undefined" {
 		p.Services = privacyObj.Get("services")

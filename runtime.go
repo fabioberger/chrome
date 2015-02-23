@@ -3,12 +3,12 @@ package chrome
 import "github.com/gopherjs/gopherjs/js"
 
 type Runtime struct {
-	o         js.Object
-	LastError js.Object
+	o         *js.Object
+	LastError *js.Object
 	Id        string
 }
 
-func NewRuntime(runtimeObj js.Object) *Runtime {
+func NewRuntime(runtimeObj *js.Object) *Runtime {
 	r := new(Runtime)
 	r.o = runtimeObj
 	if r.o.String() != "undefined" {
@@ -49,7 +49,7 @@ func (r *Runtime) GetBackgroundPage(callback func(backgroundPage interface{})) {
 	r.o.Call("getBackgroundPage", callback)
 }
 
-func (r *Runtime) GetManifest() js.Object {
+func (r *Runtime) GetManifest() *js.Object {
 	return r.o.Call("getManifest")
 }
 
@@ -71,11 +71,13 @@ func (r *Runtime) Restart() {
 }
 
 func (r *Runtime) Connect(extensionId string, connectInfo interface{}) Port {
-	return r.o.Call("connect", extensionId, connectInfo).(Port)
+	portObj := *r.o.Call("connect", extensionId, connectInfo)
+	return Port{Object: portObj}
 }
 
 func (r *Runtime) ConnectNative(application string) Port {
-	return r.o.Call("connectNative", application).(Port)
+	portObj := *r.o.Call("connectNative", application)
+	return Port{Object: portObj}
 }
 
 func (r *Runtime) SendMessage(extensionId string, message interface{}, options interface{}, responseCallback func(response interface{})) {

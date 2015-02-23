@@ -3,7 +3,7 @@ package chrome
 import "github.com/gopherjs/gopherjs/js"
 
 type Tabs struct {
-	o js.Object
+	o *js.Object
 }
 
 /*
@@ -57,7 +57,7 @@ func (t *Tabs) Connect(tabId int, connectInfo interface{}) {
 // SendMessage sends a single message to the content script(s) in the specified tab,
 //  with an optional callback to run when a response is sent back. The runtime.onMessage
 // event is fired in each content script running in the specified tab for the current extension.
-func (t *Tabs) SendMessage(tabId int, message interface{}, responseCallback func(js.Object)) {
+func (t *Tabs) SendMessage(tabId int, message interface{}, responseCallback func(response Object)) {
 	t.o.Call("sendMessage", tabId, message, responseCallback)
 }
 

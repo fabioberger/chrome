@@ -3,13 +3,13 @@ package chrome
 import "github.com/gopherjs/gopherjs/js"
 
 type System struct {
-	o       js.Object
+	o       *js.Object
 	Cpu     *Cpu
 	Memory  *Memory
 	Storage *SysStorage
 }
 
-func NewSystem(systemObj js.Object) *System {
+func NewSystem(systemObj *js.Object) *System {
 	s := new(System)
 	s.o = systemObj
 	if systemObj.String() != "undefined" {
@@ -21,15 +21,15 @@ func NewSystem(systemObj js.Object) *System {
 }
 
 type Cpu struct {
-	o js.Object
+	o *js.Object
 }
 
 type Memory struct {
-	o js.Object
+	o *js.Object
 }
 
 type SysStorage struct {
-	o js.Object
+	o *js.Object
 }
 
 /*

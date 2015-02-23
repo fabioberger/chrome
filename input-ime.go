@@ -3,15 +3,15 @@ package chrome
 import "github.com/gopherjs/gopherjs/js"
 
 type Input struct {
-	o   js.Object
+	o   *js.Object
 	Ime *Ime
 }
 
 type Ime struct {
-	o js.Object
+	o *js.Object
 }
 
-func NewInput(inputObj js.Object) *Input {
+func NewInput(inputObj *js.Object) *Input {
 	i := new(Input)
 	i.o = inputObj
 	if i.o.String() == "undefined" {

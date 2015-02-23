@@ -12952,7 +12952,7 @@ $packages["fmt"] = (function() {
 	return $pkg;
 })();
 $packages["github.com/fabioberger/chrome"] = (function() {
-	var $pkg = {}, fmt, js, time, Alarms, Alarm, Bookmarks, BookmarkTreeNode, BrowserAction, ColorArray, BrowsingData, RemovalOptions, DataTypeSet, Object, Chrome, Commands, Command, ContextMenus, Cookies, Cookie, CookieStore, Debugger, Debugee, TargetInfo, DeclarativeContent, OnPageChanged, DesktopCapture, Downloads, DownloadItem, Enterprise, PlatformKeys, Token, Extension, FileBrowserHandler, FileHandlerExecuteEventDetails, FileSystemProvider, EntryMetadata, FileSystemInfo, FontSettings, FontName, Gcm, History, HistoryItem, VisitItem, I18n, Identity, AccountInfo, Idle, Input, Ime, KeyboardEvent, InputContext, Notification, NotificationOptions, Omnibox, SuggestResult, PageAction, PageCapture, Permissions, Power, Privacy, Proxy, Runtime, Port, MessageSender, PlatformInfo, Sessions, Filter, Session, Device, Storage, StorageChange, System, Cpu, Memory, SysStorage, StorageUnitInfo, TabCapture, CaptureInfo, Tabs, Tab, ZoomSettings, TopSites, MostvisitedURL, Tts, TtsEvent, TtsVoice, TtsEngine, WebNavigation, WebRequest, WebStore, Windows, Window, funcType, sliceType, funcType$1, funcType$2, sliceType$1, sliceType$2, funcType$3, funcType$4, funcType$5, funcType$6, funcType$7, funcType$8, funcType$9, funcType$10, funcType$11, funcType$12, funcType$13, funcType$14, sliceType$3, funcType$15, funcType$16, funcType$17, funcType$18, sliceType$4, funcType$19, funcType$20, sliceType$5, funcType$21, funcType$22, sliceType$6, funcType$23, funcType$24, funcType$25, sliceType$7, mapType, sliceType$8, funcType$26, funcType$27, funcType$28, sliceType$9, funcType$29, funcType$30, sliceType$10, funcType$31, funcType$32, funcType$33, funcType$34, funcType$35, sliceType$11, funcType$36, funcType$37, sliceType$12, sliceType$13, funcType$38, funcType$39, sliceType$14, funcType$40, funcType$41, funcType$42, funcType$43, funcType$44, funcType$45, sliceType$15, funcType$46, funcType$47, funcType$48, funcType$49, sliceType$16, funcType$50, funcType$51, funcType$52, funcType$53, funcType$54, sliceType$17, funcType$55, sliceType$18, funcType$56, funcType$57, funcType$58, funcType$59, sliceType$19, funcType$60, funcType$61, funcType$62, funcType$63, funcType$64, funcType$65, funcType$66, funcType$67, funcType$68, funcType$69, funcType$70, funcType$71, funcType$72, funcType$73, funcType$74, funcType$79, funcType$80, funcType$81, funcType$82, funcType$83, funcType$84, funcType$85, sliceType$21, funcType$86, funcType$87, funcType$88, funcType$89, funcType$90, mapType$1, funcType$91, funcType$92, funcType$93, funcType$94, funcType$95, funcType$96, funcType$97, funcType$98, funcType$99, mapType$2, funcType$100, funcType$101, funcType$102, funcType$103, funcType$104, sliceType$22, funcType$105, sliceType$23, funcType$106, funcType$107, mapType$3, funcType$108, funcType$109, mapType$4, funcType$110, sliceType$24, funcType$111, funcType$112, funcType$113, sliceType$25, funcType$114, funcType$115, funcType$116, funcType$117, funcType$118, funcType$119, funcType$120, funcType$121, funcType$122, funcType$123, funcType$124, funcType$125, funcType$126, funcType$127, funcType$128, funcType$129, funcType$130, funcType$131, funcType$132, funcType$133, sliceType$26, funcType$134, funcType$135, sliceType$27, funcType$136, funcType$137, funcType$138, sliceType$28, funcType$139, mapType$5, funcType$140, funcType$141, funcType$142, funcType$143, funcType$144, funcType$145, ptrType, ptrType$1, ptrType$2, ptrType$3, mapType$6, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, ptrType$9, ptrType$10, ptrType$11, ptrType$12, ptrType$13, ptrType$14, ptrType$15, ptrType$16, ptrType$17, ptrType$18, ptrType$19, ptrType$20, ptrType$21, ptrType$22, ptrType$23, ptrType$24, ptrType$25, ptrType$26, ptrType$27, ptrType$28, ptrType$29, ptrType$30, ptrType$31, ptrType$32, ptrType$33, ptrType$34, ptrType$35, ptrType$36, ptrType$37, ptrType$38, ptrType$39, ptrType$40, ptrType$41, ptrType$42, ptrType$43, ptrType$44, ptrType$45, ptrType$47, ptrType$48, ptrType$49, NewChrome, NewContextMenus, NewDeclarativeContent, NewEnterprise, NewExtension, NewGcm, NewInput, NewPrivacy, NewProxy, NewRuntime, NewSessions, NewStorage, NewSystem, NewWebRequest, NewWindows;
+	var $pkg = {}, fmt, js, time, Alarms, Alarm, Bookmarks, BookmarkTreeNode, BrowserAction, ColorArray, BrowsingData, RemovalOptions, DataTypeSet, Object, Chrome, Commands, Command, ContextMenus, Cookies, Cookie, CookieStore, Debugger, Debugee, TargetInfo, DeclarativeContent, OnPageChanged, DesktopCapture, Downloads, DownloadItem, Enterprise, PlatformKeys, Token, Extension, FileBrowserHandler, FileHandlerExecuteEventDetails, FileSystemProvider, EntryMetadata, FileSystemInfo, FontSettings, FontName, Gcm, History, HistoryItem, VisitItem, I18n, Identity, AccountInfo, Idle, Input, Ime, KeyboardEvent, InputContext, Notification, NotificationOptions, Omnibox, SuggestResult, PageAction, PageCapture, Permissions, Power, Privacy, Proxy, Runtime, Port, MessageSender, PlatformInfo, Sessions, Filter, Session, Device, Storage, StorageChange, System, Cpu, Memory, SysStorage, StorageUnitInfo, TabCapture, CaptureInfo, Tabs, Tab, ZoomSettings, TopSites, MostvisitedURL, Tts, TtsEvent, TtsVoice, TtsEngine, WebNavigation, WebRequest, WebStore, Windows, Window, funcType, sliceType, funcType$1, funcType$2, sliceType$1, sliceType$2, funcType$3, funcType$4, funcType$5, funcType$6, funcType$7, funcType$8, funcType$9, funcType$10, funcType$11, funcType$12, funcType$13, funcType$14, sliceType$3, funcType$15, funcType$16, funcType$17, funcType$18, sliceType$4, funcType$19, funcType$20, sliceType$5, funcType$21, funcType$22, sliceType$6, funcType$23, funcType$24, funcType$25, sliceType$7, mapType, sliceType$8, funcType$26, funcType$27, funcType$28, sliceType$9, funcType$29, funcType$30, sliceType$10, funcType$31, funcType$32, funcType$33, funcType$34, funcType$35, sliceType$11, funcType$36, funcType$37, sliceType$12, sliceType$13, funcType$38, funcType$39, sliceType$14, funcType$40, funcType$41, funcType$42, funcType$43, funcType$44, funcType$45, sliceType$15, funcType$46, funcType$47, funcType$48, funcType$49, sliceType$16, funcType$50, funcType$51, funcType$52, funcType$53, funcType$54, sliceType$17, funcType$55, sliceType$18, funcType$56, funcType$57, funcType$58, funcType$59, sliceType$19, funcType$60, funcType$61, funcType$62, funcType$63, funcType$64, funcType$65, funcType$66, funcType$67, funcType$68, funcType$69, funcType$70, funcType$71, funcType$72, funcType$73, funcType$74, funcType$79, funcType$80, funcType$81, funcType$82, funcType$83, funcType$84, funcType$85, sliceType$21, funcType$86, funcType$87, funcType$88, funcType$89, funcType$90, mapType$1, funcType$91, funcType$92, funcType$93, funcType$94, funcType$95, funcType$96, funcType$97, funcType$98, funcType$99, mapType$2, funcType$100, funcType$101, funcType$102, funcType$103, funcType$104, sliceType$22, funcType$105, sliceType$23, funcType$106, funcType$107, mapType$3, funcType$108, funcType$109, mapType$4, funcType$110, sliceType$24, funcType$111, funcType$112, funcType$113, sliceType$25, funcType$114, funcType$115, funcType$116, funcType$117, funcType$118, funcType$119, funcType$120, funcType$121, funcType$122, funcType$123, funcType$124, funcType$125, funcType$126, funcType$127, funcType$128, funcType$129, funcType$130, funcType$131, funcType$132, funcType$133, funcType$134, sliceType$26, funcType$135, funcType$136, sliceType$27, funcType$137, funcType$138, funcType$139, sliceType$28, funcType$140, mapType$5, funcType$141, funcType$142, funcType$143, funcType$144, funcType$145, funcType$146, ptrType, ptrType$1, ptrType$2, ptrType$3, mapType$6, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, ptrType$9, ptrType$10, ptrType$11, ptrType$12, ptrType$13, ptrType$14, ptrType$15, ptrType$16, ptrType$17, ptrType$18, ptrType$19, ptrType$20, ptrType$21, ptrType$22, ptrType$23, ptrType$24, ptrType$25, ptrType$26, ptrType$27, ptrType$28, ptrType$29, ptrType$30, ptrType$31, ptrType$32, ptrType$33, ptrType$34, ptrType$35, ptrType$36, ptrType$37, ptrType$38, ptrType$39, ptrType$40, ptrType$41, ptrType$42, ptrType$43, ptrType$44, ptrType$45, ptrType$47, ptrType$48, ptrType$49, NewChrome, NewContextMenus, NewDeclarativeContent, NewEnterprise, NewExtension, NewGcm, NewInput, NewPrivacy, NewProxy, NewRuntime, NewSessions, NewStorage, NewSystem, NewWebRequest, NewWindows;
 	fmt = $packages["fmt"];
 	js = $packages["github.com/gopherjs/gopherjs/js"];
 	time = $packages["time"];
@@ -13678,40 +13678,41 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	sliceType$25 = $sliceType(CaptureInfo);
 	funcType$114 = $funcType([sliceType$25], [], false);
 	funcType$115 = $funcType([CaptureInfo], [], false);
-	funcType$116 = $funcType([js.Object], [], false);
+	funcType$116 = $funcType([Object], [], false);
 	funcType$117 = $funcType([sliceType$13], [], false);
 	funcType$118 = $funcType([sliceType$13], [], false);
-	funcType$119 = $funcType([$String], [], false);
+	funcType$119 = $funcType([js.Object], [], false);
 	funcType$120 = $funcType([$String], [], false);
-	funcType$121 = $funcType([sliceType$7], [], false);
-	funcType$122 = $funcType([$Int64], [], false);
-	funcType$123 = $funcType([ZoomSettings], [], false);
-	funcType$124 = $funcType([$Int, Object, Tab], [], false);
-	funcType$125 = $funcType([$Int, Object], [], false);
-	funcType$126 = $funcType([Object], [], false);
+	funcType$121 = $funcType([$String], [], false);
+	funcType$122 = $funcType([sliceType$7], [], false);
+	funcType$123 = $funcType([$Int64], [], false);
+	funcType$124 = $funcType([ZoomSettings], [], false);
+	funcType$125 = $funcType([$Int, Object, Tab], [], false);
+	funcType$126 = $funcType([$Int, Object], [], false);
 	funcType$127 = $funcType([Object], [], false);
 	funcType$128 = $funcType([Object], [], false);
-	funcType$129 = $funcType([$Int, Object], [], false);
+	funcType$129 = $funcType([Object], [], false);
 	funcType$130 = $funcType([$Int, Object], [], false);
 	funcType$131 = $funcType([$Int, Object], [], false);
-	funcType$132 = $funcType([$Int, $Int], [], false);
-	funcType$133 = $funcType([Object], [], false);
+	funcType$132 = $funcType([$Int, Object], [], false);
+	funcType$133 = $funcType([$Int, $Int], [], false);
+	funcType$134 = $funcType([Object], [], false);
 	sliceType$26 = $sliceType(MostvisitedURL);
-	funcType$134 = $funcType([sliceType$26], [], false);
-	funcType$135 = $funcType([$Bool], [], false);
+	funcType$135 = $funcType([sliceType$26], [], false);
+	funcType$136 = $funcType([$Bool], [], false);
 	sliceType$27 = $sliceType(TtsVoice);
-	funcType$136 = $funcType([sliceType$27], [], false);
-	funcType$137 = $funcType([TtsEvent], [], false);
-	funcType$138 = $funcType([$String, Object, funcType$137], [], false);
+	funcType$137 = $funcType([sliceType$27], [], false);
+	funcType$138 = $funcType([TtsEvent], [], false);
+	funcType$139 = $funcType([$String, Object, funcType$138], [], false);
 	sliceType$28 = $sliceType(Object);
-	funcType$139 = $funcType([sliceType$28], [], false);
+	funcType$140 = $funcType([sliceType$28], [], false);
 	mapType$5 = $mapType($String, sliceType$28);
-	funcType$140 = $funcType([$String, $String], [], false);
-	funcType$141 = $funcType([$String], [], false);
-	funcType$142 = $funcType([$Int64], [], false);
-	funcType$143 = $funcType([Window], [], false);
-	funcType$144 = $funcType([sliceType$12], [], false);
-	funcType$145 = $funcType([$Int], [], false);
+	funcType$141 = $funcType([$String, $String], [], false);
+	funcType$142 = $funcType([$String], [], false);
+	funcType$143 = $funcType([$Int64], [], false);
+	funcType$144 = $funcType([Window], [], false);
+	funcType$145 = $funcType([sliceType$12], [], false);
+	funcType$146 = $funcType([$Int], [], false);
 	ptrType = $ptrType(Alarms);
 	ptrType$1 = $ptrType(Bookmarks);
 	ptrType$2 = $ptrType(BrowserAction);
@@ -15571,7 +15572,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	Tabs.ptr.prototype.Highlight = function(highlightInfo, callback) {
 		var callback, highlightInfo, t;
 		t = this;
-		t.o.highlight($externalize(highlightInfo, $emptyInterface), $externalize(callback, funcType$116));
+		t.o.highlight($externalize(highlightInfo, $emptyInterface), $externalize(callback, funcType$119));
 	};
 	Tabs.prototype.Highlight = function(highlightInfo, callback) { return this.$val.Highlight(highlightInfo, callback); };
 	Tabs.ptr.prototype.Update = function(tabId, updateProperties, callback) {
@@ -15589,31 +15590,31 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	Tabs.ptr.prototype.Reload = function(tabId, reloadProperties, callback) {
 		var callback, reloadProperties, t, tabId;
 		t = this;
-		t.o.reload(tabId, $externalize(reloadProperties, $emptyInterface), $externalize(callback, funcType$116));
+		t.o.reload(tabId, $externalize(reloadProperties, $emptyInterface), $externalize(callback, funcType$119));
 	};
 	Tabs.prototype.Reload = function(tabId, reloadProperties, callback) { return this.$val.Reload(tabId, reloadProperties, callback); };
 	Tabs.ptr.prototype.Remove = function(tabIds, callback) {
 		var callback, t, tabIds;
 		t = this;
-		t.o.remove($externalize(tabIds, sliceType$7), $externalize(callback, funcType$116));
+		t.o.remove($externalize(tabIds, sliceType$7), $externalize(callback, funcType$119));
 	};
 	Tabs.prototype.Remove = function(tabIds, callback) { return this.$val.Remove(tabIds, callback); };
 	Tabs.ptr.prototype.DetectLanguage = function(tabId, callback) {
 		var callback, t, tabId;
 		t = this;
-		t.o.detectLanguage(tabId, $externalize(callback, funcType$119));
+		t.o.detectLanguage(tabId, $externalize(callback, funcType$120));
 	};
 	Tabs.prototype.DetectLanguage = function(tabId, callback) { return this.$val.DetectLanguage(tabId, callback); };
 	Tabs.ptr.prototype.CaptureVisibleTab = function(windowId, options, callback) {
 		var callback, options, t, windowId;
 		t = this;
-		t.o.captureVisibleTab(windowId, $externalize(options, $emptyInterface), $externalize(callback, funcType$120));
+		t.o.captureVisibleTab(windowId, $externalize(options, $emptyInterface), $externalize(callback, funcType$121));
 	};
 	Tabs.prototype.CaptureVisibleTab = function(windowId, options, callback) { return this.$val.CaptureVisibleTab(windowId, options, callback); };
 	Tabs.ptr.prototype.ExecuteScript = function(tabId, details, callback) {
 		var callback, details, t, tabId;
 		t = this;
-		t.o.executeScript(tabId, $externalize(details, $emptyInterface), $externalize(callback, funcType$121));
+		t.o.executeScript(tabId, $externalize(details, $emptyInterface), $externalize(callback, funcType$122));
 	};
 	Tabs.prototype.ExecuteScript = function(tabId, details, callback) { return this.$val.ExecuteScript(tabId, details, callback); };
 	Tabs.ptr.prototype.InsertCss = function(tabId, details, callback) {
@@ -15631,7 +15632,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	Tabs.ptr.prototype.GetZoom = function(tabId, callback) {
 		var callback, t, tabId;
 		t = this;
-		t.o.getZoom(tabId, $externalize(callback, funcType$122));
+		t.o.getZoom(tabId, $externalize(callback, funcType$123));
 	};
 	Tabs.prototype.GetZoom = function(tabId, callback) { return this.$val.GetZoom(tabId, callback); };
 	Tabs.ptr.prototype.SetZoomSettings = function(tabId, zoomSettings, callback) {
@@ -15643,7 +15644,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	Tabs.ptr.prototype.GetZoomSettings = function(tabId, callback) {
 		var callback, t, tabId;
 		t = this;
-		t.o.getZoomSettings(tabId, $externalize(callback, funcType$123));
+		t.o.getZoomSettings(tabId, $externalize(callback, funcType$124));
 	};
 	Tabs.prototype.GetZoomSettings = function(tabId, callback) { return this.$val.GetZoomSettings(tabId, callback); };
 	Tabs.ptr.prototype.OnCreated = function(callback) {
@@ -15655,67 +15656,67 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	Tabs.ptr.prototype.OnUpdated = function(callback) {
 		var callback, t;
 		t = this;
-		t.o.onUpdated.addListener($externalize(callback, funcType$124));
+		t.o.onUpdated.addListener($externalize(callback, funcType$125));
 	};
 	Tabs.prototype.OnUpdated = function(callback) { return this.$val.OnUpdated(callback); };
 	Tabs.ptr.prototype.OnMoved = function(callback) {
 		var callback, t;
 		t = this;
-		t.o.onMoved.addListener($externalize(callback, funcType$125));
+		t.o.onMoved.addListener($externalize(callback, funcType$126));
 	};
 	Tabs.prototype.OnMoved = function(callback) { return this.$val.OnMoved(callback); };
 	Tabs.ptr.prototype.OnActivated = function(callback) {
 		var callback, t;
 		t = this;
-		t.o.onActivated.addListener($externalize(callback, funcType$126));
+		t.o.onActivated.addListener($externalize(callback, funcType$127));
 	};
 	Tabs.prototype.OnActivated = function(callback) { return this.$val.OnActivated(callback); };
 	Tabs.ptr.prototype.OnHighlightChanged = function(callback) {
 		var callback, t;
 		t = this;
-		t.o.onHighlightChanged.addListener($externalize(callback, funcType$127));
+		t.o.onHighlightChanged.addListener($externalize(callback, funcType$128));
 	};
 	Tabs.prototype.OnHighlightChanged = function(callback) { return this.$val.OnHighlightChanged(callback); };
 	Tabs.ptr.prototype.OnHighlighted = function(callback) {
 		var callback, t;
 		t = this;
-		t.o.onHighlighted.addListener($externalize(callback, funcType$128));
+		t.o.onHighlighted.addListener($externalize(callback, funcType$129));
 	};
 	Tabs.prototype.OnHighlighted = function(callback) { return this.$val.OnHighlighted(callback); };
 	Tabs.ptr.prototype.OnDetached = function(callback) {
 		var callback, t;
 		t = this;
-		t.o.onDetached.addListener($externalize(callback, funcType$129));
+		t.o.onDetached.addListener($externalize(callback, funcType$130));
 	};
 	Tabs.prototype.OnDetached = function(callback) { return this.$val.OnDetached(callback); };
 	Tabs.ptr.prototype.OnAttached = function(callback) {
 		var callback, t;
 		t = this;
-		t.o.onAttached.addListener($externalize(callback, funcType$130));
+		t.o.onAttached.addListener($externalize(callback, funcType$131));
 	};
 	Tabs.prototype.OnAttached = function(callback) { return this.$val.OnAttached(callback); };
 	Tabs.ptr.prototype.OnRemoved = function(callback) {
 		var callback, t;
 		t = this;
-		t.o.onRemoved.addListener($externalize(callback, funcType$131));
+		t.o.onRemoved.addListener($externalize(callback, funcType$132));
 	};
 	Tabs.prototype.OnRemoved = function(callback) { return this.$val.OnRemoved(callback); };
 	Tabs.ptr.prototype.OnReplaced = function(callback) {
 		var callback, t;
 		t = this;
-		t.o.OnReplaced.addListener($externalize(callback, funcType$132));
+		t.o.OnReplaced.addListener($externalize(callback, funcType$133));
 	};
 	Tabs.prototype.OnReplaced = function(callback) { return this.$val.OnReplaced(callback); };
 	Tabs.ptr.prototype.OnZoomChange = function(callback) {
 		var callback, t;
 		t = this;
-		t.o.onZoomChange.addListener($externalize(callback, funcType$133));
+		t.o.onZoomChange.addListener($externalize(callback, funcType$134));
 	};
 	Tabs.prototype.OnZoomChange = function(callback) { return this.$val.OnZoomChange(callback); };
 	TopSites.ptr.prototype.Get = function(callback) {
 		var callback, t;
 		t = this;
-		t.o.get($externalize(callback, funcType$134));
+		t.o.get($externalize(callback, funcType$135));
 	};
 	TopSites.prototype.Get = function(callback) { return this.$val.Get(callback); };
 	Tts.ptr.prototype.Speak = function(utterance, options, callback) {
@@ -15745,19 +15746,19 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	Tts.ptr.prototype.IsSpeaking = function(callback) {
 		var callback, t;
 		t = this;
-		t.o.isSpeaking($externalize(callback, funcType$135));
+		t.o.isSpeaking($externalize(callback, funcType$136));
 	};
 	Tts.prototype.IsSpeaking = function(callback) { return this.$val.IsSpeaking(callback); };
 	Tts.ptr.prototype.GetVoices = function(callback) {
 		var callback, t;
 		t = this;
-		t.o.getVoices($externalize(callback, funcType$136));
+		t.o.getVoices($externalize(callback, funcType$137));
 	};
 	Tts.prototype.GetVoices = function(callback) { return this.$val.GetVoices(callback); };
 	TtsEngine.ptr.prototype.OnSpeak = function(callback) {
 		var callback, t;
 		t = this;
-		t.o.onSpeak.addListener($externalize(callback, funcType$138));
+		t.o.onSpeak.addListener($externalize(callback, funcType$139));
 	};
 	TtsEngine.prototype.OnSpeak = function(callback) { return this.$val.OnSpeak(callback); };
 	TtsEngine.ptr.prototype.OnStop = function(callback) {
@@ -15787,7 +15788,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	WebNavigation.ptr.prototype.GetAllFrames = function(details, callback) {
 		var callback, details, w;
 		w = this;
-		w.o.getAllFrames($externalize(details, Object), $externalize(callback, funcType$139));
+		w.o.getAllFrames($externalize(details, Object), $externalize(callback, funcType$140));
 	};
 	WebNavigation.prototype.GetAllFrames = function(details, callback) { return this.$val.GetAllFrames(details, callback); };
 	WebNavigation.ptr.prototype.OnBeforeNavigate = function(callback, filters) {
@@ -15916,19 +15917,19 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	WebStore.ptr.prototype.Install = function(url, successCallback, failureCallback) {
 		var failureCallback, successCallback, url, w;
 		w = this;
-		w.o.install($externalize(url, $String), $externalize(successCallback, funcType$5), $externalize(failureCallback, funcType$140));
+		w.o.install($externalize(url, $String), $externalize(successCallback, funcType$5), $externalize(failureCallback, funcType$141));
 	};
 	WebStore.prototype.Install = function(url, successCallback, failureCallback) { return this.$val.Install(url, successCallback, failureCallback); };
 	WebStore.ptr.prototype.OnInstallStageChanged = function(callback) {
 		var callback, w;
 		w = this;
-		w.o.onInstallStageChanged.addListener($externalize(callback, funcType$141));
+		w.o.onInstallStageChanged.addListener($externalize(callback, funcType$142));
 	};
 	WebStore.prototype.OnInstallStageChanged = function(callback) { return this.$val.OnInstallStageChanged(callback); };
 	WebStore.ptr.prototype.OnDownloadProgress = function(callback) {
 		var callback, w;
 		w = this;
-		w.o.onDownloadProgress.addListener($externalize(callback, funcType$142));
+		w.o.onDownloadProgress.addListener($externalize(callback, funcType$143));
 	};
 	WebStore.prototype.OnDownloadProgress = function(callback) { return this.$val.OnDownloadProgress(callback); };
 	NewWindows = $pkg.NewWindows = function(windowsObj) {
@@ -15944,55 +15945,55 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	Windows.ptr.prototype.Get = function(windowId, getInfo, callback) {
 		var callback, getInfo, w, windowId;
 		w = this;
-		w.o.get(windowId, $externalize(getInfo, Object), $externalize(callback, funcType$143));
+		w.o.get(windowId, $externalize(getInfo, Object), $externalize(callback, funcType$144));
 	};
 	Windows.prototype.Get = function(windowId, getInfo, callback) { return this.$val.Get(windowId, getInfo, callback); };
 	Windows.ptr.prototype.GetCurrent = function(getInfo, callback) {
 		var callback, getInfo, w;
 		w = this;
-		w.o.getCurrent($externalize(getInfo, Object), $externalize(callback, funcType$143));
+		w.o.getCurrent($externalize(getInfo, Object), $externalize(callback, funcType$144));
 	};
 	Windows.prototype.GetCurrent = function(getInfo, callback) { return this.$val.GetCurrent(getInfo, callback); };
 	Windows.ptr.prototype.GetLastFocused = function(getInfo, callback) {
 		var callback, getInfo, w;
 		w = this;
-		w.o.getLastFocused($externalize(getInfo, Object), $externalize(callback, funcType$143));
+		w.o.getLastFocused($externalize(getInfo, Object), $externalize(callback, funcType$144));
 	};
 	Windows.prototype.GetLastFocused = function(getInfo, callback) { return this.$val.GetLastFocused(getInfo, callback); };
 	Windows.ptr.prototype.GetAll = function(getInfo, callback) {
 		var callback, getInfo, w;
 		w = this;
-		w.o.getAll($externalize(getInfo, Object), $externalize(callback, funcType$144));
+		w.o.getAll($externalize(getInfo, Object), $externalize(callback, funcType$145));
 	};
 	Windows.prototype.GetAll = function(getInfo, callback) { return this.$val.GetAll(getInfo, callback); };
 	Windows.ptr.prototype.Create = function(createData, callback) {
 		var callback, createData, w;
 		w = this;
-		w.o.create($externalize(createData, Object), $externalize(callback, funcType$143));
+		w.o.create($externalize(createData, Object), $externalize(callback, funcType$144));
 	};
 	Windows.prototype.Create = function(createData, callback) { return this.$val.Create(createData, callback); };
 	Windows.ptr.prototype.Update = function(windowId, updateInfo, callback) {
 		var callback, updateInfo, w, windowId;
 		w = this;
-		w.o.update(windowId, $externalize(updateInfo, Object), $externalize(callback, funcType$143));
+		w.o.update(windowId, $externalize(updateInfo, Object), $externalize(callback, funcType$144));
 	};
 	Windows.prototype.Update = function(windowId, updateInfo, callback) { return this.$val.Update(windowId, updateInfo, callback); };
 	Windows.ptr.prototype.Remove = function(windowId, callback) {
 		var callback, w, windowId;
 		w = this;
-		w.o.remove(windowId, $externalize(callback, funcType$116));
+		w.o.remove(windowId, $externalize(callback, funcType$119));
 	};
 	Windows.prototype.Remove = function(windowId, callback) { return this.$val.Remove(windowId, callback); };
 	Windows.ptr.prototype.OnCreated = function(callback) {
 		var callback, w;
 		w = this;
-		w.o.onCreated.addListener($externalize(callback, funcType$143));
+		w.o.onCreated.addListener($externalize(callback, funcType$144));
 	};
 	Windows.prototype.OnCreated = function(callback) { return this.$val.OnCreated(callback); };
 	Windows.ptr.prototype.OnRemoved = function(callback) {
 		var callback, w;
 		w = this;
-		w.o.onRemoved.addListener($externalize(callback, funcType$145));
+		w.o.onRemoved.addListener($externalize(callback, funcType$146));
 	};
 	Windows.prototype.OnRemoved = function(callback) { return this.$val.OnRemoved(callback); };
 	ptrType.methods = [{prop: "Create", name: "Create", pkg: "", typ: $funcType([$String, Object], [], false)}, {prop: "Get", name: "Get", pkg: "", typ: $funcType([$String, funcType], [], false)}, {prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([funcType$1], [], false)}, {prop: "Clear", name: "Clear", pkg: "", typ: $funcType([$String, funcType$2], [], false)}, {prop: "ClearAll", name: "ClearAll", pkg: "", typ: $funcType([funcType$2], [], false)}, {prop: "OnAlarm", name: "OnAlarm", pkg: "", typ: $funcType([funcType], [], false)}];
@@ -16031,14 +16032,14 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	ptrType$48.methods = [{prop: "GetInfo", name: "GetInfo", pkg: "", typ: $funcType([funcType$110], [], false)}];
 	ptrType$49.methods = [{prop: "GetInfo", name: "GetInfo", pkg: "", typ: $funcType([funcType$111], [], false)}, {prop: "EjectDevice", name: "EjectDevice", pkg: "", typ: $funcType([$String, funcType$11], [], false)}, {prop: "GetAvailableCapacity", name: "GetAvailableCapacity", pkg: "", typ: $funcType([funcType$109], [], false)}, {prop: "OnAttached", name: "OnAttached", pkg: "", typ: $funcType([funcType$112], [], false)}, {prop: "OnDetached", name: "OnDetached", pkg: "", typ: $funcType([funcType$79], [], false)}];
 	ptrType$35.methods = [{prop: "Capture", name: "Capture", pkg: "", typ: $funcType([Object, funcType$113], [], false)}, {prop: "GetCapturedTabs", name: "GetCapturedTabs", pkg: "", typ: $funcType([funcType$114], [], false)}, {prop: "OnStatusChanged", name: "OnStatusChanged", pkg: "", typ: $funcType([funcType$115], [], false)}];
-	ptrType$34.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([$Int, funcType$89], [], false)}, {prop: "GetCurrent", name: "GetCurrent", pkg: "", typ: $funcType([funcType$89], [], false)}, {prop: "Connect", name: "Connect", pkg: "", typ: $funcType([$Int, $emptyInterface], [], false)}, {prop: "SendMessage", name: "SendMessage", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$116], [], false)}, {prop: "GetSelected", name: "GetSelected", pkg: "", typ: $funcType([$Int, funcType$89], [], false)}, {prop: "GetAllInWindow", name: "GetAllInWindow", pkg: "", typ: $funcType([$Int, funcType$117], [], false)}, {prop: "Create", name: "Create", pkg: "", typ: $funcType([$emptyInterface, funcType$89], [], false)}, {prop: "Duplicate", name: "Duplicate", pkg: "", typ: $funcType([$Int, funcType$89], [], false)}, {prop: "Query", name: "Query", pkg: "", typ: $funcType([$emptyInterface, funcType$118], [], false)}, {prop: "Highlight", name: "Highlight", pkg: "", typ: $funcType([$emptyInterface, funcType$116], [], false)}, {prop: "Update", name: "Update", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$89], [], false)}, {prop: "Move", name: "Move", pkg: "", typ: $funcType([sliceType$7, $emptyInterface, funcType$117], [], false)}, {prop: "Reload", name: "Reload", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$116], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([sliceType$7, funcType$116], [], false)}, {prop: "DetectLanguage", name: "DetectLanguage", pkg: "", typ: $funcType([$Int, funcType$119], [], false)}, {prop: "CaptureVisibleTab", name: "CaptureVisibleTab", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$120], [], false)}, {prop: "ExecuteScript", name: "ExecuteScript", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$121], [], false)}, {prop: "InsertCss", name: "InsertCss", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$5], [], false)}, {prop: "SetZoom", name: "SetZoom", pkg: "", typ: $funcType([$Int, $Int64, funcType$5], [], false)}, {prop: "GetZoom", name: "GetZoom", pkg: "", typ: $funcType([$Int, funcType$122], [], false)}, {prop: "SetZoomSettings", name: "SetZoomSettings", pkg: "", typ: $funcType([$Int, ZoomSettings, funcType$5], [], false)}, {prop: "GetZoomSettings", name: "GetZoomSettings", pkg: "", typ: $funcType([$Int, funcType$123], [], false)}, {prop: "OnCreated", name: "OnCreated", pkg: "", typ: $funcType([funcType$89], [], false)}, {prop: "OnUpdated", name: "OnUpdated", pkg: "", typ: $funcType([funcType$124], [], false)}, {prop: "OnMoved", name: "OnMoved", pkg: "", typ: $funcType([funcType$125], [], false)}, {prop: "OnActivated", name: "OnActivated", pkg: "", typ: $funcType([funcType$126], [], false)}, {prop: "OnHighlightChanged", name: "OnHighlightChanged", pkg: "", typ: $funcType([funcType$127], [], false)}, {prop: "OnHighlighted", name: "OnHighlighted", pkg: "", typ: $funcType([funcType$128], [], false)}, {prop: "OnDetached", name: "OnDetached", pkg: "", typ: $funcType([funcType$129], [], false)}, {prop: "OnAttached", name: "OnAttached", pkg: "", typ: $funcType([funcType$130], [], false)}, {prop: "OnRemoved", name: "OnRemoved", pkg: "", typ: $funcType([funcType$131], [], false)}, {prop: "OnReplaced", name: "OnReplaced", pkg: "", typ: $funcType([funcType$132], [], false)}, {prop: "OnZoomChange", name: "OnZoomChange", pkg: "", typ: $funcType([funcType$133], [], false)}];
-	ptrType$36.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([funcType$134], [], false)}];
-	ptrType$37.methods = [{prop: "Speak", name: "Speak", pkg: "", typ: $funcType([$String, Object, funcType$5], [], false)}, {prop: "Stop", name: "Stop", pkg: "", typ: $funcType([], [], false)}, {prop: "Pause", name: "Pause", pkg: "", typ: $funcType([], [], false)}, {prop: "Resume", name: "Resume", pkg: "", typ: $funcType([], [], false)}, {prop: "IsSpeaking", name: "IsSpeaking", pkg: "", typ: $funcType([funcType$135], [], false)}, {prop: "GetVoices", name: "GetVoices", pkg: "", typ: $funcType([funcType$136], [], false)}];
-	ptrType$38.methods = [{prop: "OnSpeak", name: "OnSpeak", pkg: "", typ: $funcType([funcType$138], [], false)}, {prop: "OnStop", name: "OnStop", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnPause", name: "OnPause", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnResume", name: "OnResume", pkg: "", typ: $funcType([funcType$5], [], false)}];
-	ptrType$39.methods = [{prop: "GetFrame", name: "GetFrame", pkg: "", typ: $funcType([Object, funcType$20], [], false)}, {prop: "GetAllFrames", name: "GetAllFrames", pkg: "", typ: $funcType([Object, funcType$139], [], false)}, {prop: "OnBeforeNavigate", name: "OnBeforeNavigate", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnCommited", name: "OnCommited", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnDOMContentLoaded", name: "OnDOMContentLoaded", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnCompleted", name: "OnCompleted", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnErrorOccurred", name: "OnErrorOccurred", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnCreatedNavigationTarget", name: "OnCreatedNavigationTarget", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnReferenceFragmentUpdated", name: "OnReferenceFragmentUpdated", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnTabReplaced", name: "OnTabReplaced", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnHistoryStateUpdated", name: "OnHistoryStateUpdated", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}];
+	ptrType$34.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([$Int, funcType$89], [], false)}, {prop: "GetCurrent", name: "GetCurrent", pkg: "", typ: $funcType([funcType$89], [], false)}, {prop: "Connect", name: "Connect", pkg: "", typ: $funcType([$Int, $emptyInterface], [], false)}, {prop: "SendMessage", name: "SendMessage", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$116], [], false)}, {prop: "GetSelected", name: "GetSelected", pkg: "", typ: $funcType([$Int, funcType$89], [], false)}, {prop: "GetAllInWindow", name: "GetAllInWindow", pkg: "", typ: $funcType([$Int, funcType$117], [], false)}, {prop: "Create", name: "Create", pkg: "", typ: $funcType([$emptyInterface, funcType$89], [], false)}, {prop: "Duplicate", name: "Duplicate", pkg: "", typ: $funcType([$Int, funcType$89], [], false)}, {prop: "Query", name: "Query", pkg: "", typ: $funcType([$emptyInterface, funcType$118], [], false)}, {prop: "Highlight", name: "Highlight", pkg: "", typ: $funcType([$emptyInterface, funcType$119], [], false)}, {prop: "Update", name: "Update", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$89], [], false)}, {prop: "Move", name: "Move", pkg: "", typ: $funcType([sliceType$7, $emptyInterface, funcType$117], [], false)}, {prop: "Reload", name: "Reload", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$119], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([sliceType$7, funcType$119], [], false)}, {prop: "DetectLanguage", name: "DetectLanguage", pkg: "", typ: $funcType([$Int, funcType$120], [], false)}, {prop: "CaptureVisibleTab", name: "CaptureVisibleTab", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$121], [], false)}, {prop: "ExecuteScript", name: "ExecuteScript", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$122], [], false)}, {prop: "InsertCss", name: "InsertCss", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$5], [], false)}, {prop: "SetZoom", name: "SetZoom", pkg: "", typ: $funcType([$Int, $Int64, funcType$5], [], false)}, {prop: "GetZoom", name: "GetZoom", pkg: "", typ: $funcType([$Int, funcType$123], [], false)}, {prop: "SetZoomSettings", name: "SetZoomSettings", pkg: "", typ: $funcType([$Int, ZoomSettings, funcType$5], [], false)}, {prop: "GetZoomSettings", name: "GetZoomSettings", pkg: "", typ: $funcType([$Int, funcType$124], [], false)}, {prop: "OnCreated", name: "OnCreated", pkg: "", typ: $funcType([funcType$89], [], false)}, {prop: "OnUpdated", name: "OnUpdated", pkg: "", typ: $funcType([funcType$125], [], false)}, {prop: "OnMoved", name: "OnMoved", pkg: "", typ: $funcType([funcType$126], [], false)}, {prop: "OnActivated", name: "OnActivated", pkg: "", typ: $funcType([funcType$127], [], false)}, {prop: "OnHighlightChanged", name: "OnHighlightChanged", pkg: "", typ: $funcType([funcType$128], [], false)}, {prop: "OnHighlighted", name: "OnHighlighted", pkg: "", typ: $funcType([funcType$129], [], false)}, {prop: "OnDetached", name: "OnDetached", pkg: "", typ: $funcType([funcType$130], [], false)}, {prop: "OnAttached", name: "OnAttached", pkg: "", typ: $funcType([funcType$131], [], false)}, {prop: "OnRemoved", name: "OnRemoved", pkg: "", typ: $funcType([funcType$132], [], false)}, {prop: "OnReplaced", name: "OnReplaced", pkg: "", typ: $funcType([funcType$133], [], false)}, {prop: "OnZoomChange", name: "OnZoomChange", pkg: "", typ: $funcType([funcType$134], [], false)}];
+	ptrType$36.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([funcType$135], [], false)}];
+	ptrType$37.methods = [{prop: "Speak", name: "Speak", pkg: "", typ: $funcType([$String, Object, funcType$5], [], false)}, {prop: "Stop", name: "Stop", pkg: "", typ: $funcType([], [], false)}, {prop: "Pause", name: "Pause", pkg: "", typ: $funcType([], [], false)}, {prop: "Resume", name: "Resume", pkg: "", typ: $funcType([], [], false)}, {prop: "IsSpeaking", name: "IsSpeaking", pkg: "", typ: $funcType([funcType$136], [], false)}, {prop: "GetVoices", name: "GetVoices", pkg: "", typ: $funcType([funcType$137], [], false)}];
+	ptrType$38.methods = [{prop: "OnSpeak", name: "OnSpeak", pkg: "", typ: $funcType([funcType$139], [], false)}, {prop: "OnStop", name: "OnStop", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnPause", name: "OnPause", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnResume", name: "OnResume", pkg: "", typ: $funcType([funcType$5], [], false)}];
+	ptrType$39.methods = [{prop: "GetFrame", name: "GetFrame", pkg: "", typ: $funcType([Object, funcType$20], [], false)}, {prop: "GetAllFrames", name: "GetAllFrames", pkg: "", typ: $funcType([Object, funcType$140], [], false)}, {prop: "OnBeforeNavigate", name: "OnBeforeNavigate", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnCommited", name: "OnCommited", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnDOMContentLoaded", name: "OnDOMContentLoaded", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnCompleted", name: "OnCompleted", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnErrorOccurred", name: "OnErrorOccurred", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnCreatedNavigationTarget", name: "OnCreatedNavigationTarget", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnReferenceFragmentUpdated", name: "OnReferenceFragmentUpdated", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnTabReplaced", name: "OnTabReplaced", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnHistoryStateUpdated", name: "OnHistoryStateUpdated", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}];
 	ptrType$40.methods = [{prop: "HandlerBehaviorChanged", name: "HandlerBehaviorChanged", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnBeforeRequest", name: "OnBeforeRequest", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnBeforeSendHeaders", name: "OnBeforeSendHeaders", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnSendHeaders", name: "OnSendHeaders", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnHeadersReceived", name: "OnHeadersReceived", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnAuthRequired", name: "OnAuthRequired", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnResponseStarted", name: "OnResponseStarted", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnBeforeRedirect", name: "OnBeforeRedirect", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnCompleted", name: "OnCompleted", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnErrorOccured", name: "OnErrorOccured", pkg: "", typ: $funcType([funcType$20], [], false)}];
-	ptrType$41.methods = [{prop: "Install", name: "Install", pkg: "", typ: $funcType([$String, funcType$5, funcType$140], [], false)}, {prop: "OnInstallStageChanged", name: "OnInstallStageChanged", pkg: "", typ: $funcType([funcType$141], [], false)}, {prop: "OnDownloadProgress", name: "OnDownloadProgress", pkg: "", typ: $funcType([funcType$142], [], false)}];
-	ptrType$42.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([$Int, Object, funcType$143], [], false)}, {prop: "GetCurrent", name: "GetCurrent", pkg: "", typ: $funcType([Object, funcType$143], [], false)}, {prop: "GetLastFocused", name: "GetLastFocused", pkg: "", typ: $funcType([Object, funcType$143], [], false)}, {prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([Object, funcType$144], [], false)}, {prop: "Create", name: "Create", pkg: "", typ: $funcType([Object, funcType$143], [], false)}, {prop: "Update", name: "Update", pkg: "", typ: $funcType([$Int, Object, funcType$143], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([$Int, funcType$116], [], false)}, {prop: "OnCreated", name: "OnCreated", pkg: "", typ: $funcType([funcType$143], [], false)}, {prop: "OnRemoved", name: "OnRemoved", pkg: "", typ: $funcType([funcType$145], [], false)}, {prop: "onFocusChanged", name: "onFocusChanged", pkg: "github.com/fabioberger/chrome", typ: $funcType([funcType$145], [], false)}];
+	ptrType$41.methods = [{prop: "Install", name: "Install", pkg: "", typ: $funcType([$String, funcType$5, funcType$141], [], false)}, {prop: "OnInstallStageChanged", name: "OnInstallStageChanged", pkg: "", typ: $funcType([funcType$142], [], false)}, {prop: "OnDownloadProgress", name: "OnDownloadProgress", pkg: "", typ: $funcType([funcType$143], [], false)}];
+	ptrType$42.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([$Int, Object, funcType$144], [], false)}, {prop: "GetCurrent", name: "GetCurrent", pkg: "", typ: $funcType([Object, funcType$144], [], false)}, {prop: "GetLastFocused", name: "GetLastFocused", pkg: "", typ: $funcType([Object, funcType$144], [], false)}, {prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([Object, funcType$145], [], false)}, {prop: "Create", name: "Create", pkg: "", typ: $funcType([Object, funcType$144], [], false)}, {prop: "Update", name: "Update", pkg: "", typ: $funcType([$Int, Object, funcType$144], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([$Int, funcType$119], [], false)}, {prop: "OnCreated", name: "OnCreated", pkg: "", typ: $funcType([funcType$144], [], false)}, {prop: "OnRemoved", name: "OnRemoved", pkg: "", typ: $funcType([funcType$146], [], false)}, {prop: "onFocusChanged", name: "onFocusChanged", pkg: "github.com/fabioberger/chrome", typ: $funcType([funcType$146], [], false)}];
 	Alarms.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
 	Alarm.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Name", name: "Name", pkg: "", typ: $String, tag: "js:\"name\""}, {prop: "ScheduledTime", name: "ScheduledTime", pkg: "", typ: $String, tag: "js:\"scheduledTime\""}, {prop: "PeriodInMinutes", name: "PeriodInMinutes", pkg: "", typ: $String, tag: "js:\"periodInMinutes\""}]);
 	Bookmarks.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
@@ -19836,16 +19837,19 @@ $packages["honnef.co/go/js/dom"] = (function() {
 	return $pkg;
 })();
 $packages["main"] = (function() {
-	var $pkg = {}, chrome, qunit, dom, time, sliceType, doc, main;
+	var $pkg = {}, fmt, chrome, qunit, js, dom, time, sliceType, sliceType$1, doc, main;
+	fmt = $packages["fmt"];
 	chrome = $packages["github.com/fabioberger/chrome"];
 	qunit = $packages["github.com/fabioberger/qunit"];
+	js = $packages["github.com/gopherjs/gopherjs/js"];
 	dom = $packages["honnef.co/go/js/dom"];
 	time = $packages["time"];
 	sliceType = $sliceType($String);
+	sliceType$1 = $sliceType($emptyInterface);
 	main = function() {
-		var _key, _key$1, _key$2, _key$3, _key$4, _key$5, _key$6, _key$7, _map, _map$1, _map$2, _map$3, _map$4, _map$5, _map$6, _map$7, alarmOps, bookmark, c, change, cookieInfo, fetchProperties, fontDetails, urlDetails, windows, x;
+		var _key, _key$1, _key$2, _key$3, _key$4, _key$5, _key$6, _key$7, _key$8, _map, _map$1, _map$2, _map$3, _map$4, _map$5, _map$6, _map$7, _map$8, alarmOps, bookmark, c, change, cookieInfo, fetchProperties, fontDetails, queryInfo, urlDetails, windows, x;
 		c = chrome.NewChrome();
-		qunit.Module("Chrome");
+		qunit.Module("Chrome-Popup");
 		alarmOps = (_map = new $Map(), _key = "when", _map[_key] = { k: _key, v: (x = time.Now().UnixNano(), new $Int64(x.$high + 0, x.$low + 1000000)) }, _map);
 		c.Alarms.Create("test_alarm", alarmOps);
 		c.Alarms.Get("test_alarm", (function(alarm) {
@@ -19979,14 +19983,28 @@ $packages["main"] = (function() {
 				}));
 			}));
 		}));
+		queryInfo = (_map$8 = new $Map(), _key$8 = "currentWindow", _map$8[_key$8] = { k: _key$8, v: new $Bool(true) }, _key$8 = "active", _map$8[_key$8] = { k: _key$8, v: new $Bool(true) }, _map$8);
+		c.Tabs.Query(new chrome.Object(queryInfo), (function(tabs) {
+			var _key$9, _map$9, id, msg, tabs;
+			id = $parseInt(((0 < 0 || 0 >= tabs.$length) ? $throwRuntimeError("index out of range") : tabs.$array[tabs.$offset + 0]).Object.id) >> 0;
+			msg = (_map$9 = new $Map(), _key$9 = "greeting", _map$9[_key$9] = { k: _key$9, v: new $String("hello") }, _map$9);
+			c.Tabs.SendMessage(id, new chrome.Object(msg), (function(response) {
+				var err, response;
+				err = $internalize($global.chrome.runtime.lastError.message, $String);
+				fmt.Println(new sliceType$1([new $String(err)]));
+				fmt.Println(new sliceType$1([new chrome.Object(response)]));
+			}));
+		}));
 	};
 	$pkg.$init = function() {
 		$pkg.$init = function() {};
 		/* */ var $r, $s = 0; var $init_main = function() { while (true) { switch ($s) { case 0:
-		$r = chrome.$init($BLOCKING); /* */ $s = 1; case 1: if ($r && $r.$blocking) { $r = $r(); }
-		$r = qunit.$init($BLOCKING); /* */ $s = 2; case 2: if ($r && $r.$blocking) { $r = $r(); }
-		$r = dom.$init($BLOCKING); /* */ $s = 3; case 3: if ($r && $r.$blocking) { $r = $r(); }
-		$r = time.$init($BLOCKING); /* */ $s = 4; case 4: if ($r && $r.$blocking) { $r = $r(); }
+		$r = fmt.$init($BLOCKING); /* */ $s = 1; case 1: if ($r && $r.$blocking) { $r = $r(); }
+		$r = chrome.$init($BLOCKING); /* */ $s = 2; case 2: if ($r && $r.$blocking) { $r = $r(); }
+		$r = qunit.$init($BLOCKING); /* */ $s = 3; case 3: if ($r && $r.$blocking) { $r = $r(); }
+		$r = js.$init($BLOCKING); /* */ $s = 4; case 4: if ($r && $r.$blocking) { $r = $r(); }
+		$r = dom.$init($BLOCKING); /* */ $s = 5; case 5: if ($r && $r.$blocking) { $r = $r(); }
+		$r = time.$init($BLOCKING); /* */ $s = 6; case 6: if ($r && $r.$blocking) { $r = $r(); }
 		doc = dom.GetWindow().Document();
 		main();
 		/* */ } return; } }; $init_main.$blocking = true; return $init_main;

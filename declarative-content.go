@@ -7,15 +7,15 @@ import (
 )
 
 type DeclarativeContent struct {
-	o             js.Object
+	o             *js.Object
 	OnPageChanged *OnPageChanged //Need to remove this and fix methods below...
 }
 
 type OnPageChanged struct {
-	o js.Object
+	o *js.Object
 }
 
-func NewDeclarativeContent(declarativeContentObj js.Object) *DeclarativeContent {
+func NewDeclarativeContent(declarativeContentObj *js.Object) *DeclarativeContent {
 	d := new(DeclarativeContent)
 	d.o = declarativeContentObj
 	fmt.Println(d.o.String())

@@ -3,11 +3,11 @@ package chrome
 import "github.com/gopherjs/gopherjs/js"
 
 type Proxy struct {
-	o        js.Object
-	Settings js.Object
+	o        *js.Object
+	Settings *js.Object
 }
 
-func NewProxy(proxyObj js.Object) *Proxy {
+func NewProxy(proxyObj *js.Object) *Proxy {
 	p := new(Proxy)
 	p.o = proxyObj
 	if proxyObj.String() != "undefined" {

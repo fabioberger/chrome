@@ -3,13 +3,13 @@ package chrome
 import "github.com/gopherjs/gopherjs/js"
 
 type Storage struct {
-	o       js.Object
-	Sync    js.Object
-	Local   js.Object
-	Managed js.Object
+	o       *js.Object
+	Sync    *js.Object
+	Local   *js.Object
+	Managed *js.Object
 }
 
-func NewStorage(storageObj js.Object) *Storage {
+func NewStorage(storageObj *js.Object) *Storage {
 	s := new(Storage)
 	s.o = storageObj
 	if s.o.String() != "undefined" {

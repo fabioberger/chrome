@@ -3,11 +3,11 @@ package chrome
 import "github.com/gopherjs/gopherjs/js"
 
 type WebRequest struct {
-	o                                                 js.Object
+	o                                                 *js.Object
 	MAX_HANDLER_BEHAVIOR_CHANGED_CALLS_PER_10_MINUTES int
 }
 
-func NewWebRequest(webRequestObj js.Object) *WebRequest {
+func NewWebRequest(webRequestObj *js.Object) *WebRequest {
 	w := new(WebRequest)
 	w.o = webRequestObj
 	if w.o.String() != "undefined" {

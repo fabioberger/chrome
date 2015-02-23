@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/fabioberger/chrome"
 	QUnit "github.com/fabioberger/qunit"
+	"github.com/gopherjs/gopherjs/js"
 	"honnef.co/go/js/dom"
 )
 
@@ -15,10 +17,11 @@ var (
 func main() {
 	c := chrome.NewChrome()
 
+	QUnit.Module("Chrome-Popup")
+
 	/*
 	* Alarm Method Tests
 	 */
-	QUnit.Module("Chrome")
 
 	// Create New Alarm
 	alarmOps := chrome.Object{
@@ -184,6 +187,30 @@ func main() {
 			QUnit.Test("History.Search()", func(assert QUnit.QUnitAssert) {
 				assert.Equal(results[0].Url, "http://www.testing.com/", "Search")
 			})
+		})
+	})
+
+	/*
+	* Tab Method Test
+	 */
+
+	// Find the current Tab
+	queryInfo := chrome.Object{
+		"currentWindow": true,
+		"active":        true,
+	}
+	c.Tabs.Query(queryInfo, func(tabs []chrome.Tab) {
+		id := tabs[0].Id
+
+		// Send Message to the given Tab
+		msg := chrome.Object{"greeting": "hello"}
+		c.Tabs.SendMessage(id, msg, func(response chrome.Object) {
+			err := js.Global.Get("chrome").Get("runtime").Get("lastError").Get("message").String()
+			fmt.Println(err)
+			fmt.Println(response)
+			// QUnit.Test("Tabs.SendMessage()", func(assert QUnit.QUnitAssert) {
+			// 	assert.Equal(response.Get("farewell").String(), "goodbye", "SendMessage")
+			// })
 		})
 	})
 

@@ -3,11 +3,11 @@ package chrome
 import "github.com/gopherjs/gopherjs/js"
 
 type Sessions struct {
-	o                   js.Object
+	o                   *js.Object
 	MAX_SESSION_RESULTS int
 }
 
-func NewSessions(sessionsObj js.Object) *Sessions {
+func NewSessions(sessionsObj *js.Object) *Sessions {
 	s := new(Sessions)
 	s.o = sessionsObj
 	if s.o.String() != "undefined" {

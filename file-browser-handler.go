@@ -5,7 +5,7 @@ package chrome
 import "github.com/gopherjs/gopherjs/js"
 
 type FileBrowserHandler struct {
-	o js.Object
+	o *js.Object
 }
 
 /*

@@ -3,15 +3,15 @@ package chrome
 import "github.com/gopherjs/gopherjs/js"
 
 type Enterprise struct {
-	o            js.Object
+	o            *js.Object
 	PlatformKeys *PlatformKeys
 }
 
 type PlatformKeys struct {
-	o js.Object
+	o *js.Object
 }
 
-func NewEnterprise(enterpriseObj js.Object) *Enterprise {
+func NewEnterprise(enterpriseObj *js.Object) *Enterprise {
 	e := new(Enterprise)
 	e.o = enterpriseObj
 	if e.o.String() == "undefined" {

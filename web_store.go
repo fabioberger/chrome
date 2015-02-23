@@ -3,7 +3,7 @@ package chrome
 import "github.com/gopherjs/gopherjs/js"
 
 type WebStore struct {
-	o js.Object
+	o *js.Object
 }
 
 /*

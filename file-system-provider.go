@@ -9,7 +9,7 @@ import (
 )
 
 type FileSystemProvider struct {
-	o js.Object
+	o *js.Object
 }
 
 /*

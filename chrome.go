@@ -53,7 +53,7 @@ type Chrome struct {
 
 func NewChrome() *Chrome {
 	c := new(Chrome)
-	c.o = js.Global.Get("chrome")
+	c.o = *js.Global.Get("chrome")
 	c.Alarms = &Alarms{o: c.o.Get("alarms")}
 	c.Bookmarks = &Bookmarks{o: c.o.Get("bookmarks")}
 	c.BrowserAction = &BrowserAction{o: c.o.Get("browserAction")}

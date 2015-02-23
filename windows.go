@@ -3,12 +3,12 @@ package chrome
 import "github.com/gopherjs/gopherjs/js"
 
 type Windows struct {
-	o                 js.Object
+	o                 *js.Object
 	WINDOW_ID_NONE    int
 	WINDOW_ID_CURRENT int
 }
 
-func NewWindows(windowsObj js.Object) *Windows {
+func NewWindows(windowsObj *js.Object) *Windows {
 	w := new(Windows)
 	w.o = windowsObj
 	if w.o.String() != "undefined" {

@@ -3,11 +3,11 @@ package chrome
 import "github.com/gopherjs/gopherjs/js"
 
 type Gcm struct {
-	o                js.Object
+	o                *js.Object
 	MAX_MESSAGE_SIZE int
 }
 
-func NewGcm(gcmObj js.Object) *Gcm {
+func NewGcm(gcmObj *js.Object) *Gcm {
 	g := new(Gcm)
 	g.o = gcmObj
 	if g.o.String() != "undefined" {

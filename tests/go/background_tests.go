@@ -1,14 +1,21 @@
 package main
 
-func main() {
-	// c := chrome.NewChrome()
+import (
+	"fmt"
 
-	// fmt.Println("Set up onMessage")
-	// c.Runtime.OnMessage(func(message interface{}, sender chrome.MessageSender, sendResponse func(interface{})) {
-	// 	fmt.Println("Got msg: ", message)
-	// 	resp := Object{
-	// 		"farewell": "goodbye",
-	// 	}
-	// 	sendResponse(resp)
-	// })
+	"github.com/fabioberger/chrome"
+)
+
+func main() {
+	c := chrome.NewChrome()
+
+	// Listen for OnMessage Event
+	fmt.Println("We are running")
+	c.Runtime.OnMessage(func(message interface{}, sender chrome.MessageSender, sendResponse func(interface{})) {
+		fmt.Println("Got in here")
+		resp := chrome.Object{
+			"farewell": "goodbye",
+		}
+		sendResponse(resp)
+	})
 }
