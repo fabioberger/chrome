@@ -5,7 +5,7 @@ Gopherjs Chrome Bindings
 
 Write Chrome extensions in Go! 
 
-With the help of the Gopherjs transpiler, it is now possible to write Go code which will then by converted into javascript in order to run in the browser. This library contains the necessary bindings to interact with the Chrome Javascript API in an easy and intuitive way so that you can write Chrome Extensions and Chrome OS apps in Go.
+With the help of the Gopherjs transpiler, you can now write Go code which will be converted into javascript in order to run in the browser. This library contains the necessary bindings to interact with the Chrome Javascript API in an easy and intuitive way so that you can write Chrome Extensions and Chrome OS apps in Go.
 
 # Installation
 
