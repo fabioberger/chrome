@@ -21,7 +21,7 @@ Next, install the chrome bindings library:
 go get github.com/fabioberger/chrome
 ```
 
-Include the package in your project's imports:
+and include the package in your project's imports:
 
 ```bash
 import "github.com/fabioberger/chrome"
@@ -29,9 +29,9 @@ import "github.com/fabioberger/chrome"
 
 # Sample Extension
 
-The lovely people at Google's Chrome team have written a [great post](https://developer.chrome.com/extensions/getstarted) on how to get started building chrome extensions. Within the examples folder you will find a Go version of the JS sample extension they build during their post. 
+The lovely people at Google's Chrome team have written a [great post](https://developer.chrome.com/extensions/getstarted) on how to get started building chrome extensions. Within the examples folder you will find a [Go version](https://github.com/fabioberger/chrome/tree/master/examples/getting-started-sample) of the JS sample extension they build. 
 
-In order to run this sample extension, simply navigate to ```chrome://extensions``` from within your chrome browser and click "Load unpacked extension..." and open the examples/getting-started-sample folder. This should install the chrome extension. Now visit any webpage and click on the globe-like icon on the top right of your chrome browser.
+In order to run this sample extension, simply navigate to ```chrome://extensions``` from within your chrome browser and click ```Load unpacked extension...``` and open the examples/getting-started-sample folder. This should install the chrome extension. Now visit any webpage and click on the globe-like icon on the top right of your chrome browser.
 
 # Creating a New Extension
 
@@ -165,8 +165,8 @@ Coming soon!
 
 # Tests
 
-Because of the immense amount of endpoints of Chrome API, as well as the many different requirements for the endpoints, the tests are currently not comprehensive. 
+Because of the immense amount of endpoints in the Chrome API, as well as the many different requirements for the endpoints, the tests are still a work in progress. 
 
-To run the tests, install the tests folder as a chrome extension by navigating to ```chrome://extensions``` in Chrome and clicking "Load unpacked extension..." and navigating to the "tests" folder. Once you have done time, simply click the "T" icon on the top right of your chrome browser and the test suite will run within the displayed popup. 
+To run the tests, install the ```tests``` folder as a chrome extension by navigating to ```chrome://extensions``` in Chrome and clicking ```Load unpacked extension...``` and navigating to the "tests" folder. Once you have done time, simply click the ```T``` icon on the top right of your chrome browser and the test suite will run within the displayed popup. 
 
-If you feel inclined, please add tests to their extension and submit a pull request!
+Feel free to add more tests to this extension and submit a pull request!
