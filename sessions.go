@@ -21,19 +21,19 @@ func NewSessions(sessionsObj *js.Object) *Sessions {
  */
 
 type Filter struct {
-	js.Object
+	*js.Object
 	MaxResults int `js:"maxResults"`
 }
 
 type Session struct {
-	js.Object
+	*js.Object
 	LastModified int    `js:"lastModified"`
 	Tab          Tab    `js:"tab"`
 	Window       Window `js:"window"`
 }
 
 type Device struct {
-	js.Object
+	*js.Object
 	DeviceName string    `js:"deviceName"`
 	Sessions   []Session `js:"sessions"`
 }

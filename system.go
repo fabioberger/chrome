@@ -37,7 +37,7 @@ type SysStorage struct {
  */
 
 type StorageUnitInfo struct {
-	js.Object
+	*js.Object
 	Id       string `js:"id"`
 	Name     string `js:"name"`
 	Type     string `js:"type"`

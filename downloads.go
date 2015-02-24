@@ -11,7 +11,7 @@ type Downloads struct {
  */
 
 type DownloadItem struct {
-	js.Object
+	*js.Object
 	Id               int    `js:"id"`
 	Url              string `js:"url"`
 	Referrer         string `js:"referrer"`

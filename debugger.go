@@ -11,14 +11,14 @@ type Debugger struct {
  */
 
 type Debugee struct {
-	js.Object
+	*js.Object
 	TabId       int    `js:"tabId"`
 	ExtensionId string `js:"extensionId"`
 	TargetId    string `js:"targetId"`
 }
 
 type TargetInfo struct {
-	js.Object
+	*js.Object
 	Type        string `js:"type"`
 	Id          string `js:"id"`
 	TabId       int    `js:"tabId"`

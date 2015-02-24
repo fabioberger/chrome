@@ -11,7 +11,7 @@ type Alarms struct {
  */
 
 type Alarm struct {
-	js.Object
+	*js.Object
 	Name            string `js:"name"`
 	ScheduledTime   string `js:"scheduledTime"`
 	PeriodInMinutes string `js:"periodInMinutes"`

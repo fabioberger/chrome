@@ -11,7 +11,7 @@ type Notification struct {
  */
 
 type NotificationOptions struct {
-	js.Object
+	*js.Object
 	Type           string   `js:"type"`
 	IconUrl        string   `js:"iconUrl"`
 	AppIconMaskUrl string   `js:"appIconMaskUrl"`

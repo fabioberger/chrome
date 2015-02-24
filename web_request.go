@@ -21,7 +21,7 @@ func NewWebRequest(webRequestObj *js.Object) *WebRequest {
  */
 
 type RequestFilter struct {
-	js.Object
+	*js.Object
 	Urls     []string `js:"urls"`
 	Types    string   `js:"types"`
 	TabId    int      `js:"tabId"`
@@ -29,7 +29,7 @@ type RequestFilter struct {
 }
 
 type BlockingResponse struct {
-	js.Object
+	*js.Object
 	Cancel          bool              `js:"cancel"`
 	RedirectUrl     string            `js:"redirectUrl"`
 	RequestHeaders  Object            `js:"requestHeaders"`
@@ -38,7 +38,7 @@ type BlockingResponse struct {
 }
 
 type UploadData struct {
-	js.Object
+	*js.Object
 	Bytes interface{} `js:"bytes"`
 	File  string      `js:"file"`
 }

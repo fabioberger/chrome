@@ -11,13 +11,13 @@ type Management struct {
  */
 
 type IconInfo struct {
-	js.Object
+	*js.Object
 	Size int    `js:"size"`
 	Url  string `js:"url"`
 }
 
 type ExtensionInfo struct {
-	js.Object
+	*js.Object
 	Id                   string     `js:"id"`
 	Name                 string     `js:"name"`
 	ShortName            string     `js:"shortName"`

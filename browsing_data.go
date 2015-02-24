@@ -11,7 +11,7 @@ type BrowsingData struct {
  */
 
 type RemovalOptions struct {
-	js.Object
+	*js.Object
 	Since       float64         `js:"since"`
 	OriginTypes map[string]bool `js:"originTypes"`
 }

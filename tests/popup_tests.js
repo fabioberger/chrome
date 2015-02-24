@@ -12973,7 +12973,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	Alarm = $pkg.Alarm = $newType(0, $kindStruct, "chrome.Alarm", "Alarm", "github.com/fabioberger/chrome", function(Object_, Name_, ScheduledTime_, PeriodInMinutes_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.Name = Name_ !== undefined ? Name_ : "";
 		this.ScheduledTime = ScheduledTime_ !== undefined ? ScheduledTime_ : "";
 		this.PeriodInMinutes = PeriodInMinutes_ !== undefined ? PeriodInMinutes_ : "";
@@ -12984,7 +12984,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	BookmarkTreeNode = $pkg.BookmarkTreeNode = $newType(0, $kindStruct, "chrome.BookmarkTreeNode", "BookmarkTreeNode", "github.com/fabioberger/chrome", function(Object_, Id_, ParentId_, Index_, Url_, Title_, DateAdded_, DateGroupModified_, Unmodifiable_, Children_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.Id = Id_ !== undefined ? Id_ : "";
 		this.ParentId = ParentId_ !== undefined ? ParentId_ : "";
 		this.Index = Index_ !== undefined ? Index_ : 0;
@@ -13006,7 +13006,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	RemovalOptions = $pkg.RemovalOptions = $newType(0, $kindStruct, "chrome.RemovalOptions", "RemovalOptions", "github.com/fabioberger/chrome", function(Object_, Since_, OriginTypes_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.Since = Since_ !== undefined ? Since_ : 0;
 		this.OriginTypes = OriginTypes_ !== undefined ? OriginTypes_ : false;
 	});
@@ -13075,7 +13075,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	Cookie = $pkg.Cookie = $newType(0, $kindStruct, "chrome.Cookie", "Cookie", "github.com/fabioberger/chrome", function(Object_, Name_, Value_, Domain_, HostOnly_, Path_, Secure_, HttpOnly_, Session_, ExpirationDate_, StoreId_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.Name = Name_ !== undefined ? Name_ : "";
 		this.Value = Value_ !== undefined ? Value_ : "";
 		this.Domain = Domain_ !== undefined ? Domain_ : "";
@@ -13089,7 +13089,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	CookieStore = $pkg.CookieStore = $newType(0, $kindStruct, "chrome.CookieStore", "CookieStore", "github.com/fabioberger/chrome", function(Object_, Id_, TabIds_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.Id = Id_ !== undefined ? Id_ : "";
 		this.TabIds = TabIds_ !== undefined ? TabIds_ : sliceType$10.nil;
 	});
@@ -13099,14 +13099,14 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	Debugee = $pkg.Debugee = $newType(0, $kindStruct, "chrome.Debugee", "Debugee", "github.com/fabioberger/chrome", function(Object_, TabId_, ExtensionId_, TargetId_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.TabId = TabId_ !== undefined ? TabId_ : 0;
 		this.ExtensionId = ExtensionId_ !== undefined ? ExtensionId_ : "";
 		this.TargetId = TargetId_ !== undefined ? TargetId_ : "";
 	});
 	TargetInfo = $pkg.TargetInfo = $newType(0, $kindStruct, "chrome.TargetInfo", "TargetInfo", "github.com/fabioberger/chrome", function(Object_, Type_, Id_, TabId_, ExtensionId_, Attached_, Title_, Url_, FaviconUrl_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.Type = Type_ !== undefined ? Type_ : "";
 		this.Id = Id_ !== undefined ? Id_ : "";
 		this.TabId = TabId_ !== undefined ? TabId_ : 0;
@@ -13135,7 +13135,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	DownloadItem = $pkg.DownloadItem = $newType(0, $kindStruct, "chrome.DownloadItem", "DownloadItem", "github.com/fabioberger/chrome", function(Object_, Id_, Url_, Referrer_, Filename_, Incognito_, Danger_, Mime_, StartTime_, EndTime_, EstimatedEndTime_, State_, Paused_, CanResume_, Error_, BytesReceived_, TotalBytes_, FileSize_, Exists_, ByExtensionId_, ByExtensionName_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.Id = Id_ !== undefined ? Id_ : 0;
 		this.Url = Url_ !== undefined ? Url_ : "";
 		this.Referrer = Referrer_ !== undefined ? Referrer_ : "";
@@ -13184,7 +13184,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	FileHandlerExecuteEventDetails = $pkg.FileHandlerExecuteEventDetails = $newType(0, $kindStruct, "chrome.FileHandlerExecuteEventDetails", "FileHandlerExecuteEventDetails", "github.com/fabioberger/chrome", function(Object_, Entries_, Tab_id_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.Entries = Entries_ !== undefined ? Entries_ : sliceType$7.nil;
 		this.Tab_id = Tab_id_ !== undefined ? Tab_id_ : 0;
 	});
@@ -13194,7 +13194,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	EntryMetadata = $pkg.EntryMetadata = $newType(0, $kindStruct, "chrome.EntryMetadata", "EntryMetadata", "github.com/fabioberger/chrome", function(Object_, IsDirectory_, Name_, Size_, ModificationTime_, MimeType_, Thumbnail_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.IsDirectory = IsDirectory_ !== undefined ? IsDirectory_ : false;
 		this.Name = Name_ !== undefined ? Name_ : "";
 		this.Size = Size_ !== undefined ? Size_ : new $Int64(0, 0);
@@ -13204,7 +13204,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	FileSystemInfo = $pkg.FileSystemInfo = $newType(0, $kindStruct, "chrome.FileSystemInfo", "FileSystemInfo", "github.com/fabioberger/chrome", function(Object_, FileSystemId_, DisplayName_, Writable_, OpenedFileLimit_, OpenedFiles_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.FileSystemId = FileSystemId_ !== undefined ? FileSystemId_ : "";
 		this.DisplayName = DisplayName_ !== undefined ? DisplayName_ : "";
 		this.Writable = Writable_ !== undefined ? Writable_ : false;
@@ -13217,7 +13217,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	FontName = $pkg.FontName = $newType(0, $kindStruct, "chrome.FontName", "FontName", "github.com/fabioberger/chrome", function(Object_, FontId_, DisplayName_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.FontId = FontId_ !== undefined ? FontId_ : "";
 		this.DisplayName = DisplayName_ !== undefined ? DisplayName_ : "";
 	});
@@ -13232,7 +13232,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	HistoryItem = $pkg.HistoryItem = $newType(0, $kindStruct, "chrome.HistoryItem", "HistoryItem", "github.com/fabioberger/chrome", function(Object_, Id_, Url_, Title_, LastVisitTime_, VisitCount_, TypedCount_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.Id = Id_ !== undefined ? Id_ : "";
 		this.Url = Url_ !== undefined ? Url_ : "";
 		this.Title = Title_ !== undefined ? Title_ : "";
@@ -13242,7 +13242,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	VisitItem = $pkg.VisitItem = $newType(0, $kindStruct, "chrome.VisitItem", "VisitItem", "github.com/fabioberger/chrome", function(Object_, Id_, VisitId_, VisitTime_, ReferringVisitId_, Transition_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.Id = Id_ !== undefined ? Id_ : "";
 		this.VisitId = VisitId_ !== undefined ? VisitId_ : "";
 		this.VisitTime = VisitTime_ !== undefined ? VisitTime_ : new $Int64(0, 0);
@@ -13259,7 +13259,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	AccountInfo = $pkg.AccountInfo = $newType(0, $kindStruct, "chrome.AccountInfo", "AccountInfo", "github.com/fabioberger/chrome", function(Object_, Id_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.Id = Id_ !== undefined ? Id_ : "";
 	});
 	Idle = $pkg.Idle = $newType(0, $kindStruct, "chrome.Idle", "Idle", "github.com/fabioberger/chrome", function(o_) {
@@ -13304,7 +13304,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	NotificationOptions = $pkg.NotificationOptions = $newType(0, $kindStruct, "chrome.NotificationOptions", "NotificationOptions", "github.com/fabioberger/chrome", function(Object_, Type_, IconUrl_, AppIconMaskUrl_, Title_, Message_, ContextMessage_, Priority_, EventTime_, Buttons_, ImageUrl_, Items_, Progress_, IsClickable_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.Type = Type_ !== undefined ? Type_ : "";
 		this.IconUrl = IconUrl_ !== undefined ? IconUrl_ : "";
 		this.AppIconMaskUrl = AppIconMaskUrl_ !== undefined ? AppIconMaskUrl_ : "";
@@ -13325,7 +13325,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	SuggestResult = $pkg.SuggestResult = $newType(0, $kindStruct, "chrome.SuggestResult", "SuggestResult", "github.com/fabioberger/chrome", function(Object_, Content_, Description_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.Content = Content_ !== undefined ? Content_ : "";
 		this.Description = Description_ !== undefined ? Description_ : "";
 	});
@@ -13364,7 +13364,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	Port = $pkg.Port = $newType(0, $kindStruct, "chrome.Port", "Port", "github.com/fabioberger/chrome", function(Object_, Name_, OnDisconnect_, OnMessage_, Sender_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.Name = Name_ !== undefined ? Name_ : "";
 		this.OnDisconnect = OnDisconnect_ !== undefined ? OnDisconnect_ : new js.Object.ptr();
 		this.OnMessage = OnMessage_ !== undefined ? OnMessage_ : new js.Object.ptr();
@@ -13372,7 +13372,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	MessageSender = $pkg.MessageSender = $newType(0, $kindStruct, "chrome.MessageSender", "MessageSender", "github.com/fabioberger/chrome", function(Object_, tab_, FrameId_, Id_, Url_, TlsChannelId_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.tab = tab_ !== undefined ? tab_ : new Tab.ptr();
 		this.FrameId = FrameId_ !== undefined ? FrameId_ : 0;
 		this.Id = Id_ !== undefined ? Id_ : "";
@@ -13387,19 +13387,19 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	Filter = $pkg.Filter = $newType(0, $kindStruct, "chrome.Filter", "Filter", "github.com/fabioberger/chrome", function(Object_, MaxResults_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.MaxResults = MaxResults_ !== undefined ? MaxResults_ : 0;
 	});
 	Session = $pkg.Session = $newType(0, $kindStruct, "chrome.Session", "Session", "github.com/fabioberger/chrome", function(Object_, LastModified_, Tab_, Window_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.LastModified = LastModified_ !== undefined ? LastModified_ : 0;
 		this.Tab = Tab_ !== undefined ? Tab_ : new Tab.ptr();
 		this.Window = Window_ !== undefined ? Window_ : new Window.ptr();
 	});
 	Device = $pkg.Device = $newType(0, $kindStruct, "chrome.Device", "Device", "github.com/fabioberger/chrome", function(Object_, DeviceName_, Sessions_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.DeviceName = DeviceName_ !== undefined ? DeviceName_ : "";
 		this.Sessions = Sessions_ !== undefined ? Sessions_ : sliceType$22.nil;
 	});
@@ -13436,7 +13436,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	StorageUnitInfo = $pkg.StorageUnitInfo = $newType(0, $kindStruct, "chrome.StorageUnitInfo", "StorageUnitInfo", "github.com/fabioberger/chrome", function(Object_, Id_, Name_, Type_, Capacity_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.Id = Id_ !== undefined ? Id_ : "";
 		this.Name = Name_ !== undefined ? Name_ : "";
 		this.Type = Type_ !== undefined ? Type_ : "";
@@ -13448,7 +13448,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	CaptureInfo = $pkg.CaptureInfo = $newType(0, $kindStruct, "chrome.CaptureInfo", "CaptureInfo", "github.com/fabioberger/chrome", function(Object_, TabId_, Status_, FullScreen_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.TabId = TabId_ !== undefined ? TabId_ : 0;
 		this.Status = Status_ !== undefined ? Status_ : "";
 		this.FullScreen = FullScreen_ !== undefined ? FullScreen_ : false;
@@ -13459,7 +13459,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	Tab = $pkg.Tab = $newType(0, $kindStruct, "chrome.Tab", "Tab", "github.com/fabioberger/chrome", function(Object_, Id_, Index_, WindowId_, OpenerTabId_, Selected_, Highlighted_, Active_, Pinned_, Url_, Title_, FavIconUrl_, Status_, Incognito_, Width_, Height_, SessionId_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.Id = Id_ !== undefined ? Id_ : 0;
 		this.Index = Index_ !== undefined ? Index_ : 0;
 		this.WindowId = WindowId_ !== undefined ? WindowId_ : 0;
@@ -13493,14 +13493,14 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	TtsEvent = $pkg.TtsEvent = $newType(0, $kindStruct, "chrome.TtsEvent", "TtsEvent", "github.com/fabioberger/chrome", function(Object_, Type_, CharIndex_, ErrorMessage_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.Type = Type_ !== undefined ? Type_ : "";
 		this.CharIndex = CharIndex_ !== undefined ? CharIndex_ : new $Int64(0, 0);
 		this.ErrorMessage = ErrorMessage_ !== undefined ? ErrorMessage_ : "";
 	});
 	TtsVoice = $pkg.TtsVoice = $newType(0, $kindStruct, "chrome.TtsVoice", "TtsVoice", "github.com/fabioberger/chrome", function(Object_, VoiceName_, Lang_, Gender_, Remote_, ExtensionId_, EventTypes_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
+		this.Object = Object_ !== undefined ? Object_ : null;
 		this.VoiceName = VoiceName_ !== undefined ? VoiceName_ : "";
 		this.Lang = Lang_ !== undefined ? Lang_ : "";
 		this.Gender = Gender_ !== undefined ? Gender_ : "";
@@ -15311,15 +15311,15 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	Runtime.ptr.prototype.Connect = function(extensionId, connectInfo) {
 		var connectInfo, extensionId, portObj, r;
 		r = this;
-		portObj = $clone(new $jsObjectPtr(r.o.connect($externalize(extensionId, $String), $externalize(connectInfo, $emptyInterface))), js.Object);
-		return new Port.ptr($clone(portObj, js.Object), "", new js.Object.ptr(), new js.Object.ptr(), new MessageSender.ptr());
+		portObj = r.o.connect($externalize(extensionId, $String), $externalize(connectInfo, $emptyInterface));
+		return new Port.ptr(portObj, "", new js.Object.ptr(), new js.Object.ptr(), new MessageSender.ptr());
 	};
 	Runtime.prototype.Connect = function(extensionId, connectInfo) { return this.$val.Connect(extensionId, connectInfo); };
 	Runtime.ptr.prototype.ConnectNative = function(application) {
 		var application, portObj, r;
 		r = this;
-		portObj = $clone(new $jsObjectPtr(r.o.connectNative($externalize(application, $String))), js.Object);
-		return new Port.ptr($clone(portObj, js.Object), "", new js.Object.ptr(), new js.Object.ptr(), new MessageSender.ptr());
+		portObj = r.o.connectNative($externalize(application, $String));
+		return new Port.ptr(portObj, "", new js.Object.ptr(), new js.Object.ptr(), new MessageSender.ptr());
 	};
 	Runtime.prototype.ConnectNative = function(application) { return this.$val.ConnectNative(application); };
 	Runtime.ptr.prototype.SendMessage = function(extensionId, message, options, responseCallback) {
@@ -16055,13 +16055,13 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	ptrType$42.methods = [{prop: "Install", name: "Install", pkg: "", typ: $funcType([$String, funcType$5, funcType$141], [], false)}, {prop: "OnInstallStageChanged", name: "OnInstallStageChanged", pkg: "", typ: $funcType([funcType$142], [], false)}, {prop: "OnDownloadProgress", name: "OnDownloadProgress", pkg: "", typ: $funcType([funcType$143], [], false)}];
 	ptrType$43.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([$Int, Object, funcType$144], [], false)}, {prop: "GetCurrent", name: "GetCurrent", pkg: "", typ: $funcType([Object, funcType$144], [], false)}, {prop: "GetLastFocused", name: "GetLastFocused", pkg: "", typ: $funcType([Object, funcType$144], [], false)}, {prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([Object, funcType$145], [], false)}, {prop: "Create", name: "Create", pkg: "", typ: $funcType([Object, funcType$144], [], false)}, {prop: "Update", name: "Update", pkg: "", typ: $funcType([$Int, Object, funcType$144], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([$Int, funcType$119], [], false)}, {prop: "OnCreated", name: "OnCreated", pkg: "", typ: $funcType([funcType$144], [], false)}, {prop: "OnRemoved", name: "OnRemoved", pkg: "", typ: $funcType([funcType$146], [], false)}, {prop: "onFocusChanged", name: "onFocusChanged", pkg: "github.com/fabioberger/chrome", typ: $funcType([funcType$146], [], false)}];
 	Alarms.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
-	Alarm.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Name", name: "Name", pkg: "", typ: $String, tag: "js:\"name\""}, {prop: "ScheduledTime", name: "ScheduledTime", pkg: "", typ: $String, tag: "js:\"scheduledTime\""}, {prop: "PeriodInMinutes", name: "PeriodInMinutes", pkg: "", typ: $String, tag: "js:\"periodInMinutes\""}]);
+	Alarm.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Name", name: "Name", pkg: "", typ: $String, tag: "js:\"name\""}, {prop: "ScheduledTime", name: "ScheduledTime", pkg: "", typ: $String, tag: "js:\"scheduledTime\""}, {prop: "PeriodInMinutes", name: "PeriodInMinutes", pkg: "", typ: $String, tag: "js:\"periodInMinutes\""}]);
 	Bookmarks.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
-	BookmarkTreeNode.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "ParentId", name: "ParentId", pkg: "", typ: $String, tag: "js:\"parentId\""}, {prop: "Index", name: "Index", pkg: "", typ: $Int, tag: "js:\"index\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "Title", name: "Title", pkg: "", typ: $String, tag: "js:\"title\""}, {prop: "DateAdded", name: "DateAdded", pkg: "", typ: $Int64, tag: "js:\"dateAdded\""}, {prop: "DateGroupModified", name: "DateGroupModified", pkg: "", typ: $Int64, tag: "js:\"dateGroupModified\""}, {prop: "Unmodifiable", name: "Unmodifiable", pkg: "", typ: $String, tag: "js:\"unmodifiable\""}, {prop: "Children", name: "Children", pkg: "", typ: sliceType$2, tag: "js:\"children\""}]);
+	BookmarkTreeNode.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "ParentId", name: "ParentId", pkg: "", typ: $String, tag: "js:\"parentId\""}, {prop: "Index", name: "Index", pkg: "", typ: $Int, tag: "js:\"index\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "Title", name: "Title", pkg: "", typ: $String, tag: "js:\"title\""}, {prop: "DateAdded", name: "DateAdded", pkg: "", typ: $Int64, tag: "js:\"dateAdded\""}, {prop: "DateGroupModified", name: "DateGroupModified", pkg: "", typ: $Int64, tag: "js:\"dateGroupModified\""}, {prop: "Unmodifiable", name: "Unmodifiable", pkg: "", typ: $String, tag: "js:\"unmodifiable\""}, {prop: "Children", name: "Children", pkg: "", typ: sliceType$2, tag: "js:\"children\""}]);
 	BrowserAction.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
 	ColorArray.init($Int);
 	BrowsingData.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
-	RemovalOptions.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Since", name: "Since", pkg: "", typ: $Float64, tag: "js:\"since\""}, {prop: "OriginTypes", name: "OriginTypes", pkg: "", typ: mapType$6, tag: "js:\"originTypes\""}]);
+	RemovalOptions.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Since", name: "Since", pkg: "", typ: $Float64, tag: "js:\"since\""}, {prop: "OriginTypes", name: "OriginTypes", pkg: "", typ: mapType$6, tag: "js:\"originTypes\""}]);
 	DataTypeSet.init($String, $Bool);
 	Object.init($String, $emptyInterface);
 	Chrome.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}, {prop: "Alarms", name: "Alarms", pkg: "", typ: ptrType, tag: ""}, {prop: "Bookmarks", name: "Bookmarks", pkg: "", typ: ptrType$2, tag: ""}, {prop: "BrowserAction", name: "BrowserAction", pkg: "", typ: ptrType$3, tag: ""}, {prop: "BrowsingData", name: "BrowsingData", pkg: "", typ: ptrType$4, tag: ""}, {prop: "Commands", name: "Commands", pkg: "", typ: ptrType$5, tag: ""}, {prop: "ContextMenus", name: "ContextMenus", pkg: "", typ: ptrType$6, tag: ""}, {prop: "Cookies", name: "Cookies", pkg: "", typ: ptrType$7, tag: ""}, {prop: "Debugger", name: "Debugger", pkg: "", typ: ptrType$8, tag: ""}, {prop: "DeclarativeContent", name: "DeclarativeContent", pkg: "", typ: ptrType$9, tag: ""}, {prop: "DesktopCapture", name: "DesktopCapture", pkg: "", typ: ptrType$10, tag: ""}, {prop: "Downloads", name: "Downloads", pkg: "", typ: ptrType$11, tag: ""}, {prop: "Enterprise", name: "Enterprise", pkg: "", typ: ptrType$12, tag: ""}, {prop: "Extension", name: "Extension", pkg: "", typ: ptrType$13, tag: ""}, {prop: "FileBrowserHandler", name: "FileBrowserHandler", pkg: "", typ: ptrType$14, tag: ""}, {prop: "FileSystemProvider", name: "FileSystemProvider", pkg: "", typ: ptrType$15, tag: ""}, {prop: "FontSettings", name: "FontSettings", pkg: "", typ: ptrType$16, tag: ""}, {prop: "Gcm", name: "Gcm", pkg: "", typ: ptrType$17, tag: ""}, {prop: "History", name: "History", pkg: "", typ: ptrType$18, tag: ""}, {prop: "I18n", name: "I18n", pkg: "", typ: ptrType$19, tag: ""}, {prop: "Identity", name: "Identity", pkg: "", typ: ptrType$20, tag: ""}, {prop: "Idle", name: "Idle", pkg: "", typ: ptrType$21, tag: ""}, {prop: "Input", name: "Input", pkg: "", typ: ptrType$22, tag: ""}, {prop: "Notification", name: "Notification", pkg: "", typ: ptrType$23, tag: ""}, {prop: "Omnibox", name: "Omnibox", pkg: "", typ: ptrType$24, tag: ""}, {prop: "PageAction", name: "PageAction", pkg: "", typ: ptrType$25, tag: ""}, {prop: "PageCapture", name: "PageCapture", pkg: "", typ: ptrType$26, tag: ""}, {prop: "Permissions", name: "Permissions", pkg: "", typ: ptrType$27, tag: ""}, {prop: "Power", name: "Power", pkg: "", typ: ptrType$28, tag: ""}, {prop: "Privacy", name: "Privacy", pkg: "", typ: ptrType$29, tag: ""}, {prop: "Proxy", name: "Proxy", pkg: "", typ: ptrType$30, tag: ""}, {prop: "Runtime", name: "Runtime", pkg: "", typ: ptrType$31, tag: ""}, {prop: "Sessions", name: "Sessions", pkg: "", typ: ptrType$32, tag: ""}, {prop: "Storage", name: "Storage", pkg: "", typ: ptrType$33, tag: ""}, {prop: "System", name: "System", pkg: "", typ: ptrType$34, tag: ""}, {prop: "Tabs", name: "Tabs", pkg: "", typ: ptrType$35, tag: ""}, {prop: "TabCapture", name: "TabCapture", pkg: "", typ: ptrType$36, tag: ""}, {prop: "TopSites", name: "TopSites", pkg: "", typ: ptrType$37, tag: ""}, {prop: "Tts", name: "Tts", pkg: "", typ: ptrType$38, tag: ""}, {prop: "TtsEngine", name: "TtsEngine", pkg: "", typ: ptrType$39, tag: ""}, {prop: "WebNavigation", name: "WebNavigation", pkg: "", typ: ptrType$40, tag: ""}, {prop: "WebRequest", name: "WebRequest", pkg: "", typ: ptrType$41, tag: ""}, {prop: "WebStore", name: "WebStore", pkg: "", typ: ptrType$42, tag: ""}, {prop: "Windows", name: "Windows", pkg: "", typ: ptrType$43, tag: ""}]);
@@ -16069,43 +16069,43 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	Command.init($String, $String);
 	ContextMenus.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "ACTION_MENU_TOP_LEVEL_LIMIT", name: "ACTION_MENU_TOP_LEVEL_LIMIT", pkg: "", typ: $Int, tag: ""}]);
 	Cookies.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
-	Cookie.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Name", name: "Name", pkg: "", typ: $String, tag: "js:\"name\""}, {prop: "Value", name: "Value", pkg: "", typ: $String, tag: "js:\"value\""}, {prop: "Domain", name: "Domain", pkg: "", typ: $String, tag: "js:\"domain\""}, {prop: "HostOnly", name: "HostOnly", pkg: "", typ: $Bool, tag: "js:\"hostOnly\""}, {prop: "Path", name: "Path", pkg: "", typ: $String, tag: "js:\"path\""}, {prop: "Secure", name: "Secure", pkg: "", typ: $Bool, tag: "js:\"secure\""}, {prop: "HttpOnly", name: "HttpOnly", pkg: "", typ: $Bool, tag: "js:\"httpOnly\""}, {prop: "Session", name: "Session", pkg: "", typ: $Bool, tag: "js:\"session\""}, {prop: "ExpirationDate", name: "ExpirationDate", pkg: "", typ: $Int64, tag: "js:\"expirationDate\""}, {prop: "StoreId", name: "StoreId", pkg: "", typ: $String, tag: "js:\"storeId\""}]);
-	CookieStore.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "TabIds", name: "TabIds", pkg: "", typ: sliceType$10, tag: "js:\"tabIds\""}]);
+	Cookie.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Name", name: "Name", pkg: "", typ: $String, tag: "js:\"name\""}, {prop: "Value", name: "Value", pkg: "", typ: $String, tag: "js:\"value\""}, {prop: "Domain", name: "Domain", pkg: "", typ: $String, tag: "js:\"domain\""}, {prop: "HostOnly", name: "HostOnly", pkg: "", typ: $Bool, tag: "js:\"hostOnly\""}, {prop: "Path", name: "Path", pkg: "", typ: $String, tag: "js:\"path\""}, {prop: "Secure", name: "Secure", pkg: "", typ: $Bool, tag: "js:\"secure\""}, {prop: "HttpOnly", name: "HttpOnly", pkg: "", typ: $Bool, tag: "js:\"httpOnly\""}, {prop: "Session", name: "Session", pkg: "", typ: $Bool, tag: "js:\"session\""}, {prop: "ExpirationDate", name: "ExpirationDate", pkg: "", typ: $Int64, tag: "js:\"expirationDate\""}, {prop: "StoreId", name: "StoreId", pkg: "", typ: $String, tag: "js:\"storeId\""}]);
+	CookieStore.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "TabIds", name: "TabIds", pkg: "", typ: sliceType$10, tag: "js:\"tabIds\""}]);
 	Debugger.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
-	Debugee.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "TabId", name: "TabId", pkg: "", typ: $Int, tag: "js:\"tabId\""}, {prop: "ExtensionId", name: "ExtensionId", pkg: "", typ: $String, tag: "js:\"extensionId\""}, {prop: "TargetId", name: "TargetId", pkg: "", typ: $String, tag: "js:\"targetId\""}]);
-	TargetInfo.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Type", name: "Type", pkg: "", typ: $String, tag: "js:\"type\""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "TabId", name: "TabId", pkg: "", typ: $Int, tag: "js:\"tabId\""}, {prop: "ExtensionId", name: "ExtensionId", pkg: "", typ: $String, tag: "js:\"extensionId\""}, {prop: "Attached", name: "Attached", pkg: "", typ: $Bool, tag: "js:\"attached\""}, {prop: "Title", name: "Title", pkg: "", typ: $String, tag: "js:\"title\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "FaviconUrl", name: "FaviconUrl", pkg: "", typ: $String, tag: "js:\"faviconUrl\""}]);
+	Debugee.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "TabId", name: "TabId", pkg: "", typ: $Int, tag: "js:\"tabId\""}, {prop: "ExtensionId", name: "ExtensionId", pkg: "", typ: $String, tag: "js:\"extensionId\""}, {prop: "TargetId", name: "TargetId", pkg: "", typ: $String, tag: "js:\"targetId\""}]);
+	TargetInfo.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Type", name: "Type", pkg: "", typ: $String, tag: "js:\"type\""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "TabId", name: "TabId", pkg: "", typ: $Int, tag: "js:\"tabId\""}, {prop: "ExtensionId", name: "ExtensionId", pkg: "", typ: $String, tag: "js:\"extensionId\""}, {prop: "Attached", name: "Attached", pkg: "", typ: $Bool, tag: "js:\"attached\""}, {prop: "Title", name: "Title", pkg: "", typ: $String, tag: "js:\"title\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "FaviconUrl", name: "FaviconUrl", pkg: "", typ: $String, tag: "js:\"faviconUrl\""}]);
 	DeclarativeContent.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "OnPageChanged", name: "OnPageChanged", pkg: "", typ: ptrType$44, tag: ""}]);
 	OnPageChanged.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
 	DesktopCapture.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
 	Downloads.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
-	DownloadItem.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $Int, tag: "js:\"id\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "Referrer", name: "Referrer", pkg: "", typ: $String, tag: "js:\"referrer\""}, {prop: "Filename", name: "Filename", pkg: "", typ: $String, tag: "js:\"filename\""}, {prop: "Incognito", name: "Incognito", pkg: "", typ: $Bool, tag: "js:\"incognito\""}, {prop: "Danger", name: "Danger", pkg: "", typ: $String, tag: "js:\"danger\""}, {prop: "Mime", name: "Mime", pkg: "", typ: $String, tag: "js:\"mime\""}, {prop: "StartTime", name: "StartTime", pkg: "", typ: $String, tag: "js:\"startTime\""}, {prop: "EndTime", name: "EndTime", pkg: "", typ: $String, tag: "js:\"endTime\""}, {prop: "EstimatedEndTime", name: "EstimatedEndTime", pkg: "", typ: $String, tag: "js:\"estimatedEndTime\""}, {prop: "State", name: "State", pkg: "", typ: $String, tag: "js:\"state\""}, {prop: "Paused", name: "Paused", pkg: "", typ: $Bool, tag: "js:\"paused\""}, {prop: "CanResume", name: "CanResume", pkg: "", typ: $Bool, tag: "js:\"canResume\""}, {prop: "Error", name: "Error", pkg: "", typ: $String, tag: "js:\"error\""}, {prop: "BytesReceived", name: "BytesReceived", pkg: "", typ: $Int64, tag: "js:\"bytesReceived\""}, {prop: "TotalBytes", name: "TotalBytes", pkg: "", typ: $Int64, tag: "js:\"totalBytes\""}, {prop: "FileSize", name: "FileSize", pkg: "", typ: $Int64, tag: "js:\"fileSize\""}, {prop: "Exists", name: "Exists", pkg: "", typ: $Bool, tag: "js:\"exists\""}, {prop: "ByExtensionId", name: "ByExtensionId", pkg: "", typ: $String, tag: "js:\"byExtensionId\""}, {prop: "ByExtensionName", name: "ByExtensionName", pkg: "", typ: $String, tag: "js:\"byExtensionName\""}]);
+	DownloadItem.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $Int, tag: "js:\"id\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "Referrer", name: "Referrer", pkg: "", typ: $String, tag: "js:\"referrer\""}, {prop: "Filename", name: "Filename", pkg: "", typ: $String, tag: "js:\"filename\""}, {prop: "Incognito", name: "Incognito", pkg: "", typ: $Bool, tag: "js:\"incognito\""}, {prop: "Danger", name: "Danger", pkg: "", typ: $String, tag: "js:\"danger\""}, {prop: "Mime", name: "Mime", pkg: "", typ: $String, tag: "js:\"mime\""}, {prop: "StartTime", name: "StartTime", pkg: "", typ: $String, tag: "js:\"startTime\""}, {prop: "EndTime", name: "EndTime", pkg: "", typ: $String, tag: "js:\"endTime\""}, {prop: "EstimatedEndTime", name: "EstimatedEndTime", pkg: "", typ: $String, tag: "js:\"estimatedEndTime\""}, {prop: "State", name: "State", pkg: "", typ: $String, tag: "js:\"state\""}, {prop: "Paused", name: "Paused", pkg: "", typ: $Bool, tag: "js:\"paused\""}, {prop: "CanResume", name: "CanResume", pkg: "", typ: $Bool, tag: "js:\"canResume\""}, {prop: "Error", name: "Error", pkg: "", typ: $String, tag: "js:\"error\""}, {prop: "BytesReceived", name: "BytesReceived", pkg: "", typ: $Int64, tag: "js:\"bytesReceived\""}, {prop: "TotalBytes", name: "TotalBytes", pkg: "", typ: $Int64, tag: "js:\"totalBytes\""}, {prop: "FileSize", name: "FileSize", pkg: "", typ: $Int64, tag: "js:\"fileSize\""}, {prop: "Exists", name: "Exists", pkg: "", typ: $Bool, tag: "js:\"exists\""}, {prop: "ByExtensionId", name: "ByExtensionId", pkg: "", typ: $String, tag: "js:\"byExtensionId\""}, {prop: "ByExtensionName", name: "ByExtensionName", pkg: "", typ: $String, tag: "js:\"byExtensionName\""}]);
 	Enterprise.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "PlatformKeys", name: "PlatformKeys", pkg: "", typ: ptrType$45, tag: ""}]);
 	PlatformKeys.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
 	Token.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "SubtleCrypto", name: "SubtleCrypto", pkg: "", typ: js.Object, tag: "js:\"subtleCrypto\""}]);
 	Extension.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "LastError", name: "LastError", pkg: "", typ: ptrType$1, tag: ""}, {prop: "InIncognitoContext", name: "InIncognitoContext", pkg: "", typ: $Bool, tag: ""}]);
 	FileBrowserHandler.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
-	FileHandlerExecuteEventDetails.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Entries", name: "Entries", pkg: "", typ: sliceType$7, tag: "js:\"entries\""}, {prop: "Tab_id", name: "Tab_id", pkg: "", typ: $Int, tag: "js:\"tab_id\""}]);
+	FileHandlerExecuteEventDetails.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Entries", name: "Entries", pkg: "", typ: sliceType$7, tag: "js:\"entries\""}, {prop: "Tab_id", name: "Tab_id", pkg: "", typ: $Int, tag: "js:\"tab_id\""}]);
 	FileSystemProvider.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
-	EntryMetadata.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "IsDirectory", name: "IsDirectory", pkg: "", typ: $Bool, tag: "js:\"isDirectory\""}, {prop: "Name", name: "Name", pkg: "", typ: $String, tag: "js:\"name\""}, {prop: "Size", name: "Size", pkg: "", typ: $Int64, tag: "js:\"size\""}, {prop: "ModificationTime", name: "ModificationTime", pkg: "", typ: time.Time, tag: "js:\"modificationTime\""}, {prop: "MimeType", name: "MimeType", pkg: "", typ: $String, tag: "js:\"mimeType\""}, {prop: "Thumbnail", name: "Thumbnail", pkg: "", typ: $String, tag: "js:\"thumbnail\""}]);
-	FileSystemInfo.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "FileSystemId", name: "FileSystemId", pkg: "", typ: $String, tag: "js:\"fileSystemId\""}, {prop: "DisplayName", name: "DisplayName", pkg: "", typ: $String, tag: "js:\"displayName\""}, {prop: "Writable", name: "Writable", pkg: "", typ: $Bool, tag: "js:\"writable\""}, {prop: "OpenedFileLimit", name: "OpenedFileLimit", pkg: "", typ: $Int64, tag: "js:\"openedFileLimit\""}, {prop: "OpenedFiles", name: "OpenedFiles", pkg: "", typ: sliceType$28, tag: "js:\"openedFiles\""}]);
+	EntryMetadata.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "IsDirectory", name: "IsDirectory", pkg: "", typ: $Bool, tag: "js:\"isDirectory\""}, {prop: "Name", name: "Name", pkg: "", typ: $String, tag: "js:\"name\""}, {prop: "Size", name: "Size", pkg: "", typ: $Int64, tag: "js:\"size\""}, {prop: "ModificationTime", name: "ModificationTime", pkg: "", typ: time.Time, tag: "js:\"modificationTime\""}, {prop: "MimeType", name: "MimeType", pkg: "", typ: $String, tag: "js:\"mimeType\""}, {prop: "Thumbnail", name: "Thumbnail", pkg: "", typ: $String, tag: "js:\"thumbnail\""}]);
+	FileSystemInfo.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "FileSystemId", name: "FileSystemId", pkg: "", typ: $String, tag: "js:\"fileSystemId\""}, {prop: "DisplayName", name: "DisplayName", pkg: "", typ: $String, tag: "js:\"displayName\""}, {prop: "Writable", name: "Writable", pkg: "", typ: $Bool, tag: "js:\"writable\""}, {prop: "OpenedFileLimit", name: "OpenedFileLimit", pkg: "", typ: $Int64, tag: "js:\"openedFileLimit\""}, {prop: "OpenedFiles", name: "OpenedFiles", pkg: "", typ: sliceType$28, tag: "js:\"openedFiles\""}]);
 	FontSettings.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
-	FontName.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "FontId", name: "FontId", pkg: "", typ: $String, tag: "js:\"fontId\""}, {prop: "DisplayName", name: "DisplayName", pkg: "", typ: $String, tag: "js:\"displayName\""}]);
+	FontName.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "FontId", name: "FontId", pkg: "", typ: $String, tag: "js:\"fontId\""}, {prop: "DisplayName", name: "DisplayName", pkg: "", typ: $String, tag: "js:\"displayName\""}]);
 	Gcm.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "MAX_MESSAGE_SIZE", name: "MAX_MESSAGE_SIZE", pkg: "", typ: $Int, tag: ""}]);
 	History.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
-	HistoryItem.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "Title", name: "Title", pkg: "", typ: $String, tag: "js:\"title\""}, {prop: "LastVisitTime", name: "LastVisitTime", pkg: "", typ: $Int64, tag: "js:\"lastVisitTime\""}, {prop: "VisitCount", name: "VisitCount", pkg: "", typ: $Int, tag: "js:\"visitCount\""}, {prop: "TypedCount", name: "TypedCount", pkg: "", typ: $Int, tag: "js:\"typedCount\""}]);
-	VisitItem.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "VisitId", name: "VisitId", pkg: "", typ: $String, tag: "js:\"visitId\""}, {prop: "VisitTime", name: "VisitTime", pkg: "", typ: $Int64, tag: "js:\"visitTime\""}, {prop: "ReferringVisitId", name: "ReferringVisitId", pkg: "", typ: $String, tag: "js:\"referringVisitId\""}, {prop: "Transition", name: "Transition", pkg: "", typ: $String, tag: "js:\"transition\""}]);
+	HistoryItem.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "Title", name: "Title", pkg: "", typ: $String, tag: "js:\"title\""}, {prop: "LastVisitTime", name: "LastVisitTime", pkg: "", typ: $Int64, tag: "js:\"lastVisitTime\""}, {prop: "VisitCount", name: "VisitCount", pkg: "", typ: $Int, tag: "js:\"visitCount\""}, {prop: "TypedCount", name: "TypedCount", pkg: "", typ: $Int, tag: "js:\"typedCount\""}]);
+	VisitItem.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "VisitId", name: "VisitId", pkg: "", typ: $String, tag: "js:\"visitId\""}, {prop: "VisitTime", name: "VisitTime", pkg: "", typ: $Int64, tag: "js:\"visitTime\""}, {prop: "ReferringVisitId", name: "ReferringVisitId", pkg: "", typ: $String, tag: "js:\"referringVisitId\""}, {prop: "Transition", name: "Transition", pkg: "", typ: $String, tag: "js:\"transition\""}]);
 	I18n.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
 	Identity.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
-	AccountInfo.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}]);
+	AccountInfo.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}]);
 	Idle.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
 	Input.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "Ime", name: "Ime", pkg: "", typ: ptrType$46, tag: ""}]);
 	Ime.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
 	KeyboardEvent.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Type", name: "Type", pkg: "", typ: $String, tag: "js:\"type\""}, {prop: "RequestId", name: "RequestId", pkg: "", typ: $String, tag: "js:\"requestId\""}, {prop: "ExtensionId", name: "ExtensionId", pkg: "", typ: $String, tag: "js:\"extensionId\""}, {prop: "Key", name: "Key", pkg: "", typ: $String, tag: "js:\"key\""}, {prop: "Code", name: "Code", pkg: "", typ: $String, tag: "js:\"code\""}, {prop: "KeyCode", name: "KeyCode", pkg: "", typ: $Int, tag: "js:\"keyCode\""}, {prop: "AltKey", name: "AltKey", pkg: "", typ: $Bool, tag: "js:\"altKey\""}, {prop: "CtrlKey", name: "CtrlKey", pkg: "", typ: $Bool, tag: "js:\"ctrlKey\""}, {prop: "ShiftKey", name: "ShiftKey", pkg: "", typ: $Bool, tag: "js:\"shiftKey\""}, {prop: "CapsLock", name: "CapsLock", pkg: "", typ: $Bool, tag: "js:\"capsLock\""}]);
 	InputContext.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "ContextID", name: "ContextID", pkg: "", typ: $Int, tag: "js:\"contextID\""}, {prop: "Type", name: "Type", pkg: "", typ: $String, tag: "js:\"type\""}, {prop: "AutoCorrect", name: "AutoCorrect", pkg: "", typ: $Bool, tag: "js:\"autoCorrect\""}, {prop: "AutoComplete", name: "AutoComplete", pkg: "", typ: $Bool, tag: "js:\"autoComplete\""}, {prop: "SpellCheck", name: "SpellCheck", pkg: "", typ: $Bool, tag: "js:\"spellCheck\""}]);
 	Notification.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
-	NotificationOptions.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Type", name: "Type", pkg: "", typ: $String, tag: "js:\"type\""}, {prop: "IconUrl", name: "IconUrl", pkg: "", typ: $String, tag: "js:\"iconUrl\""}, {prop: "AppIconMaskUrl", name: "AppIconMaskUrl", pkg: "", typ: $String, tag: "js:\"appIconMaskUrl\""}, {prop: "Title", name: "Title", pkg: "", typ: $String, tag: "js:\"title\""}, {prop: "Message", name: "Message", pkg: "", typ: $String, tag: "js:\"message\""}, {prop: "ContextMessage", name: "ContextMessage", pkg: "", typ: $String, tag: "js:\"contextMessage\""}, {prop: "Priority", name: "Priority", pkg: "", typ: $Int, tag: "js:\"priority\""}, {prop: "EventTime", name: "EventTime", pkg: "", typ: $Int64, tag: "js:\"eventTime\""}, {prop: "Buttons", name: "Buttons", pkg: "", typ: sliceType$28, tag: "js:\"buttons\""}, {prop: "ImageUrl", name: "ImageUrl", pkg: "", typ: $String, tag: "js:\"imageUrl\""}, {prop: "Items", name: "Items", pkg: "", typ: sliceType$28, tag: "js:\"items\""}, {prop: "Progress", name: "Progress", pkg: "", typ: $Int, tag: "js:\"progress\""}, {prop: "IsClickable", name: "IsClickable", pkg: "", typ: $Bool, tag: "js:\"isClickable\""}]);
+	NotificationOptions.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Type", name: "Type", pkg: "", typ: $String, tag: "js:\"type\""}, {prop: "IconUrl", name: "IconUrl", pkg: "", typ: $String, tag: "js:\"iconUrl\""}, {prop: "AppIconMaskUrl", name: "AppIconMaskUrl", pkg: "", typ: $String, tag: "js:\"appIconMaskUrl\""}, {prop: "Title", name: "Title", pkg: "", typ: $String, tag: "js:\"title\""}, {prop: "Message", name: "Message", pkg: "", typ: $String, tag: "js:\"message\""}, {prop: "ContextMessage", name: "ContextMessage", pkg: "", typ: $String, tag: "js:\"contextMessage\""}, {prop: "Priority", name: "Priority", pkg: "", typ: $Int, tag: "js:\"priority\""}, {prop: "EventTime", name: "EventTime", pkg: "", typ: $Int64, tag: "js:\"eventTime\""}, {prop: "Buttons", name: "Buttons", pkg: "", typ: sliceType$28, tag: "js:\"buttons\""}, {prop: "ImageUrl", name: "ImageUrl", pkg: "", typ: $String, tag: "js:\"imageUrl\""}, {prop: "Items", name: "Items", pkg: "", typ: sliceType$28, tag: "js:\"items\""}, {prop: "Progress", name: "Progress", pkg: "", typ: $Int, tag: "js:\"progress\""}, {prop: "IsClickable", name: "IsClickable", pkg: "", typ: $Bool, tag: "js:\"isClickable\""}]);
 	Omnibox.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
-	SuggestResult.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Content", name: "Content", pkg: "", typ: $String, tag: "js:\"content\""}, {prop: "Description", name: "Description", pkg: "", typ: $String, tag: "js:\"description\""}]);
+	SuggestResult.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Content", name: "Content", pkg: "", typ: $String, tag: "js:\"content\""}, {prop: "Description", name: "Description", pkg: "", typ: $String, tag: "js:\"description\""}]);
 	PageAction.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
 	PageCapture.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
 	Permissions.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
@@ -16113,30 +16113,30 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	Privacy.init([{prop: "Services", name: "Services", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Network", name: "Network", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Websites", name: "Websites", pkg: "", typ: ptrType$1, tag: ""}]);
 	Proxy.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "Settings", name: "Settings", pkg: "", typ: ptrType$1, tag: ""}]);
 	Runtime.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "LastError", name: "LastError", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: ""}]);
-	Port.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Name", name: "Name", pkg: "", typ: $String, tag: "js:\"name\""}, {prop: "OnDisconnect", name: "OnDisconnect", pkg: "", typ: js.Object, tag: "js:\"onDisconnect\""}, {prop: "OnMessage", name: "OnMessage", pkg: "", typ: js.Object, tag: "js:\"onMessage\""}, {prop: "Sender", name: "Sender", pkg: "", typ: MessageSender, tag: "js:\"sender\""}]);
-	MessageSender.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "tab", name: "tab", pkg: "github.com/fabioberger/chrome", typ: Tab, tag: "js:\"tab\""}, {prop: "FrameId", name: "FrameId", pkg: "", typ: $Int, tag: "js:\"frameId\""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "TlsChannelId", name: "TlsChannelId", pkg: "", typ: $String, tag: "js:\"tlsChannelId\""}]);
+	Port.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Name", name: "Name", pkg: "", typ: $String, tag: "js:\"name\""}, {prop: "OnDisconnect", name: "OnDisconnect", pkg: "", typ: js.Object, tag: "js:\"onDisconnect\""}, {prop: "OnMessage", name: "OnMessage", pkg: "", typ: js.Object, tag: "js:\"onMessage\""}, {prop: "Sender", name: "Sender", pkg: "", typ: MessageSender, tag: "js:\"sender\""}]);
+	MessageSender.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "tab", name: "tab", pkg: "github.com/fabioberger/chrome", typ: Tab, tag: "js:\"tab\""}, {prop: "FrameId", name: "FrameId", pkg: "", typ: $Int, tag: "js:\"frameId\""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "TlsChannelId", name: "TlsChannelId", pkg: "", typ: $String, tag: "js:\"tlsChannelId\""}]);
 	PlatformInfo.init($String, $String);
 	Sessions.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "MAX_SESSION_RESULTS", name: "MAX_SESSION_RESULTS", pkg: "", typ: $Int, tag: ""}]);
-	Filter.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "MaxResults", name: "MaxResults", pkg: "", typ: $Int, tag: "js:\"maxResults\""}]);
-	Session.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "LastModified", name: "LastModified", pkg: "", typ: $Int, tag: "js:\"lastModified\""}, {prop: "Tab", name: "Tab", pkg: "", typ: Tab, tag: "js:\"tab\""}, {prop: "Window", name: "Window", pkg: "", typ: Window, tag: "js:\"window\""}]);
-	Device.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "DeviceName", name: "DeviceName", pkg: "", typ: $String, tag: "js:\"deviceName\""}, {prop: "Sessions", name: "Sessions", pkg: "", typ: sliceType$22, tag: "js:\"sessions\""}]);
+	Filter.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "MaxResults", name: "MaxResults", pkg: "", typ: $Int, tag: "js:\"maxResults\""}]);
+	Session.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "LastModified", name: "LastModified", pkg: "", typ: $Int, tag: "js:\"lastModified\""}, {prop: "Tab", name: "Tab", pkg: "", typ: Tab, tag: "js:\"tab\""}, {prop: "Window", name: "Window", pkg: "", typ: Window, tag: "js:\"window\""}]);
+	Device.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "DeviceName", name: "DeviceName", pkg: "", typ: $String, tag: "js:\"deviceName\""}, {prop: "Sessions", name: "Sessions", pkg: "", typ: sliceType$22, tag: "js:\"sessions\""}]);
 	Storage.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "Sync", name: "Sync", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Local", name: "Local", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Managed", name: "Managed", pkg: "", typ: ptrType$1, tag: ""}]);
 	StorageChange.init([{prop: "OldValue", name: "OldValue", pkg: "", typ: $emptyInterface, tag: "js:\"oldValue\""}, {prop: "NewValue", name: "NewValue", pkg: "", typ: $emptyInterface, tag: "js:\"newValue\""}]);
 	System.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "Cpu", name: "Cpu", pkg: "", typ: ptrType$48, tag: ""}, {prop: "Memory", name: "Memory", pkg: "", typ: ptrType$49, tag: ""}, {prop: "Storage", name: "Storage", pkg: "", typ: ptrType$50, tag: ""}]);
 	Cpu.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
 	Memory.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
 	SysStorage.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
-	StorageUnitInfo.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "Name", name: "Name", pkg: "", typ: $String, tag: "js:\"name\""}, {prop: "Type", name: "Type", pkg: "", typ: $String, tag: "js:\"type\""}, {prop: "Capacity", name: "Capacity", pkg: "", typ: $Int64, tag: "js:\"capacity\""}]);
+	StorageUnitInfo.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "Name", name: "Name", pkg: "", typ: $String, tag: "js:\"name\""}, {prop: "Type", name: "Type", pkg: "", typ: $String, tag: "js:\"type\""}, {prop: "Capacity", name: "Capacity", pkg: "", typ: $Int64, tag: "js:\"capacity\""}]);
 	TabCapture.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
-	CaptureInfo.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "TabId", name: "TabId", pkg: "", typ: $Int, tag: "js:\"tabId\""}, {prop: "Status", name: "Status", pkg: "", typ: $String, tag: "js:\"status\""}, {prop: "FullScreen", name: "FullScreen", pkg: "", typ: $Bool, tag: "js:\"fullScreen\""}]);
+	CaptureInfo.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "TabId", name: "TabId", pkg: "", typ: $Int, tag: "js:\"tabId\""}, {prop: "Status", name: "Status", pkg: "", typ: $String, tag: "js:\"status\""}, {prop: "FullScreen", name: "FullScreen", pkg: "", typ: $Bool, tag: "js:\"fullScreen\""}]);
 	Tabs.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
-	Tab.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $Int, tag: "js:\"id\""}, {prop: "Index", name: "Index", pkg: "", typ: $Int, tag: "js:\"index\""}, {prop: "WindowId", name: "WindowId", pkg: "", typ: $Int, tag: "js:\"windowId\""}, {prop: "OpenerTabId", name: "OpenerTabId", pkg: "", typ: $Int, tag: "js:\"openerTabId\""}, {prop: "Selected", name: "Selected", pkg: "", typ: $Bool, tag: "js:\"selected\""}, {prop: "Highlighted", name: "Highlighted", pkg: "", typ: $Bool, tag: "js:\"highlighted\""}, {prop: "Active", name: "Active", pkg: "", typ: $Bool, tag: "js:\"active\""}, {prop: "Pinned", name: "Pinned", pkg: "", typ: $Bool, tag: "js:\"pinned\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "Title", name: "Title", pkg: "", typ: $String, tag: "js:\"title\""}, {prop: "FavIconUrl", name: "FavIconUrl", pkg: "", typ: $String, tag: "js:\"favIconUrl\""}, {prop: "Status", name: "Status", pkg: "", typ: $String, tag: "js:\"status\""}, {prop: "Incognito", name: "Incognito", pkg: "", typ: $Bool, tag: "js:\"incognito\""}, {prop: "Width", name: "Width", pkg: "", typ: $Int, tag: "js:\"width\""}, {prop: "Height", name: "Height", pkg: "", typ: $Int, tag: "js:\"height\""}, {prop: "SessionId", name: "SessionId", pkg: "", typ: $String, tag: "js:\"sessionId\""}]);
+	Tab.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $Int, tag: "js:\"id\""}, {prop: "Index", name: "Index", pkg: "", typ: $Int, tag: "js:\"index\""}, {prop: "WindowId", name: "WindowId", pkg: "", typ: $Int, tag: "js:\"windowId\""}, {prop: "OpenerTabId", name: "OpenerTabId", pkg: "", typ: $Int, tag: "js:\"openerTabId\""}, {prop: "Selected", name: "Selected", pkg: "", typ: $Bool, tag: "js:\"selected\""}, {prop: "Highlighted", name: "Highlighted", pkg: "", typ: $Bool, tag: "js:\"highlighted\""}, {prop: "Active", name: "Active", pkg: "", typ: $Bool, tag: "js:\"active\""}, {prop: "Pinned", name: "Pinned", pkg: "", typ: $Bool, tag: "js:\"pinned\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "Title", name: "Title", pkg: "", typ: $String, tag: "js:\"title\""}, {prop: "FavIconUrl", name: "FavIconUrl", pkg: "", typ: $String, tag: "js:\"favIconUrl\""}, {prop: "Status", name: "Status", pkg: "", typ: $String, tag: "js:\"status\""}, {prop: "Incognito", name: "Incognito", pkg: "", typ: $Bool, tag: "js:\"incognito\""}, {prop: "Width", name: "Width", pkg: "", typ: $Int, tag: "js:\"width\""}, {prop: "Height", name: "Height", pkg: "", typ: $Int, tag: "js:\"height\""}, {prop: "SessionId", name: "SessionId", pkg: "", typ: $String, tag: "js:\"sessionId\""}]);
 	ZoomSettings.init($String, $String);
 	TopSites.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
 	MostvisitedURL.init([{prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "Title", name: "Title", pkg: "", typ: $String, tag: "js:\"title\""}]);
 	Tts.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
-	TtsEvent.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Type", name: "Type", pkg: "", typ: $String, tag: "js:\"type\""}, {prop: "CharIndex", name: "CharIndex", pkg: "", typ: $Int64, tag: "js:\"charIndex\""}, {prop: "ErrorMessage", name: "ErrorMessage", pkg: "", typ: $String, tag: "js:\"errorMessage\""}]);
-	TtsVoice.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "VoiceName", name: "VoiceName", pkg: "", typ: $String, tag: "js:\"voiceName\""}, {prop: "Lang", name: "Lang", pkg: "", typ: $String, tag: "js:\"lang\""}, {prop: "Gender", name: "Gender", pkg: "", typ: $String, tag: "js:\"gender\""}, {prop: "Remote", name: "Remote", pkg: "", typ: $Bool, tag: "js:\"remote\""}, {prop: "ExtensionId", name: "ExtensionId", pkg: "", typ: $String, tag: "js:\"extensionId\""}, {prop: "EventTypes", name: "EventTypes", pkg: "", typ: sliceType$1, tag: "js:\"eventTypes\""}]);
+	TtsEvent.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Type", name: "Type", pkg: "", typ: $String, tag: "js:\"type\""}, {prop: "CharIndex", name: "CharIndex", pkg: "", typ: $Int64, tag: "js:\"charIndex\""}, {prop: "ErrorMessage", name: "ErrorMessage", pkg: "", typ: $String, tag: "js:\"errorMessage\""}]);
+	TtsVoice.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "VoiceName", name: "VoiceName", pkg: "", typ: $String, tag: "js:\"voiceName\""}, {prop: "Lang", name: "Lang", pkg: "", typ: $String, tag: "js:\"lang\""}, {prop: "Gender", name: "Gender", pkg: "", typ: $String, tag: "js:\"gender\""}, {prop: "Remote", name: "Remote", pkg: "", typ: $Bool, tag: "js:\"remote\""}, {prop: "ExtensionId", name: "ExtensionId", pkg: "", typ: $String, tag: "js:\"extensionId\""}, {prop: "EventTypes", name: "EventTypes", pkg: "", typ: sliceType$1, tag: "js:\"eventTypes\""}]);
 	TtsEngine.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
 	WebNavigation.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
 	WebRequest.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "MAX_HANDLER_BEHAVIOR_CHANGED_CALLS_PER_10_MINUTES", name: "MAX_HANDLER_BEHAVIOR_CHANGED_CALLS_PER_10_MINUTES", pkg: "", typ: $Int, tag: ""}]);
@@ -19872,7 +19872,7 @@ $packages["main"] = (function() {
 			var alarm;
 			qunit.Test("Alarm.Get()", (function(assert) {
 				var assert;
-				assert.Equal(new $String($internalize(alarm.Object.object.name, $String)), new $String("test_alarm"), "Get");
+				assert.Equal(new $String($internalize(alarm.Object.name, $String)), new $String("test_alarm"), "Get");
 			}));
 			c.Alarms.Clear("test_alarm", (function(wasCleared) {
 				var wasCleared;
@@ -19886,8 +19886,8 @@ $packages["main"] = (function() {
 					var alarms;
 					qunit.Test("Alarm.GetAll()", (function(assert) {
 						var assert;
-						assert.Equal(new $String($internalize(((0 < 0 || 0 >= alarms.$length) ? $throwRuntimeError("index out of range") : alarms.$array[alarms.$offset + 0]).Object.object.name, $String)), new $String("test_alarm2"), "GetAll");
-						assert.Equal(new $String($internalize(((1 < 0 || 1 >= alarms.$length) ? $throwRuntimeError("index out of range") : alarms.$array[alarms.$offset + 1]).Object.object.name, $String)), new $String("test_alarm3"), "GetAll");
+						assert.Equal(new $String($internalize(((0 < 0 || 0 >= alarms.$length) ? $throwRuntimeError("index out of range") : alarms.$array[alarms.$offset + 0]).Object.name, $String)), new $String("test_alarm2"), "GetAll");
+						assert.Equal(new $String($internalize(((1 < 0 || 1 >= alarms.$length) ? $throwRuntimeError("index out of range") : alarms.$array[alarms.$offset + 1]).Object.name, $String)), new $String("test_alarm3"), "GetAll");
 					}));
 					c.Alarms.ClearAll((function(wasCleared$1) {
 						var wasCleared$1;
@@ -19904,13 +19904,13 @@ $packages["main"] = (function() {
 			var result;
 			qunit.Test("Bookmarks.Create()", (function(assert) {
 				var assert;
-				assert.Equal(new $String($internalize(result.Object.object.title, $String)), new $String("Testing"), "Create");
+				assert.Equal(new $String($internalize(result.Object.title, $String)), new $String("Testing"), "Create");
 			}));
-			c.Bookmarks.Get(new sliceType([$internalize(result.Object.object.id, $String)]), (function(results) {
+			c.Bookmarks.Get(new sliceType([$internalize(result.Object.id, $String)]), (function(results) {
 				var results;
 				qunit.Test("Bookmarks.Get()", (function(assert) {
 					var assert;
-					assert.Equal(new $String($internalize(((0 < 0 || 0 >= results.$length) ? $throwRuntimeError("index out of range") : results.$array[results.$offset + 0]).Object.object.url, $String)), new $String("http://www.testing.com/"), "Get");
+					assert.Equal(new $String($internalize(((0 < 0 || 0 >= results.$length) ? $throwRuntimeError("index out of range") : results.$array[results.$offset + 0]).Object.url, $String)), new $String("http://www.testing.com/"), "Get");
 				}));
 			}));
 		}));
@@ -19948,15 +19948,15 @@ $packages["main"] = (function() {
 			var _key$5, _map$5, cookie;
 			qunit.Test("Cookies.Set()", (function(assert) {
 				var assert;
-				assert.Equal(new $String($internalize(cookie.Object.object.name, $String)), new $String("testing"), "Set");
-				assert.Equal(new $String($internalize(cookie.Object.object.value, $String)), new $String("testvalue"), "Set");
+				assert.Equal(new $String($internalize(cookie.Object.name, $String)), new $String("testing"), "Set");
+				assert.Equal(new $String($internalize(cookie.Object.value, $String)), new $String("testvalue"), "Set");
 			}));
 			cookieInfo = (_map$5 = new $Map(), _key$5 = "url", _map$5[_key$5] = { k: _key$5, v: new $String("http://www.google.com") }, _key$5 = "name", _map$5[_key$5] = { k: _key$5, v: new $String("testing") }, _map$5);
 			c.Cookies.Get(cookieInfo, (function(cookie$1) {
 				var cookie$1;
 				qunit.Test("Cookies.Get()", (function(assert) {
 					var assert;
-					assert.Equal(new $String($internalize(cookie$1.Object.object.name, $String)), new $String("testing"), "Get");
+					assert.Equal(new $String($internalize(cookie$1.Object.name, $String)), new $String("testing"), "Get");
 				}));
 			}));
 		}));
@@ -19995,14 +19995,14 @@ $packages["main"] = (function() {
 				var results;
 				qunit.Test("History.Search()", (function(assert) {
 					var assert;
-					assert.Equal(new $String($internalize(((0 < 0 || 0 >= results.$length) ? $throwRuntimeError("index out of range") : results.$array[results.$offset + 0]).Object.object.url, $String)), new $String("http://www.testing.com/"), "Search");
+					assert.Equal(new $String($internalize(((0 < 0 || 0 >= results.$length) ? $throwRuntimeError("index out of range") : results.$array[results.$offset + 0]).Object.url, $String)), new $String("http://www.testing.com/"), "Search");
 				}));
 			}));
 		}));
 		queryInfo = (_map$8 = new $Map(), _key$8 = "currentWindow", _map$8[_key$8] = { k: _key$8, v: new $Bool(true) }, _key$8 = "active", _map$8[_key$8] = { k: _key$8, v: new $Bool(true) }, _map$8);
 		c.Tabs.Query(new chrome.Object(queryInfo), (function(tabs) {
 			var _key$9, _map$9, id, msg, tabs;
-			id = $parseInt(((0 < 0 || 0 >= tabs.$length) ? $throwRuntimeError("index out of range") : tabs.$array[tabs.$offset + 0]).Object.object.id) >> 0;
+			id = $parseInt(((0 < 0 || 0 >= tabs.$length) ? $throwRuntimeError("index out of range") : tabs.$array[tabs.$offset + 0]).Object.id) >> 0;
 			msg = (_map$9 = new $Map(), _key$9 = "greeting", _map$9[_key$9] = { k: _key$9, v: new $String("hello") }, _map$9);
 			c.Tabs.SendMessage(id, new chrome.Object(msg), (function(response) {
 				var err, response;

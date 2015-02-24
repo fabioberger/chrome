@@ -17,7 +17,7 @@ type FileSystemProvider struct {
  */
 
 type EntryMetadata struct {
-	js.Object
+	*js.Object
 	IsDirectory      bool      `js:"isDirectory"`
 	Name             string    `js:"name"`
 	Size             int64     `js:"size"`
@@ -27,14 +27,14 @@ type EntryMetadata struct {
 }
 
 type Watcher struct {
-	js.Object
+	*js.Object
 	EntryPath string `js:"entryPath"`
 	Recursive bool   `js:"recursive"`
 	LastTag   string `js:"lastTag"`
 }
 
 type FileSystemInfo struct {
-	js.Object
+	*js.Object
 	FileSystemId    string   `js:"fileSystemId"`
 	DisplayName     string   `js:"displayName"`
 	Writable        bool     `js:"writable"`
@@ -43,7 +43,7 @@ type FileSystemInfo struct {
 }
 
 type AddWatcherRequestedOptions struct {
-	js.Object
+	*js.Object
 	FilesystemId string `js:"fileSystemId"`
 	RequestId    int    `js:"requestId"`
 	EntryPath    string `js:"entryPath"`
@@ -53,7 +53,7 @@ type AddWatcherRequestedOptions struct {
 type RemoveWatcherRequestedOptions AddWatcherRequestedOptions
 
 type NotifyOptions struct {
-	js.Object
+	*js.Object
 	FilesystemId string   `js:"fileSystemId"`
 	ObservedPath string   `js:"observedPath"`
 	Recursive    bool     `js:"recursive"`

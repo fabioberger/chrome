@@ -11,7 +11,7 @@ type FontSettings struct {
  */
 
 type FontName struct {
-	js.Object
+	*js.Object
 	FontId      string `js:"fontId"`
 	DisplayName string `js:"displayName"`
 }

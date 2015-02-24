@@ -23,7 +23,7 @@ func NewRuntime(runtimeObj *js.Object) *Runtime {
  */
 
 type Port struct {
-	js.Object
+	*js.Object
 	Name         string        `js:"name"`
 	OnDisconnect js.Object     `js:"onDisconnect"`
 	OnMessage    js.Object     `js:"onMessage"`
@@ -31,7 +31,7 @@ type Port struct {
 }
 
 type MessageSender struct {
-	js.Object
+	*js.Object
 	tab          Tab    `js:"tab"`
 	FrameId      int    `js:"frameId"`
 	Id           string `js:"id"`
@@ -71,12 +71,12 @@ func (r *Runtime) Restart() {
 }
 
 func (r *Runtime) Connect(extensionId string, connectInfo interface{}) Port {
-	portObj := *r.o.Call("connect", extensionId, connectInfo)
+	portObj := r.o.Call("connect", extensionId, connectInfo)
 	return Port{Object: portObj}
 }
 
 func (r *Runtime) ConnectNative(application string) Port {
-	portObj := *r.o.Call("connectNative", application)
+	portObj := r.o.Call("connectNative", application)
 	return Port{Object: portObj}
 }
 

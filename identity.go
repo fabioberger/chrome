@@ -11,7 +11,7 @@ type Identity struct {
  */
 
 type AccountInfo struct {
-	js.Object
+	*js.Object
 	Id string `js:"id"`
 }
 

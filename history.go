@@ -11,7 +11,7 @@ type History struct {
  */
 
 type HistoryItem struct {
-	js.Object
+	*js.Object
 	Id            string `js:"id"`
 	Url           string `js:"url"`
 	Title         string `js:"title"`
@@ -21,7 +21,7 @@ type HistoryItem struct {
 }
 
 type VisitItem struct {
-	js.Object
+	*js.Object
 	Id               string `js:"id"`
 	VisitId          string `js:"visitId"`
 	VisitTime        int64  `js:"visitTime"`

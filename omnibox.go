@@ -11,7 +11,7 @@ type Omnibox struct {
  */
 
 type SuggestResult struct {
-	js.Object
+	*js.Object
 	Content     string `js:"content"`
 	Description string `js:"description"`
 }

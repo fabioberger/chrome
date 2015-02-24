@@ -11,7 +11,7 @@ type Cookies struct {
  */
 
 type Cookie struct {
-	js.Object
+	*js.Object
 	Name           string `js:"name"`
 	Value          string `js:"value"`
 	Domain         string `js:"domain"`
@@ -25,7 +25,7 @@ type Cookie struct {
 }
 
 type CookieStore struct {
-	js.Object
+	*js.Object
 	Id     string `js:"id"`
 	TabIds []int  `js:"tabIds"`
 }

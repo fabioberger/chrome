@@ -11,15 +11,15 @@ type TabCapture struct {
  */
 
 type CaptureInfo struct {
-	js.Object
+	*js.Object
 	TabId      int    `js:"tabId"`
 	Status     string `js:"status"`
 	FullScreen bool   `js:"fullScreen"`
 }
 
 type MediaStreamConstraint struct {
-	Mandatory js.Object `js:"mandatory"`
-	Optional  js.Object `js:"optional"`
+	Mandatory *js.Object `js:"mandatory"`
+	Optional  *js.Object `js:"optional"`
 }
 
 /*

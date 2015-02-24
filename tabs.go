@@ -11,7 +11,7 @@ type Tabs struct {
  */
 
 type Tab struct {
-	js.Object
+	*js.Object
 	Id          int    `js:"id"`
 	Index       int    `js:"index"`
 	WindowId    int    `js:"windowId"`

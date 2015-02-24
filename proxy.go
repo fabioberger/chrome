@@ -21,14 +21,14 @@ func NewProxy(proxyObj *js.Object) *Proxy {
  */
 
 type ProxyServer struct {
-	js.Object
+	*js.Object
 	Scheme string `js:"scheme"`
 	Host   string `js:"host"`
 	Port   int    `js:"port"`
 }
 
 type ProxyRules struct {
-	js.Object
+	*js.Object
 	SingleProxy   ProxyServer `js:"singleProxy"`
 	ProxyForHttp  ProxyServer `js:"proxyForHttp"`
 	ProxyForHttps ProxyServer `js:"proxyForHttps"`
@@ -38,14 +38,14 @@ type ProxyRules struct {
 }
 
 type PacScript struct {
-	js.Object
+	*js.Object
 	Url       string `js:"url"`
 	Data      string `js:"data"`
 	Mandatory bool   `js:"mandatory"`
 }
 
 type ProxyConfig struct {
-	js.Object
+	*js.Object
 	Rules     ProxyRules `js:"rules"`
 	PacScript PacScript  `js:"pacScript"`
 	Mode      string     `js:"mode"`

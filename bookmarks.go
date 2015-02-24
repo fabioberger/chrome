@@ -11,7 +11,7 @@ type Bookmarks struct {
  */
 
 type BookmarkTreeNode struct {
-	js.Object
+	*js.Object
 	Id                string             `js:"id"`
 	ParentId          string             `js:"parentId"`
 	Index             int                `js:"index"`

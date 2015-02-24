@@ -11,14 +11,14 @@ type Tts struct {
  */
 
 type TtsEvent struct {
-	js.Object
+	*js.Object
 	Type         string `js:"type"`
 	CharIndex    int64  `js:"charIndex"`
 	ErrorMessage string `js:"errorMessage"`
 }
 
 type TtsVoice struct {
-	js.Object
+	*js.Object
 	VoiceName   string   `js:"voiceName"`
 	Lang        string   `js:"lang"`
 	Gender      string   `js:"gender"`
