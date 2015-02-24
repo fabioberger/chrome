@@ -1,12 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/fabioberger/chrome"
 	QUnit "github.com/fabioberger/qunit"
-	"github.com/gopherjs/gopherjs/js"
 	"honnef.co/go/js/dom"
 )
 
@@ -202,15 +200,14 @@ func main() {
 	c.Tabs.Query(queryInfo, func(tabs []chrome.Tab) {
 		id := tabs[0].Id
 
-		// Send Message to the given Tab
+		// Send Message to the given Tab & have Event Listener on Tab Respond
 		msg := chrome.Object{"greeting": "hello"}
 		c.Tabs.SendMessage(id, msg, func(response chrome.Object) {
-			err := js.Global.Get("chrome").Get("runtime").Get("lastError").Get("message").String()
-			fmt.Println(err)
-			fmt.Println(response)
-			// QUnit.Test("Tabs.SendMessage()", func(assert QUnit.QUnitAssert) {
-			// 	assert.Equal(response.Get("farewell").String(), "goodbye", "SendMessage")
-			// })
+			// err := js.Global.Get("chrome").Get("runtime").Get("lastError").Get("message").String()
+			// fmt.Println(err)
+			QUnit.Test("Tabs.SendMessage() & Runtime.OnMessage() Event", func(assert QUnit.QUnitAssert) {
+				assert.Equal(response["farewell"], "goodbye", "SendMessage")
+			})
 		})
 	})
 

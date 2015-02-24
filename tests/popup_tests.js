@@ -19853,15 +19853,12 @@ $packages["honnef.co/go/js/dom"] = (function() {
 	return $pkg;
 })();
 $packages["main"] = (function() {
-	var $pkg = {}, fmt, chrome, qunit, js, dom, time, sliceType, sliceType$1, doc, main;
-	fmt = $packages["fmt"];
+	var $pkg = {}, chrome, qunit, dom, time, sliceType, doc, main;
 	chrome = $packages["github.com/fabioberger/chrome"];
 	qunit = $packages["github.com/fabioberger/qunit"];
-	js = $packages["github.com/gopherjs/gopherjs/js"];
 	dom = $packages["honnef.co/go/js/dom"];
 	time = $packages["time"];
 	sliceType = $sliceType($String);
-	sliceType$1 = $sliceType($emptyInterface);
 	main = function() {
 		var _key, _key$1, _key$2, _key$3, _key$4, _key$5, _key$6, _key$7, _key$8, _map, _map$1, _map$2, _map$3, _map$4, _map$5, _map$6, _map$7, _map$8, alarmOps, bookmark, c, change, cookieInfo, fetchProperties, fontDetails, queryInfo, urlDetails, windows, x;
 		c = chrome.NewChrome();
@@ -20005,22 +20002,21 @@ $packages["main"] = (function() {
 			id = $parseInt(((0 < 0 || 0 >= tabs.$length) ? $throwRuntimeError("index out of range") : tabs.$array[tabs.$offset + 0]).Object.id) >> 0;
 			msg = (_map$9 = new $Map(), _key$9 = "greeting", _map$9[_key$9] = { k: _key$9, v: new $String("hello") }, _map$9);
 			c.Tabs.SendMessage(id, new chrome.Object(msg), (function(response) {
-				var err, response;
-				err = $internalize($global.chrome.runtime.lastError.message, $String);
-				fmt.Println(new sliceType$1([new $String(err)]));
-				fmt.Println(new sliceType$1([new chrome.Object(response)]));
+				var response;
+				qunit.Test("Tabs.SendMessage() & Runtime.OnMessage() Event", (function(assert) {
+					var _entry, assert;
+					assert.Equal((_entry = response["farewell"], _entry !== undefined ? _entry.v : $ifaceNil), new $String("goodbye"), "SendMessage");
+				}));
 			}));
 		}));
 	};
 	$pkg.$init = function() {
 		$pkg.$init = function() {};
 		/* */ var $r, $s = 0; var $init_main = function() { while (true) { switch ($s) { case 0:
-		$r = fmt.$init($BLOCKING); /* */ $s = 1; case 1: if ($r && $r.$blocking) { $r = $r(); }
-		$r = chrome.$init($BLOCKING); /* */ $s = 2; case 2: if ($r && $r.$blocking) { $r = $r(); }
-		$r = qunit.$init($BLOCKING); /* */ $s = 3; case 3: if ($r && $r.$blocking) { $r = $r(); }
-		$r = js.$init($BLOCKING); /* */ $s = 4; case 4: if ($r && $r.$blocking) { $r = $r(); }
-		$r = dom.$init($BLOCKING); /* */ $s = 5; case 5: if ($r && $r.$blocking) { $r = $r(); }
-		$r = time.$init($BLOCKING); /* */ $s = 6; case 6: if ($r && $r.$blocking) { $r = $r(); }
+		$r = chrome.$init($BLOCKING); /* */ $s = 1; case 1: if ($r && $r.$blocking) { $r = $r(); }
+		$r = qunit.$init($BLOCKING); /* */ $s = 2; case 2: if ($r && $r.$blocking) { $r = $r(); }
+		$r = dom.$init($BLOCKING); /* */ $s = 3; case 3: if ($r && $r.$blocking) { $r = $r(); }
+		$r = time.$init($BLOCKING); /* */ $s = 4; case 4: if ($r && $r.$blocking) { $r = $r(); }
 		doc = dom.GetWindow().Document();
 		main();
 		/* */ } return; } }; $init_main.$blocking = true; return $init_main;

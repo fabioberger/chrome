@@ -366,7 +366,7 @@ var $internalAppend = function(slice, array, offset, length) {
 };
 
 var $equal = function(a, b, type) {
-  if (type === $js.Object) {
+  if (type === $jsObjectPtr) {
     return a === b;
   }
   switch (type.kind) {
@@ -694,8 +694,8 @@ var $newType = function(size, kind, string, name, pkg, constructor) {
           if (target.prototype[m.prop] !== undefined) { return; }
           target.prototype[m.prop] = function() {
             var v = this.$val[f.prop];
-            if (f.typ === $js.Object) {
-              v = new $js.container.ptr(v);
+            if (f.typ === $jsObjectPtr) {
+              v = new $jsObjectPtr(v);
             }
             if (v.$val === undefined) {
               v = new f.typ(v);
@@ -1116,8 +1116,8 @@ var $assertType = function(value, type, returnTuple) {
   if (!isInterface) {
     value = value.$val;
   }
-  if (type === $js.Object) {
-    value = value.Object;
+  if (type === $jsObjectPtr) {
+    value = value.object;
   }
   return returnTuple ? [value, true] : value;
 };
@@ -1322,7 +1322,7 @@ var $callDeferred = function(deferred, jsErr) {
     var newErr = null;
     try {
       $deferFrames.push(deferred);
-      $panic(new $js.Error.ptr(jsErr));
+      $panic(new $jsErrorPtr(jsErr));
     } catch (err) {
       newErr = err;
     }
@@ -1673,7 +1673,7 @@ var $select = function(comms) {
   return f;
 };
 
-var $js;
+var $jsObjectPtr, $jsErrorPtr;
 
 var $needsExternalization = function(t) {
   switch (t.kind) {
@@ -1690,15 +1690,13 @@ var $needsExternalization = function(t) {
     case $kindFloat32:
     case $kindFloat64:
       return false;
-    case $kindInterface:
-      return t !== $js.Object;
     default:
-      return true;
+      return t !== $jsObjectPtr;
   }
 };
 
 var $externalize = function(v, t) {
-  if ($js !== undefined && t === $js.Object) {
+  if (t === $jsObjectPtr) {
     return v;
   }
   switch (t.kind) {
@@ -1731,7 +1729,7 @@ var $externalize = function(v, t) {
       $checkForDeadlock = false;
       var convert = false;
       for (var i = 0; i < t.params.length; i++) {
-        convert = convert || (t.params[i] !== $js.Object);
+        convert = convert || (t.params[i] !== $jsObjectPtr);
       }
       for (var i = 0; i < t.results.length; i++) {
         convert = convert || $needsExternalization(t.results[i]);
@@ -1771,6 +1769,9 @@ var $externalize = function(v, t) {
     if (v === $ifaceNil) {
       return null;
     }
+    if (v.constructor === $jsObjectPtr) {
+      return v.$val.object;
+    }
     return $externalize(v.$val, v.constructor);
   case $kindMap:
     var m = {};
@@ -1809,16 +1810,16 @@ var $externalize = function(v, t) {
 
     var noJsObject = {};
     var searchJsObject = function(v, t) {
-      if (t === $js.Object) {
+      if (t === $jsObjectPtr) {
         return v;
       }
-      if (t.kind === $kindPtr && v !== t.nil) {
-        var o = searchJsObject(v.$get(), t.elem);
-        if (o !== noJsObject) {
-          return o;
+      switch (t.kind) {
+      case $kindPtr:
+        if (v === t.nil) {
+          return noJsObject;
         }
-      }
-      if (t.kind === $kindStruct) {
+        return searchJsObject(v.$get(), t.elem);
+      case $kindStruct:
         for (var i = 0; i < t.fields.length; i++) {
           var f = t.fields[i];
           var o = searchJsObject(v[f.prop], f.typ);
@@ -1826,8 +1827,12 @@ var $externalize = function(v, t) {
             return o;
           }
         }
+        return noJsObject;
+      case $kindInterface:
+        return searchJsObject(v.$val, v.constructor);
+      default:
+        return noJsObject;
       }
-      return noJsObject;
     };
     var o = searchJsObject(v, t);
     if (o !== noJsObject) {
@@ -1848,8 +1853,11 @@ var $externalize = function(v, t) {
 };
 
 var $internalize = function(v, t, recv) {
-  if (t === $js.Object) {
+  if (t === $jsObjectPtr) {
     return v;
+  }
+  if (t === $jsObjectPtr.elem) {
+    $panic(new $String("cannot internalize js.Object, use *js.Object instead"));
   }
   switch (t.kind) {
   case $kindBool:
@@ -1942,7 +1950,7 @@ var $internalize = function(v, t, recv) {
         return new timePkg.Time(timePkg.Unix(new $Int64(0, 0), new $Int64(0, v.getTime() * 1000000)));
       }
     case Function:
-      var funcType = $funcType([$sliceType($emptyInterface)], [$js.Object], true);
+      var funcType = $funcType([$sliceType($emptyInterface)], [$jsObjectPtr], true);
       return new funcType($internalize(v, funcType));
     case Number:
       return new $Float64(parseFloat(v));
@@ -1950,7 +1958,7 @@ var $internalize = function(v, t, recv) {
       return new $String($internalize(v, $String));
     default:
       if ($global.Node && v instanceof $global.Node) {
-        return new $js.container.ptr(v);
+        return new $jsObjectPtr(v);
       }
       var mapType = $mapType($String, $emptyInterface);
       return new mapType($internalize(v, mapType));
@@ -1982,16 +1990,16 @@ var $internalize = function(v, t, recv) {
   case $kindStruct:
     var noJsObject = {};
     var searchJsObject = function(t) {
-      if (t === $js.Object) {
+      if (t === $jsObjectPtr) {
         return v;
       }
-      if (t.kind === $kindPtr && t.elem.kind === $kindStruct) {
-        var o = searchJsObject(t.elem);
-        if (o !== noJsObject) {
-          return o;
-        }
+      if (t === $jsObjectPtr.elem) {
+        $panic(new $String("cannot internalize js.Object, use *js.Object instead"));
       }
-      if (t.kind === $kindStruct) {
+      switch (t.kind) {
+      case $kindPtr:
+        return searchJsObject(t.elem);
+      case $kindStruct:
         for (var i = 0; i < t.fields.length; i++) {
           var f = t.fields[i];
           var o = searchJsObject(f.typ);
@@ -2001,8 +2009,10 @@ var $internalize = function(v, t, recv) {
             return n;
           }
         }
+        return noJsObject;
+      default:
+        return noJsObject;
       }
-      return noJsObject;
     };
     var o = searchJsObject(t);
     if (o !== noJsObject) {
@@ -2013,121 +2023,120 @@ var $internalize = function(v, t, recv) {
 };
 
 $packages["github.com/gopherjs/gopherjs/js"] = (function() {
-	var $pkg = {}, Object, container, Error, sliceType$1, ptrType, ptrType$1, init;
-	Object = $pkg.Object = $newType(8, $kindInterface, "js.Object", "Object", "github.com/gopherjs/gopherjs/js", null);
-	container = $pkg.container = $newType(0, $kindStruct, "js.container", "container", "github.com/gopherjs/gopherjs/js", function(Object_) {
+	var $pkg = {}, Object, Error, ptrType, sliceType$1, ptrType$1, init;
+	Object = $pkg.Object = $newType(0, $kindStruct, "js.Object", "Object", "github.com/gopherjs/gopherjs/js", function(object_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : null;
+		this.object = object_ !== undefined ? object_ : null;
 	});
 	Error = $pkg.Error = $newType(0, $kindStruct, "js.Error", "Error", "github.com/gopherjs/gopherjs/js", function(Object_) {
 		this.$val = this;
 		this.Object = Object_ !== undefined ? Object_ : null;
 	});
+	ptrType = $ptrType(Object);
 	sliceType$1 = $sliceType($emptyInterface);
-	ptrType = $ptrType(container);
 	ptrType$1 = $ptrType(Error);
-	container.ptr.prototype.Get = function(key) {
-		var c, key;
-		c = this;
-		return c.Object[$externalize(key, $String)];
+	Object.ptr.prototype.Get = function(key) {
+		var key, o;
+		o = this;
+		return o.object[$externalize(key, $String)];
 	};
-	container.prototype.Get = function(key) { return this.$val.Get(key); };
-	container.ptr.prototype.Set = function(key, value) {
-		var c, key, value;
-		c = this;
-		c.Object[$externalize(key, $String)] = $externalize(value, $emptyInterface);
+	Object.prototype.Get = function(key) { return this.$val.Get(key); };
+	Object.ptr.prototype.Set = function(key, value) {
+		var key, o, value;
+		o = this;
+		o.object[$externalize(key, $String)] = $externalize(value, $emptyInterface);
 	};
-	container.prototype.Set = function(key, value) { return this.$val.Set(key, value); };
-	container.ptr.prototype.Delete = function(key) {
-		var c, key;
-		c = this;
-		delete c.Object[$externalize(key, $String)];
+	Object.prototype.Set = function(key, value) { return this.$val.Set(key, value); };
+	Object.ptr.prototype.Delete = function(key) {
+		var key, o;
+		o = this;
+		delete o.object[$externalize(key, $String)];
 	};
-	container.prototype.Delete = function(key) { return this.$val.Delete(key); };
-	container.ptr.prototype.Length = function() {
-		var c;
-		c = this;
-		return $parseInt(c.Object.length);
+	Object.prototype.Delete = function(key) { return this.$val.Delete(key); };
+	Object.ptr.prototype.Length = function() {
+		var o;
+		o = this;
+		return $parseInt(o.object.length);
 	};
-	container.prototype.Length = function() { return this.$val.Length(); };
-	container.ptr.prototype.Index = function(i) {
-		var c, i;
-		c = this;
-		return c.Object[i];
+	Object.prototype.Length = function() { return this.$val.Length(); };
+	Object.ptr.prototype.Index = function(i) {
+		var i, o;
+		o = this;
+		return o.object[i];
 	};
-	container.prototype.Index = function(i) { return this.$val.Index(i); };
-	container.ptr.prototype.SetIndex = function(i, value) {
-		var c, i, value;
-		c = this;
-		c.Object[i] = $externalize(value, $emptyInterface);
+	Object.prototype.Index = function(i) { return this.$val.Index(i); };
+	Object.ptr.prototype.SetIndex = function(i, value) {
+		var i, o, value;
+		o = this;
+		o.object[i] = $externalize(value, $emptyInterface);
 	};
-	container.prototype.SetIndex = function(i, value) { return this.$val.SetIndex(i, value); };
-	container.ptr.prototype.Call = function(name, args) {
-		var args, c, name, obj;
-		c = this;
-		return (obj = c.Object, obj[$externalize(name, $String)].apply(obj, $externalize(args, sliceType$1)));
+	Object.prototype.SetIndex = function(i, value) { return this.$val.SetIndex(i, value); };
+	Object.ptr.prototype.Call = function(name, args) {
+		var args, name, o, obj;
+		o = this;
+		return (obj = o.object, obj[$externalize(name, $String)].apply(obj, $externalize(args, sliceType$1)));
 	};
-	container.prototype.Call = function(name, args) { return this.$val.Call(name, args); };
-	container.ptr.prototype.Invoke = function(args) {
-		var args, c;
-		c = this;
-		return c.Object.apply(undefined, $externalize(args, sliceType$1));
+	Object.prototype.Call = function(name, args) { return this.$val.Call(name, args); };
+	Object.ptr.prototype.Invoke = function(args) {
+		var args, o;
+		o = this;
+		return o.object.apply(undefined, $externalize(args, sliceType$1));
 	};
-	container.prototype.Invoke = function(args) { return this.$val.Invoke(args); };
-	container.ptr.prototype.New = function(args) {
-		var args, c;
-		c = this;
-		return new ($global.Function.prototype.bind.apply(c.Object, [undefined].concat($externalize(args, sliceType$1))));
+	Object.prototype.Invoke = function(args) { return this.$val.Invoke(args); };
+	Object.ptr.prototype.New = function(args) {
+		var args, o;
+		o = this;
+		return new ($global.Function.prototype.bind.apply(o.object, [undefined].concat($externalize(args, sliceType$1))));
 	};
-	container.prototype.New = function(args) { return this.$val.New(args); };
-	container.ptr.prototype.Bool = function() {
-		var c;
-		c = this;
-		return !!(c.Object);
+	Object.prototype.New = function(args) { return this.$val.New(args); };
+	Object.ptr.prototype.Bool = function() {
+		var o;
+		o = this;
+		return !!(o.object);
 	};
-	container.prototype.Bool = function() { return this.$val.Bool(); };
-	container.ptr.prototype.String = function() {
-		var c;
-		c = this;
-		return $internalize(c.Object, $String);
+	Object.prototype.Bool = function() { return this.$val.Bool(); };
+	Object.ptr.prototype.String = function() {
+		var o;
+		o = this;
+		return $internalize(o.object, $String);
 	};
-	container.prototype.String = function() { return this.$val.String(); };
-	container.ptr.prototype.Int = function() {
-		var c;
-		c = this;
-		return $parseInt(c.Object) >> 0;
+	Object.prototype.String = function() { return this.$val.String(); };
+	Object.ptr.prototype.Int = function() {
+		var o;
+		o = this;
+		return $parseInt(o.object) >> 0;
 	};
-	container.prototype.Int = function() { return this.$val.Int(); };
-	container.ptr.prototype.Int64 = function() {
-		var c;
-		c = this;
-		return $internalize(c.Object, $Int64);
+	Object.prototype.Int = function() { return this.$val.Int(); };
+	Object.ptr.prototype.Int64 = function() {
+		var o;
+		o = this;
+		return $internalize(o.object, $Int64);
 	};
-	container.prototype.Int64 = function() { return this.$val.Int64(); };
-	container.ptr.prototype.Uint64 = function() {
-		var c;
-		c = this;
-		return $internalize(c.Object, $Uint64);
+	Object.prototype.Int64 = function() { return this.$val.Int64(); };
+	Object.ptr.prototype.Uint64 = function() {
+		var o;
+		o = this;
+		return $internalize(o.object, $Uint64);
 	};
-	container.prototype.Uint64 = function() { return this.$val.Uint64(); };
-	container.ptr.prototype.Float = function() {
-		var c;
-		c = this;
-		return $parseFloat(c.Object);
+	Object.prototype.Uint64 = function() { return this.$val.Uint64(); };
+	Object.ptr.prototype.Float = function() {
+		var o;
+		o = this;
+		return $parseFloat(o.object);
 	};
-	container.prototype.Float = function() { return this.$val.Float(); };
-	container.ptr.prototype.Interface = function() {
-		var c;
-		c = this;
-		return $internalize(c.Object, $emptyInterface);
+	Object.prototype.Float = function() { return this.$val.Float(); };
+	Object.ptr.prototype.Interface = function() {
+		var o;
+		o = this;
+		return $internalize(o.object, $emptyInterface);
 	};
-	container.prototype.Interface = function() { return this.$val.Interface(); };
-	container.ptr.prototype.Unsafe = function() {
-		var c;
-		c = this;
-		return c.Object;
+	Object.prototype.Interface = function() { return this.$val.Interface(); };
+	Object.ptr.prototype.Unsafe = function() {
+		var o;
+		o = this;
+		return o.object;
 	};
-	container.prototype.Unsafe = function() { return this.$val.Unsafe(); };
+	Object.prototype.Unsafe = function() { return this.$val.Unsafe(); };
 	Error.ptr.prototype.Error = function() {
 		var err;
 		err = this;
@@ -2141,16 +2150,13 @@ $packages["github.com/gopherjs/gopherjs/js"] = (function() {
 	};
 	Error.prototype.Stack = function() { return this.$val.Stack(); };
 	init = function() {
-		var _tmp, _tmp$1, c, e;
-		c = new container.ptr(null);
+		var e;
 		e = new Error.ptr(null);
-		
 	};
-	ptrType.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([$String], [Object], false)}, {prop: "Set", name: "Set", pkg: "", typ: $funcType([$String, $emptyInterface], [], false)}, {prop: "Delete", name: "Delete", pkg: "", typ: $funcType([$String], [], false)}, {prop: "Length", name: "Length", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Index", name: "Index", pkg: "", typ: $funcType([$Int], [Object], false)}, {prop: "SetIndex", name: "SetIndex", pkg: "", typ: $funcType([$Int, $emptyInterface], [], false)}, {prop: "Call", name: "Call", pkg: "", typ: $funcType([$String, sliceType$1], [Object], true)}, {prop: "Invoke", name: "Invoke", pkg: "", typ: $funcType([sliceType$1], [Object], true)}, {prop: "New", name: "New", pkg: "", typ: $funcType([sliceType$1], [Object], true)}, {prop: "Bool", name: "Bool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Int", name: "Int", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Int64", name: "Int64", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "Uint64", name: "Uint64", pkg: "", typ: $funcType([], [$Uint64], false)}, {prop: "Float", name: "Float", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "Interface", name: "Interface", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Unsafe", name: "Unsafe", pkg: "", typ: $funcType([], [$Uintptr], false)}];
+	ptrType.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([$String], [ptrType], false)}, {prop: "Set", name: "Set", pkg: "", typ: $funcType([$String, $emptyInterface], [], false)}, {prop: "Delete", name: "Delete", pkg: "", typ: $funcType([$String], [], false)}, {prop: "Length", name: "Length", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Index", name: "Index", pkg: "", typ: $funcType([$Int], [ptrType], false)}, {prop: "SetIndex", name: "SetIndex", pkg: "", typ: $funcType([$Int, $emptyInterface], [], false)}, {prop: "Call", name: "Call", pkg: "", typ: $funcType([$String, sliceType$1], [ptrType], true)}, {prop: "Invoke", name: "Invoke", pkg: "", typ: $funcType([sliceType$1], [ptrType], true)}, {prop: "New", name: "New", pkg: "", typ: $funcType([sliceType$1], [ptrType], true)}, {prop: "Bool", name: "Bool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Int", name: "Int", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Int64", name: "Int64", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "Uint64", name: "Uint64", pkg: "", typ: $funcType([], [$Uint64], false)}, {prop: "Float", name: "Float", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "Interface", name: "Interface", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Unsafe", name: "Unsafe", pkg: "", typ: $funcType([], [$Uintptr], false)}];
 	ptrType$1.methods = [{prop: "Error", name: "Error", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Stack", name: "Stack", pkg: "", typ: $funcType([], [$String], false)}];
-	Object.init([{prop: "Bool", name: "Bool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "Call", name: "Call", pkg: "", typ: $funcType([$String, sliceType$1], [Object], true)}, {prop: "Delete", name: "Delete", pkg: "", typ: $funcType([$String], [], false)}, {prop: "Float", name: "Float", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "Get", name: "Get", pkg: "", typ: $funcType([$String], [Object], false)}, {prop: "Index", name: "Index", pkg: "", typ: $funcType([$Int], [Object], false)}, {prop: "Int", name: "Int", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Int64", name: "Int64", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "Interface", name: "Interface", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Invoke", name: "Invoke", pkg: "", typ: $funcType([sliceType$1], [Object], true)}, {prop: "Length", name: "Length", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "New", name: "New", pkg: "", typ: $funcType([sliceType$1], [Object], true)}, {prop: "Set", name: "Set", pkg: "", typ: $funcType([$String, $emptyInterface], [], false)}, {prop: "SetIndex", name: "SetIndex", pkg: "", typ: $funcType([$Int, $emptyInterface], [], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Uint64", name: "Uint64", pkg: "", typ: $funcType([], [$Uint64], false)}, {prop: "Unsafe", name: "Unsafe", pkg: "", typ: $funcType([], [$Uintptr], false)}]);
-	container.init([{prop: "Object", name: "", pkg: "", typ: Object, tag: ""}]);
-	Error.init([{prop: "Object", name: "", pkg: "", typ: Object, tag: ""}]);
+	Object.init([{prop: "object", name: "object", pkg: "github.com/gopherjs/gopherjs/js", typ: ptrType, tag: ""}]);
+	Error.init([{prop: "Object", name: "", pkg: "", typ: ptrType, tag: ""}]);
 	$pkg.$init = function() {
 		$pkg.$init = function() {};
 		/* */ var $r, $s = 0; var $init_js = function() { while (true) { switch ($s) { case 0:
@@ -2183,8 +2189,10 @@ $packages["runtime"] = (function() {
 	};
 	NotSupportedError.prototype.Error = function() { return this.$val.Error(); };
 	init = function() {
-		var e;
-		$js = $packages[$externalize("github.com/gopherjs/gopherjs/js", $String)];
+		var e, jsPkg;
+		jsPkg = $packages[$externalize("github.com/gopherjs/gopherjs/js", $String)];
+		$jsObjectPtr = jsPkg.Object.ptr;
+		$jsErrorPtr = jsPkg.Error.ptr;
 		$throwRuntimeError = (function(msg) {
 			var msg;
 			$panic(new errorString(msg));
@@ -2411,12 +2419,14 @@ $packages["sync"] = (function() {
 	runtime_Semacquire = function(s, $b) {
 		var $args = arguments, $r, $s = 0, $this = this, _entry, _key, _r, ch;
 		/* */ if($b !== $BLOCKING) { $nonblockingCall(); }; var $blocking_runtime_Semacquire = function() { s: while (true) { switch ($s) { case 0:
-		/* if (s.$get() === 0) { */ if (s.$get() === 0) {} else { $s = 1; continue; }
+		/* */ if (s.$get() === 0) { $s = 1; continue; }
+		/* */ $s = 2; continue;
+		/* if (s.$get() === 0) { */ case 1:
 			ch = new chanType(0);
 			_key = s; (semWaiters || $throwRuntimeError("assignment to entry in nil map"))[_key.$key()] = { k: _key, v: $append((_entry = semWaiters[s.$key()], _entry !== undefined ? _entry.v : sliceType$1.nil), ch) };
-			_r = $recv(ch, $BLOCKING); /* */ $s = 2; case 2: if (_r && _r.$blocking) { _r = _r(); }
+			_r = $recv(ch, $BLOCKING); /* */ $s = 3; case 3: if (_r && _r.$blocking) { _r = _r(); }
 			_r[0];
-		/* } */ case 1:
+		/* } */ case 2:
 		s.$set(s.$get() - (1) >>> 0);
 		/* */ case -1: } return; } }; $blocking_runtime_Semacquire.$blocking = true; return $blocking_runtime_Semacquire;
 	};
@@ -2449,7 +2459,6 @@ $packages["sync"] = (function() {
 		}
 		awoke = false;
 		/* while (true) { */ case 1:
-			/* if (!(true)) { break; } */ if(!(true)) { $s = 2; continue; }
 			old = m.state;
 			new$1 = old | 1;
 			if (!(((old & 1) === 0))) {
@@ -2458,13 +2467,15 @@ $packages["sync"] = (function() {
 			if (awoke) {
 				new$1 = new$1 & ~(2);
 			}
-			/* if (atomic.CompareAndSwapInt32(new ptrType$3(function() { return this.$target.state; }, function($v) { this.$target.state = $v; }, m), old, new$1)) { */ if (atomic.CompareAndSwapInt32(new ptrType$3(function() { return this.$target.state; }, function($v) { this.$target.state = $v; }, m), old, new$1)) {} else { $s = 3; continue; }
+			/* */ if (atomic.CompareAndSwapInt32(new ptrType$3(function() { return this.$target.state; }, function($v) { this.$target.state = $v; }, m), old, new$1)) { $s = 3; continue; }
+			/* */ $s = 4; continue;
+			/* if (atomic.CompareAndSwapInt32(new ptrType$3(function() { return this.$target.state; }, function($v) { this.$target.state = $v; }, m), old, new$1)) { */ case 3:
 				if ((old & 1) === 0) {
 					/* break; */ $s = 2; continue;
 				}
-				$r = runtime_Semacquire(new ptrType$2(function() { return this.$target.sema; }, function($v) { this.$target.sema = $v; }, m), $BLOCKING); /* */ $s = 4; case 4: if ($r && $r.$blocking) { $r = $r(); }
+				$r = runtime_Semacquire(new ptrType$2(function() { return this.$target.sema; }, function($v) { this.$target.sema = $v; }, m), $BLOCKING); /* */ $s = 5; case 5: if ($r && $r.$blocking) { $r = $r(); }
 				awoke = true;
-			/* } */ case 3:
+			/* } */ case 4:
 		/* } */ $s = 1; continue; case 2:
 		/* */ case -1: } return; } }; $blocking_Lock.$blocking = true; return $blocking_Lock;
 	};
@@ -2479,15 +2490,16 @@ $packages["sync"] = (function() {
 		}
 		old = new$1;
 		/* while (true) { */ case 1:
-			/* if (!(true)) { break; } */ if(!(true)) { $s = 2; continue; }
 			if (((old >> 2 >> 0) === 0) || !(((old & 3) === 0))) {
 				return;
 			}
 			new$1 = ((old - 4 >> 0)) | 2;
-			/* if (atomic.CompareAndSwapInt32(new ptrType$3(function() { return this.$target.state; }, function($v) { this.$target.state = $v; }, m), old, new$1)) { */ if (atomic.CompareAndSwapInt32(new ptrType$3(function() { return this.$target.state; }, function($v) { this.$target.state = $v; }, m), old, new$1)) {} else { $s = 3; continue; }
-				$r = runtime_Semrelease(new ptrType$2(function() { return this.$target.sema; }, function($v) { this.$target.sema = $v; }, m), $BLOCKING); /* */ $s = 4; case 4: if ($r && $r.$blocking) { $r = $r(); }
+			/* */ if (atomic.CompareAndSwapInt32(new ptrType$3(function() { return this.$target.state; }, function($v) { this.$target.state = $v; }, m), old, new$1)) { $s = 3; continue; }
+			/* */ $s = 4; continue;
+			/* if (atomic.CompareAndSwapInt32(new ptrType$3(function() { return this.$target.state; }, function($v) { this.$target.state = $v; }, m), old, new$1)) { */ case 3:
+				$r = runtime_Semrelease(new ptrType$2(function() { return this.$target.sema; }, function($v) { this.$target.sema = $v; }, m), $BLOCKING); /* */ $s = 5; case 5: if ($r && $r.$blocking) { $r = $r(); }
 				return;
-			/* } */ case 3:
+			/* } */ case 4:
 			old = m.state;
 		/* } */ $s = 1; continue; case 2:
 		/* */ case -1: } return; } }; $blocking_Unlock.$blocking = true; return $blocking_Unlock;
@@ -2558,9 +2570,11 @@ $packages["sync"] = (function() {
 		var $args = arguments, $r, $s = 0, $this = this, rw;
 		/* */ if($b !== $BLOCKING) { $nonblockingCall(); }; var $blocking_RLock = function() { s: while (true) { switch ($s) { case 0:
 		rw = $this;
-		/* if (atomic.AddInt32(new ptrType$3(function() { return this.$target.readerCount; }, function($v) { this.$target.readerCount = $v; }, rw), 1) < 0) { */ if (atomic.AddInt32(new ptrType$3(function() { return this.$target.readerCount; }, function($v) { this.$target.readerCount = $v; }, rw), 1) < 0) {} else { $s = 1; continue; }
-			$r = runtime_Semacquire(new ptrType$2(function() { return this.$target.readerSem; }, function($v) { this.$target.readerSem = $v; }, rw), $BLOCKING); /* */ $s = 2; case 2: if ($r && $r.$blocking) { $r = $r(); }
-		/* } */ case 1:
+		/* */ if (atomic.AddInt32(new ptrType$3(function() { return this.$target.readerCount; }, function($v) { this.$target.readerCount = $v; }, rw), 1) < 0) { $s = 1; continue; }
+		/* */ $s = 2; continue;
+		/* if (atomic.AddInt32(new ptrType$3(function() { return this.$target.readerCount; }, function($v) { this.$target.readerCount = $v; }, rw), 1) < 0) { */ case 1:
+			$r = runtime_Semacquire(new ptrType$2(function() { return this.$target.readerSem; }, function($v) { this.$target.readerSem = $v; }, rw), $BLOCKING); /* */ $s = 3; case 3: if ($r && $r.$blocking) { $r = $r(); }
+		/* } */ case 2:
 		/* */ case -1: } return; } }; $blocking_RLock.$blocking = true; return $blocking_RLock;
 	};
 	RWMutex.prototype.RLock = function($b) { return this.$val.RLock($b); };
@@ -2569,15 +2583,19 @@ $packages["sync"] = (function() {
 		/* */ if($b !== $BLOCKING) { $nonblockingCall(); }; var $blocking_RUnlock = function() { s: while (true) { switch ($s) { case 0:
 		rw = $this;
 		r = atomic.AddInt32(new ptrType$3(function() { return this.$target.readerCount; }, function($v) { this.$target.readerCount = $v; }, rw), -1);
-		/* if (r < 0) { */ if (r < 0) {} else { $s = 1; continue; }
+		/* */ if (r < 0) { $s = 1; continue; }
+		/* */ $s = 2; continue;
+		/* if (r < 0) { */ case 1:
 			if (((r + 1 >> 0) === 0) || ((r + 1 >> 0) === -1073741824)) {
 				raceEnable();
 				$panic(new $String("sync: RUnlock of unlocked RWMutex"));
 			}
-			/* if (atomic.AddInt32(new ptrType$3(function() { return this.$target.readerWait; }, function($v) { this.$target.readerWait = $v; }, rw), -1) === 0) { */ if (atomic.AddInt32(new ptrType$3(function() { return this.$target.readerWait; }, function($v) { this.$target.readerWait = $v; }, rw), -1) === 0) {} else { $s = 2; continue; }
-				$r = runtime_Semrelease(new ptrType$2(function() { return this.$target.writerSem; }, function($v) { this.$target.writerSem = $v; }, rw), $BLOCKING); /* */ $s = 3; case 3: if ($r && $r.$blocking) { $r = $r(); }
-			/* } */ case 2:
-		/* } */ case 1:
+			/* */ if (atomic.AddInt32(new ptrType$3(function() { return this.$target.readerWait; }, function($v) { this.$target.readerWait = $v; }, rw), -1) === 0) { $s = 3; continue; }
+			/* */ $s = 4; continue;
+			/* if (atomic.AddInt32(new ptrType$3(function() { return this.$target.readerWait; }, function($v) { this.$target.readerWait = $v; }, rw), -1) === 0) { */ case 3:
+				$r = runtime_Semrelease(new ptrType$2(function() { return this.$target.writerSem; }, function($v) { this.$target.writerSem = $v; }, rw), $BLOCKING); /* */ $s = 5; case 5: if ($r && $r.$blocking) { $r = $r(); }
+			/* } */ case 4:
+		/* } */ case 2:
 		/* */ case -1: } return; } }; $blocking_RUnlock.$blocking = true; return $blocking_RUnlock;
 	};
 	RWMutex.prototype.RUnlock = function($b) { return this.$val.RUnlock($b); };
@@ -2587,9 +2605,11 @@ $packages["sync"] = (function() {
 		rw = $this;
 		$r = rw.w.Lock($BLOCKING); /* */ $s = 1; case 1: if ($r && $r.$blocking) { $r = $r(); }
 		r = atomic.AddInt32(new ptrType$3(function() { return this.$target.readerCount; }, function($v) { this.$target.readerCount = $v; }, rw), -1073741824) + 1073741824 >> 0;
-		/* if (!((r === 0)) && !((atomic.AddInt32(new ptrType$3(function() { return this.$target.readerWait; }, function($v) { this.$target.readerWait = $v; }, rw), r) === 0))) { */ if (!((r === 0)) && !((atomic.AddInt32(new ptrType$3(function() { return this.$target.readerWait; }, function($v) { this.$target.readerWait = $v; }, rw), r) === 0))) {} else { $s = 2; continue; }
-			$r = runtime_Semacquire(new ptrType$2(function() { return this.$target.writerSem; }, function($v) { this.$target.writerSem = $v; }, rw), $BLOCKING); /* */ $s = 3; case 3: if ($r && $r.$blocking) { $r = $r(); }
-		/* } */ case 2:
+		/* */ if (!((r === 0)) && !((atomic.AddInt32(new ptrType$3(function() { return this.$target.readerWait; }, function($v) { this.$target.readerWait = $v; }, rw), r) === 0))) { $s = 2; continue; }
+		/* */ $s = 3; continue;
+		/* if (!((r === 0)) && !((atomic.AddInt32(new ptrType$3(function() { return this.$target.readerWait; }, function($v) { this.$target.readerWait = $v; }, rw), r) === 0))) { */ case 2:
+			$r = runtime_Semacquire(new ptrType$2(function() { return this.$target.writerSem; }, function($v) { this.$target.writerSem = $v; }, rw), $BLOCKING); /* */ $s = 4; case 4: if ($r && $r.$blocking) { $r = $r(); }
+		/* } */ case 3:
 		/* */ case -1: } return; } }; $blocking_Lock.$blocking = true; return $blocking_Lock;
 	};
 	RWMutex.prototype.Lock = function($b) { return this.$val.Lock($b); };
@@ -3227,7 +3247,6 @@ $packages["syscall"] = (function() {
 		}
 		lineBuffer = $appendSlice(lineBuffer, b);
 		while (true) {
-			if (!(true)) { break; }
 			i = bytes.IndexByte(lineBuffer, 10);
 			if (i === -1) {
 				break;
@@ -3884,7 +3903,7 @@ $packages["strings"] = (function() {
 	return $pkg;
 })();
 $packages["time"] = (function() {
-	var $pkg = {}, errors, js, nosync, runtime, strings, syscall, ParseError, Time, Month, Weekday, Duration, Location, zone, zoneTrans, sliceType, sliceType$1, sliceType$2, ptrType, arrayType, sliceType$3, arrayType$1, arrayType$2, ptrType$1, ptrType$2, ptrType$5, std0x, longDayNames, shortDayNames, shortMonthNames, longMonthNames, atoiError, errBad, errLeadingInt, months, days, daysBefore, utcLoc, localLoc, localOnce, zoneinfo, badData, zoneDirs, _tuple, _r, initLocal, startsWithLowerCase, nextStdChunk, match, lookup, appendUint, atoi, formatNano, quote, isDigit, getnum, cutspace, skip, Parse, parse, parseTimeZone, parseGMT, parseNanoseconds, leadingInt, absWeekday, absClock, fmtFrac, fmtInt, absDate, Unix, isLeap, norm, Date, div, FixedZone;
+	var $pkg = {}, errors, js, nosync, runtime, strings, syscall, ParseError, Time, Month, Weekday, Duration, Location, zone, zoneTrans, sliceType, sliceType$1, sliceType$2, ptrType, arrayType, sliceType$3, arrayType$1, arrayType$2, ptrType$1, ptrType$3, ptrType$6, std0x, longDayNames, shortDayNames, shortMonthNames, longMonthNames, atoiError, errBad, errLeadingInt, months, days, daysBefore, utcLoc, localLoc, localOnce, zoneinfo, badData, zoneDirs, _tuple, _r, initLocal, startsWithLowerCase, nextStdChunk, match, lookup, appendUint, atoi, formatNano, quote, isDigit, getnum, cutspace, skip, Parse, parse, parseTimeZone, parseGMT, parseNanoseconds, leadingInt, absWeekday, absClock, fmtFrac, fmtInt, absDate, Unix, isLeap, norm, Date, div, FixedZone;
 	errors = $packages["errors"];
 	js = $packages["github.com/gopherjs/gopherjs/js"];
 	nosync = $packages["github.com/gopherjs/gopherjs/nosync"];
@@ -3939,8 +3958,8 @@ $packages["time"] = (function() {
 	arrayType$1 = $arrayType($Uint8, 9);
 	arrayType$2 = $arrayType($Uint8, 64);
 	ptrType$1 = $ptrType(Location);
-	ptrType$2 = $ptrType(ParseError);
-	ptrType$5 = $ptrType(Time);
+	ptrType$3 = $ptrType(ParseError);
+	ptrType$6 = $ptrType(Time);
 	initLocal = function() {
 		var d, i, j, s;
 		d = new ($global.Date)();
@@ -4460,7 +4479,6 @@ $packages["time"] = (function() {
 		zoneOffset = -1;
 		zoneName = "";
 		while (true) {
-			if (!(true)) { break; }
 			err = $ifaceNil;
 			_tuple$1 = nextStdChunk(layout); prefix = _tuple$1[0]; std = _tuple$1[1]; suffix = _tuple$1[2];
 			stdstr = layout.substring(prefix.length, (layout.length - suffix.length >> 0));
@@ -5530,7 +5548,6 @@ $packages["time"] = (function() {
 			}
 			d0 = new $Uint64(0, 0);
 			while (true) {
-				if (!(true)) { break; }
 				qmod2 = 0;
 				if ((u1.$high > d1$1.$high || (u1.$high === d1$1.$high && u1.$low > d1$1.$low)) || (u1.$high === d1$1.$high && u1.$low === d1$1.$low) && (u0.$high > d0.$high || (u0.$high === d0.$high && u0.$low >= d0.$low))) {
 					qmod2 = 1;
@@ -5715,9 +5732,9 @@ $packages["time"] = (function() {
 		return [offset, isDST, ok];
 	};
 	Location.prototype.lookupName = function(name, unix) { return this.$val.lookupName(name, unix); };
-	ptrType$2.methods = [{prop: "Error", name: "Error", pkg: "", typ: $funcType([], [$String], false)}];
+	ptrType$3.methods = [{prop: "Error", name: "Error", pkg: "", typ: $funcType([], [$String], false)}];
 	Time.methods = [{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Format", name: "Format", pkg: "", typ: $funcType([$String], [$String], false)}, {prop: "After", name: "After", pkg: "", typ: $funcType([Time], [$Bool], false)}, {prop: "Before", name: "Before", pkg: "", typ: $funcType([Time], [$Bool], false)}, {prop: "Equal", name: "Equal", pkg: "", typ: $funcType([Time], [$Bool], false)}, {prop: "IsZero", name: "IsZero", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "abs", name: "abs", pkg: "time", typ: $funcType([], [$Uint64], false)}, {prop: "locabs", name: "locabs", pkg: "time", typ: $funcType([], [$String, $Int, $Uint64], false)}, {prop: "Date", name: "Date", pkg: "", typ: $funcType([], [$Int, Month, $Int], false)}, {prop: "Year", name: "Year", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Month", name: "Month", pkg: "", typ: $funcType([], [Month], false)}, {prop: "Day", name: "Day", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Weekday", name: "Weekday", pkg: "", typ: $funcType([], [Weekday], false)}, {prop: "ISOWeek", name: "ISOWeek", pkg: "", typ: $funcType([], [$Int, $Int], false)}, {prop: "Clock", name: "Clock", pkg: "", typ: $funcType([], [$Int, $Int, $Int], false)}, {prop: "Hour", name: "Hour", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Minute", name: "Minute", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Second", name: "Second", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Nanosecond", name: "Nanosecond", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "YearDay", name: "YearDay", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Add", name: "Add", pkg: "", typ: $funcType([Duration], [Time], false)}, {prop: "Sub", name: "Sub", pkg: "", typ: $funcType([Time], [Duration], false)}, {prop: "AddDate", name: "AddDate", pkg: "", typ: $funcType([$Int, $Int, $Int], [Time], false)}, {prop: "date", name: "date", pkg: "time", typ: $funcType([$Bool], [$Int, Month, $Int, $Int], false)}, {prop: "UTC", name: "UTC", pkg: "", typ: $funcType([], [Time], false)}, {prop: "Local", name: "Local", pkg: "", typ: $funcType([], [Time], false)}, {prop: "In", name: "In", pkg: "", typ: $funcType([ptrType$1], [Time], false)}, {prop: "Location", name: "Location", pkg: "", typ: $funcType([], [ptrType$1], false)}, {prop: "Zone", name: "Zone", pkg: "", typ: $funcType([], [$String, $Int], false)}, {prop: "Unix", name: "Unix", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "UnixNano", name: "UnixNano", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "MarshalBinary", name: "MarshalBinary", pkg: "", typ: $funcType([], [sliceType$3, $error], false)}, {prop: "GobEncode", name: "GobEncode", pkg: "", typ: $funcType([], [sliceType$3, $error], false)}, {prop: "MarshalJSON", name: "MarshalJSON", pkg: "", typ: $funcType([], [sliceType$3, $error], false)}, {prop: "MarshalText", name: "MarshalText", pkg: "", typ: $funcType([], [sliceType$3, $error], false)}, {prop: "Truncate", name: "Truncate", pkg: "", typ: $funcType([Duration], [Time], false)}, {prop: "Round", name: "Round", pkg: "", typ: $funcType([Duration], [Time], false)}];
-	ptrType$5.methods = [{prop: "UnmarshalBinary", name: "UnmarshalBinary", pkg: "", typ: $funcType([sliceType$3], [$error], false)}, {prop: "GobDecode", name: "GobDecode", pkg: "", typ: $funcType([sliceType$3], [$error], false)}, {prop: "UnmarshalJSON", name: "UnmarshalJSON", pkg: "", typ: $funcType([sliceType$3], [$error], false)}, {prop: "UnmarshalText", name: "UnmarshalText", pkg: "", typ: $funcType([sliceType$3], [$error], false)}];
+	ptrType$6.methods = [{prop: "UnmarshalBinary", name: "UnmarshalBinary", pkg: "", typ: $funcType([sliceType$3], [$error], false)}, {prop: "GobDecode", name: "GobDecode", pkg: "", typ: $funcType([sliceType$3], [$error], false)}, {prop: "UnmarshalJSON", name: "UnmarshalJSON", pkg: "", typ: $funcType([sliceType$3], [$error], false)}, {prop: "UnmarshalText", name: "UnmarshalText", pkg: "", typ: $funcType([sliceType$3], [$error], false)}];
 	Month.methods = [{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
 	Weekday.methods = [{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
 	Duration.methods = [{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Nanoseconds", name: "Nanoseconds", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "Seconds", name: "Seconds", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "Minutes", name: "Minutes", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "Hours", name: "Hours", pkg: "", typ: $funcType([], [$Float64], false)}];
@@ -6312,7 +6329,6 @@ $packages["os"] = (function() {
 		var _tmp, _tmp$1, _tuple, _tuple$1, b, bcap, err = $ifaceNil, err$1, f, m, n = 0;
 		f = this;
 		while (true) {
-			if (!(true)) { break; }
 			bcap = b;
 			if (true && bcap.$length > 1073741824) {
 				bcap = $subslice(bcap, 0, 1073741824);
@@ -7053,7 +7069,6 @@ $packages["strconv"] = (function() {
 		i = (_q$1 = ((approxExp10 - -348 >> 0)) / 8, (_q$1 === _q$1 && _q$1 !== 1/0 && _q$1 !== -1/0) ? _q$1 >> 0 : $throwRuntimeError("integer divide by zero"));
 		Loop:
 		while (true) {
-			if (!(true)) { break; }
 			exp = (f.exp + ((i < 0 || i >= powersOfTen.length) ? $throwRuntimeError("index out of range") : powersOfTen[i]).exp >> 0) + 64 >> 0;
 			if (exp < -60) {
 				i = i + (1) >> 0;
@@ -7292,7 +7307,6 @@ $packages["strconv"] = (function() {
 		digit$1 = 0;
 		multiplier = new $Uint64(0, 1);
 		while (true) {
-			if (!(true)) { break; }
 			fraction = $mul64(fraction, (new $Uint64(0, 10)));
 			multiplier = $mul64(multiplier, (new $Uint64(0, 10)));
 			digit$1 = ($shiftRightUint64(fraction, shift).$low >> 0);
@@ -8173,7 +8187,7 @@ $packages["strconv"] = (function() {
 	return $pkg;
 })();
 $packages["reflect"] = (function() {
-	var $pkg = {}, js, math, runtime, strconv, sync, mapIter, Type, Kind, rtype, typeAlg, method, uncommonType, ChanDir, arrayType, chanType, funcType, imethod, interfaceType, mapType, ptrType, sliceType, structField, structType, Method, StructField, StructTag, fieldScan, Value, flag, ValueError, nonEmptyInterface, ptrType$1, sliceType$1, funcType$1, sliceType$2, ptrType$3, arrayType$1, ptrType$4, ptrType$5, sliceType$3, sliceType$4, sliceType$5, sliceType$6, structType$5, sliceType$7, ptrType$6, arrayType$2, structType$6, ptrType$7, sliceType$8, ptrType$8, ptrType$9, ptrType$10, ptrType$11, sliceType$10, sliceType$11, ptrType$12, ptrType$17, sliceType$13, sliceType$14, funcType$3, funcType$4, funcType$5, arrayType$3, ptrType$20, initialized, stringPtrMap, callHelper, jsObject, jsContainer, kindNames, uint8Type, init, jsType, reflectType, setKindType, newStringPtr, isWrapped, copyStruct, makeValue, MakeSlice, TypeOf, ValueOf, SliceOf, Zero, unsafe_New, makeInt, memmove, mapaccess, mapassign, mapdelete, mapiterinit, mapiterkey, mapiternext, maplen, cvtDirect, methodReceiver, valueInterface, ifaceE2I, methodName, makeMethodValue, wrapJsObject, unwrapJsObject, PtrTo, implements$1, directlyAssignable, haveIdenticalUnderlyingType, toType, ifaceIndir, overflowFloat32, New, convertOp, makeFloat, makeComplex, makeString, makeBytes, makeRunes, cvtInt, cvtUint, cvtFloatInt, cvtFloatUint, cvtIntFloat, cvtUintFloat, cvtFloat, cvtComplex, cvtIntString, cvtUintString, cvtBytesString, cvtStringBytes, cvtRunesString, cvtStringRunes, cvtT2I, cvtI2I;
+	var $pkg = {}, js, math, runtime, strconv, sync, mapIter, Type, Kind, rtype, typeAlg, method, uncommonType, ChanDir, arrayType, chanType, funcType, imethod, interfaceType, mapType, ptrType, sliceType, structField, structType, Method, StructField, StructTag, fieldScan, Value, flag, ValueError, nonEmptyInterface, ptrType$1, sliceType$1, ptrType$3, funcType$1, sliceType$2, ptrType$4, arrayType$1, ptrType$5, ptrType$6, sliceType$3, sliceType$4, sliceType$5, sliceType$6, structType$5, sliceType$7, ptrType$7, arrayType$2, structType$6, ptrType$8, sliceType$8, ptrType$9, ptrType$10, ptrType$11, ptrType$12, sliceType$10, sliceType$11, ptrType$13, ptrType$18, sliceType$13, sliceType$14, funcType$3, funcType$4, funcType$5, arrayType$3, ptrType$21, initialized, stringPtrMap, callHelper, jsObjectPtr, kindNames, uint8Type, init, jsType, reflectType, setKindType, newStringPtr, isWrapped, copyStruct, makeValue, MakeSlice, TypeOf, ValueOf, SliceOf, Zero, unsafe_New, makeInt, memmove, mapaccess, mapassign, mapdelete, mapiterinit, mapiterkey, mapiternext, maplen, cvtDirect, methodReceiver, valueInterface, ifaceE2I, methodName, makeMethodValue, wrapJsObject, unwrapJsObject, PtrTo, implements$1, directlyAssignable, haveIdenticalUnderlyingType, toType, ifaceIndir, overflowFloat32, New, convertOp, makeFloat, makeComplex, makeString, makeBytes, makeRunes, cvtInt, cvtUint, cvtFloatInt, cvtFloatUint, cvtIntFloat, cvtUintFloat, cvtFloat, cvtComplex, cvtIntString, cvtUintString, cvtBytesString, cvtStringBytes, cvtRunesString, cvtStringRunes, cvtT2I, cvtI2I;
 	js = $packages["github.com/gopherjs/gopherjs/js"];
 	math = $packages["math"];
 	runtime = $packages["runtime"];
@@ -8196,10 +8210,10 @@ $packages["reflect"] = (function() {
 		this.align = align_ !== undefined ? align_ : 0;
 		this.fieldAlign = fieldAlign_ !== undefined ? fieldAlign_ : 0;
 		this.kind = kind_ !== undefined ? kind_ : 0;
-		this.alg = alg_ !== undefined ? alg_ : ptrType$3.nil;
+		this.alg = alg_ !== undefined ? alg_ : ptrType$4.nil;
 		this.gc = gc_ !== undefined ? gc_ : arrayType$1.zero();
-		this.string = string_ !== undefined ? string_ : ptrType$4.nil;
-		this.uncommonType = uncommonType_ !== undefined ? uncommonType_ : ptrType$5.nil;
+		this.string = string_ !== undefined ? string_ : ptrType$5.nil;
+		this.uncommonType = uncommonType_ !== undefined ? uncommonType_ : ptrType$6.nil;
 		this.ptrToThis = ptrToThis_ !== undefined ? ptrToThis_ : ptrType$1.nil;
 		this.zero = zero_ !== undefined ? zero_ : 0;
 	});
@@ -8210,8 +8224,8 @@ $packages["reflect"] = (function() {
 	});
 	method = $pkg.method = $newType(0, $kindStruct, "reflect.method", "method", "reflect", function(name_, pkgPath_, mtyp_, typ_, ifn_, tfn_) {
 		this.$val = this;
-		this.name = name_ !== undefined ? name_ : ptrType$4.nil;
-		this.pkgPath = pkgPath_ !== undefined ? pkgPath_ : ptrType$4.nil;
+		this.name = name_ !== undefined ? name_ : ptrType$5.nil;
+		this.pkgPath = pkgPath_ !== undefined ? pkgPath_ : ptrType$5.nil;
 		this.mtyp = mtyp_ !== undefined ? mtyp_ : ptrType$1.nil;
 		this.typ = typ_ !== undefined ? typ_ : ptrType$1.nil;
 		this.ifn = ifn_ !== undefined ? ifn_ : 0;
@@ -8219,8 +8233,8 @@ $packages["reflect"] = (function() {
 	});
 	uncommonType = $pkg.uncommonType = $newType(0, $kindStruct, "reflect.uncommonType", "uncommonType", "reflect", function(name_, pkgPath_, methods_) {
 		this.$val = this;
-		this.name = name_ !== undefined ? name_ : ptrType$4.nil;
-		this.pkgPath = pkgPath_ !== undefined ? pkgPath_ : ptrType$4.nil;
+		this.name = name_ !== undefined ? name_ : ptrType$5.nil;
+		this.pkgPath = pkgPath_ !== undefined ? pkgPath_ : ptrType$5.nil;
 		this.methods = methods_ !== undefined ? methods_ : sliceType$3.nil;
 	});
 	ChanDir = $pkg.ChanDir = $newType(4, $kindInt, "reflect.ChanDir", "ChanDir", "reflect", null);
@@ -8246,8 +8260,8 @@ $packages["reflect"] = (function() {
 	});
 	imethod = $pkg.imethod = $newType(0, $kindStruct, "reflect.imethod", "imethod", "reflect", function(name_, pkgPath_, typ_) {
 		this.$val = this;
-		this.name = name_ !== undefined ? name_ : ptrType$4.nil;
-		this.pkgPath = pkgPath_ !== undefined ? pkgPath_ : ptrType$4.nil;
+		this.name = name_ !== undefined ? name_ : ptrType$5.nil;
+		this.pkgPath = pkgPath_ !== undefined ? pkgPath_ : ptrType$5.nil;
 		this.typ = typ_ !== undefined ? typ_ : ptrType$1.nil;
 	});
 	interfaceType = $pkg.interfaceType = $newType(0, $kindStruct, "reflect.interfaceType", "interfaceType", "reflect", function(rtype_, methods_) {
@@ -8280,10 +8294,10 @@ $packages["reflect"] = (function() {
 	});
 	structField = $pkg.structField = $newType(0, $kindStruct, "reflect.structField", "structField", "reflect", function(name_, pkgPath_, typ_, tag_, offset_) {
 		this.$val = this;
-		this.name = name_ !== undefined ? name_ : ptrType$4.nil;
-		this.pkgPath = pkgPath_ !== undefined ? pkgPath_ : ptrType$4.nil;
+		this.name = name_ !== undefined ? name_ : ptrType$5.nil;
+		this.pkgPath = pkgPath_ !== undefined ? pkgPath_ : ptrType$5.nil;
 		this.typ = typ_ !== undefined ? typ_ : ptrType$1.nil;
-		this.tag = tag_ !== undefined ? tag_ : ptrType$4.nil;
+		this.tag = tag_ !== undefined ? tag_ : ptrType$5.nil;
 		this.offset = offset_ !== undefined ? offset_ : 0;
 	});
 	structType = $pkg.structType = $newType(0, $kindStruct, "reflect.structType", "structType", "reflect", function(rtype_, fields_) {
@@ -8312,7 +8326,7 @@ $packages["reflect"] = (function() {
 	StructTag = $pkg.StructTag = $newType(8, $kindString, "reflect.StructTag", "StructTag", "reflect", null);
 	fieldScan = $pkg.fieldScan = $newType(0, $kindStruct, "reflect.fieldScan", "fieldScan", "reflect", function(typ_, index_) {
 		this.$val = this;
-		this.typ = typ_ !== undefined ? typ_ : ptrType$12.nil;
+		this.typ = typ_ !== undefined ? typ_ : ptrType$13.nil;
 		this.index = index_ !== undefined ? index_ : sliceType$10.nil;
 	});
 	Value = $pkg.Value = $newType(0, $kindStruct, "reflect.Value", "Value", "reflect", function(typ_, ptr_, flag_) {
@@ -8329,51 +8343,52 @@ $packages["reflect"] = (function() {
 	});
 	nonEmptyInterface = $pkg.nonEmptyInterface = $newType(0, $kindStruct, "reflect.nonEmptyInterface", "nonEmptyInterface", "reflect", function(itab_, word_) {
 		this.$val = this;
-		this.itab = itab_ !== undefined ? itab_ : ptrType$7.nil;
+		this.itab = itab_ !== undefined ? itab_ : ptrType$8.nil;
 		this.word = word_ !== undefined ? word_ : 0;
 	});
 	ptrType$1 = $ptrType(rtype);
 	sliceType$1 = $sliceType($emptyInterface);
-	funcType$1 = $funcType([sliceType$1], [js.Object], true);
+	ptrType$3 = $ptrType(js.Object);
+	funcType$1 = $funcType([sliceType$1], [ptrType$3], true);
 	sliceType$2 = $sliceType($String);
-	ptrType$3 = $ptrType(typeAlg);
+	ptrType$4 = $ptrType(typeAlg);
 	arrayType$1 = $arrayType($UnsafePointer, 2);
-	ptrType$4 = $ptrType($String);
-	ptrType$5 = $ptrType(uncommonType);
+	ptrType$5 = $ptrType($String);
+	ptrType$6 = $ptrType(uncommonType);
 	sliceType$3 = $sliceType(method);
 	sliceType$4 = $sliceType(ptrType$1);
 	sliceType$5 = $sliceType(imethod);
 	sliceType$6 = $sliceType(structField);
 	structType$5 = $structType([{prop: "str", name: "str", pkg: "reflect", typ: $String, tag: ""}]);
 	sliceType$7 = $sliceType(Value);
-	ptrType$6 = $ptrType(nonEmptyInterface);
+	ptrType$7 = $ptrType(nonEmptyInterface);
 	arrayType$2 = $arrayType($UnsafePointer, 100000);
 	structType$6 = $structType([{prop: "ityp", name: "ityp", pkg: "reflect", typ: ptrType$1, tag: ""}, {prop: "typ", name: "typ", pkg: "reflect", typ: ptrType$1, tag: ""}, {prop: "link", name: "link", pkg: "reflect", typ: $UnsafePointer, tag: ""}, {prop: "bad", name: "bad", pkg: "reflect", typ: $Int32, tag: ""}, {prop: "unused", name: "unused", pkg: "reflect", typ: $Int32, tag: ""}, {prop: "fun", name: "fun", pkg: "reflect", typ: arrayType$2, tag: ""}]);
-	ptrType$7 = $ptrType(structType$6);
-	sliceType$8 = $sliceType(js.Object);
-	ptrType$8 = $ptrType($Uint8);
-	ptrType$9 = $ptrType(method);
-	ptrType$10 = $ptrType(interfaceType);
-	ptrType$11 = $ptrType(imethod);
+	ptrType$8 = $ptrType(structType$6);
+	sliceType$8 = $sliceType(ptrType$3);
+	ptrType$9 = $ptrType($Uint8);
+	ptrType$10 = $ptrType(method);
+	ptrType$11 = $ptrType(interfaceType);
+	ptrType$12 = $ptrType(imethod);
 	sliceType$10 = $sliceType($Int);
 	sliceType$11 = $sliceType(fieldScan);
-	ptrType$12 = $ptrType(structType);
-	ptrType$17 = $ptrType($UnsafePointer);
+	ptrType$13 = $ptrType(structType);
+	ptrType$18 = $ptrType($UnsafePointer);
 	sliceType$13 = $sliceType($Uint8);
 	sliceType$14 = $sliceType($Int32);
 	funcType$3 = $funcType([$String], [$Bool], false);
 	funcType$4 = $funcType([$UnsafePointer, $Uintptr, $Uintptr], [$Uintptr], false);
 	funcType$5 = $funcType([$UnsafePointer, $UnsafePointer, $Uintptr], [$Bool], false);
 	arrayType$3 = $arrayType($Uintptr, 2);
-	ptrType$20 = $ptrType(ValueError);
+	ptrType$21 = $ptrType(ValueError);
 	init = function() {
 		var used, x, x$1, x$10, x$11, x$12, x$2, x$3, x$4, x$5, x$6, x$7, x$8, x$9;
 		used = (function(i) {
 			var i;
 		});
-		used((x = new rtype.ptr(0, 0, 0, 0, 0, 0, ptrType$3.nil, arrayType$1.zero(), ptrType$4.nil, ptrType$5.nil, ptrType$1.nil, 0), new x.constructor.elem(x)));
-		used((x$1 = new uncommonType.ptr(ptrType$4.nil, ptrType$4.nil, sliceType$3.nil), new x$1.constructor.elem(x$1)));
-		used((x$2 = new method.ptr(ptrType$4.nil, ptrType$4.nil, ptrType$1.nil, ptrType$1.nil, 0, 0), new x$2.constructor.elem(x$2)));
+		used((x = new rtype.ptr(0, 0, 0, 0, 0, 0, ptrType$4.nil, arrayType$1.zero(), ptrType$5.nil, ptrType$6.nil, ptrType$1.nil, 0), new x.constructor.elem(x)));
+		used((x$1 = new uncommonType.ptr(ptrType$5.nil, ptrType$5.nil, sliceType$3.nil), new x$1.constructor.elem(x$1)));
+		used((x$2 = new method.ptr(ptrType$5.nil, ptrType$5.nil, ptrType$1.nil, ptrType$1.nil, 0, 0), new x$2.constructor.elem(x$2)));
 		used((x$3 = new arrayType.ptr(new rtype.ptr(), ptrType$1.nil, ptrType$1.nil, 0), new x$3.constructor.elem(x$3)));
 		used((x$4 = new chanType.ptr(new rtype.ptr(), ptrType$1.nil, 0), new x$4.constructor.elem(x$4)));
 		used((x$5 = new funcType.ptr(new rtype.ptr(), false, sliceType$4.nil, sliceType$4.nil), new x$5.constructor.elem(x$5)));
@@ -8382,8 +8397,8 @@ $packages["reflect"] = (function() {
 		used((x$8 = new ptrType.ptr(new rtype.ptr(), ptrType$1.nil), new x$8.constructor.elem(x$8)));
 		used((x$9 = new sliceType.ptr(new rtype.ptr(), ptrType$1.nil), new x$9.constructor.elem(x$9)));
 		used((x$10 = new structType.ptr(new rtype.ptr(), sliceType$6.nil), new x$10.constructor.elem(x$10)));
-		used((x$11 = new imethod.ptr(ptrType$4.nil, ptrType$4.nil, ptrType$1.nil), new x$11.constructor.elem(x$11)));
-		used((x$12 = new structField.ptr(ptrType$4.nil, ptrType$4.nil, ptrType$1.nil, ptrType$4.nil, 0), new x$12.constructor.elem(x$12)));
+		used((x$11 = new imethod.ptr(ptrType$5.nil, ptrType$5.nil, ptrType$1.nil), new x$11.constructor.elem(x$11)));
+		used((x$12 = new structField.ptr(ptrType$5.nil, ptrType$5.nil, ptrType$1.nil, ptrType$5.nil, 0), new x$12.constructor.elem(x$12)));
 		initialized = true;
 		uint8Type = $assertType(TypeOf(new $Uint8(0)), ptrType$1);
 	};
@@ -8394,7 +8409,7 @@ $packages["reflect"] = (function() {
 	reflectType = function(typ) {
 		var _i, _i$1, _i$2, _i$3, _i$4, _ref, _ref$1, _ref$2, _ref$3, _ref$4, _ref$5, dir, f, fields, i, i$1, i$2, i$3, i$4, imethods, in$1, m, m$1, methodSet, methods, out, params, reflectFields, reflectMethods, results, rt, t, typ;
 		if (typ.reflectType === undefined) {
-			rt = new rtype.ptr((($parseInt(typ.size) >> 0) >>> 0), 0, 0, 0, 0, (($parseInt(typ.kind) >> 0) << 24 >>> 24), ptrType$3.nil, arrayType$1.zero(), newStringPtr(typ.string), ptrType$5.nil, ptrType$1.nil, 0);
+			rt = new rtype.ptr((($parseInt(typ.size) >> 0) >>> 0), 0, 0, 0, 0, (($parseInt(typ.kind) >> 0) << 24 >>> 24), ptrType$4.nil, arrayType$1.zero(), newStringPtr(typ.string), ptrType$6.nil, ptrType$1.nil, 0);
 			rt.jsType = typ;
 			typ.reflectType = rt;
 			methodSet = $methodSet(typ);
@@ -8494,11 +8509,11 @@ $packages["reflect"] = (function() {
 		c.str = strObj;
 		str = c.str;
 		if (str === "") {
-			return ptrType$4.nil;
+			return ptrType$5.nil;
 		}
-		_tuple = (_entry = stringPtrMap[str], _entry !== undefined ? [_entry.v, true] : [ptrType$4.nil, false]); ptr = _tuple[0]; ok = _tuple[1];
+		_tuple = (_entry = stringPtrMap[str], _entry !== undefined ? [_entry.v, true] : [ptrType$5.nil, false]); ptr = _tuple[0]; ok = _tuple[1];
 		if (!ok) {
-			ptr = new ptrType$4(function() { return str; }, function($v) { str = $v; });
+			ptr = new ptrType$5(function() { return str; }, function($v) { str = $v; });
 			_key = str; (stringPtrMap || $throwRuntimeError("assignment to entry in nil map"))[_key] = { k: _key, v: ptr };
 		}
 		return ptr;
@@ -8553,7 +8568,7 @@ $packages["reflect"] = (function() {
 	TypeOf = $pkg.TypeOf = function(i) {
 		var i;
 		if (!initialized) {
-			return new rtype.ptr(0, 0, 0, 0, 0, 0, ptrType$3.nil, arrayType$1.zero(), ptrType$4.nil, ptrType$5.nil, ptrType$1.nil, 0);
+			return new rtype.ptr(0, 0, 0, 0, 0, 0, ptrType$4.nil, arrayType$1.zero(), ptrType$5.nil, ptrType$6.nil, ptrType$1.nil, 0);
 		}
 		if ($interfaceIsEqual(i, $ifaceNil)) {
 			return $ifaceNil;
@@ -8727,22 +8742,22 @@ $packages["reflect"] = (function() {
 				$panic(new $String("reflect: internal error: invalid method index"));
 			}
 			m = (x = tt.methods, ((i < 0 || i >= x.$length) ? $throwRuntimeError("index out of range") : x.$array[x.$offset + i]));
-			if (!($pointerIsEqual(m.pkgPath, ptrType$4.nil))) {
+			if (!($pointerIsEqual(m.pkgPath, ptrType$5.nil))) {
 				$panic(new $String("reflect: " + op + " of unexported method"));
 			}
-			iface = $pointerOfStructConversion(v.ptr, ptrType$6);
-			if (iface.itab === ptrType$7.nil) {
+			iface = $pointerOfStructConversion(v.ptr, ptrType$7);
+			if (iface.itab === ptrType$8.nil) {
 				$panic(new $String("reflect: " + op + " of method on nil interface value"));
 			}
 			t = m.typ;
 			prop = m.name.$get();
 		} else {
 			ut = v.typ.uncommonType.uncommon();
-			if (ut === ptrType$5.nil || i < 0 || i >= ut.methods.$length) {
+			if (ut === ptrType$6.nil || i < 0 || i >= ut.methods.$length) {
 				$panic(new $String("reflect: internal error: invalid method index"));
 			}
 			m$1 = (x$1 = ut.methods, ((i < 0 || i >= x$1.$length) ? $throwRuntimeError("index out of range") : x$1.$array[x$1.$offset + i]));
-			if (!($pointerIsEqual(m$1.pkgPath, ptrType$4.nil))) {
+			if (!($pointerIsEqual(m$1.pkgPath, ptrType$5.nil))) {
 				$panic(new $String("reflect: " + op + " of unexported method"));
 			}
 			t = m$1.mtyp;
@@ -8830,15 +8845,15 @@ $packages["reflect"] = (function() {
 	uncommonType.ptr.prototype.Method = function(i) {
 		var fl, fn, i, m = new Method.ptr(), mt, p, prop, t, x;
 		t = this;
-		if (t === ptrType$5.nil || i < 0 || i >= t.methods.$length) {
+		if (t === ptrType$6.nil || i < 0 || i >= t.methods.$length) {
 			$panic(new $String("reflect: Method index out of range"));
 		}
 		p = (x = t.methods, ((i < 0 || i >= x.$length) ? $throwRuntimeError("index out of range") : x.$array[x.$offset + i]));
-		if (!($pointerIsEqual(p.name, ptrType$4.nil))) {
+		if (!($pointerIsEqual(p.name, ptrType$5.nil))) {
 			m.Name = p.name.$get();
 		}
 		fl = 19;
-		if (!($pointerIsEqual(p.pkgPath, ptrType$4.nil))) {
+		if (!($pointerIsEqual(p.pkgPath, ptrType$5.nil))) {
 			m.PkgPath = p.pkgPath.$get();
 			fl = (fl | (32)) >>> 0;
 		}
@@ -8981,7 +8996,7 @@ $packages["reflect"] = (function() {
 			_i$1++;
 		}
 		argsArray[t.NumIn()] = $BLOCKING;
-		results = callHelper(new sliceType$1([new $js.container.ptr(fn), new $js.container.ptr(rcvr), new $js.container.ptr(argsArray)]));
+		results = callHelper(new sliceType$1([new $jsObjectPtr(fn), new $jsObjectPtr(rcvr), new $jsObjectPtr(argsArray)]));
 		_ref$2 = nout;
 		if (_ref$2 === 0) {
 			return sliceType$7.nil;
@@ -9016,15 +9031,15 @@ $packages["reflect"] = (function() {
 	Value.prototype.Cap = function() { return this.$val.Cap(); };
 	wrapJsObject = function(typ, val) {
 		var typ, val;
-		if ($interfaceIsEqual(typ, reflectType(jsObject))) {
-			return new (jsContainer)(val);
+		if ($interfaceIsEqual(typ, reflectType(jsObjectPtr))) {
+			return new (jsObjectPtr)(val);
 		}
 		return val;
 	};
 	unwrapJsObject = function(typ, val) {
 		var typ, val;
-		if ($interfaceIsEqual(typ, reflectType(jsObject))) {
-			return val.Object;
+		if ($interfaceIsEqual(typ, reflectType(jsObjectPtr))) {
+			return val.object;
 		}
 		return val;
 	};
@@ -9066,7 +9081,7 @@ $packages["reflect"] = (function() {
 		prop = $internalize(jsType(v.typ).fields[i].prop, $String);
 		typ = field.typ;
 		fl = (v.flag & 224) >>> 0;
-		if (!($pointerIsEqual(field.pkgPath, ptrType$4.nil))) {
+		if (!($pointerIsEqual(field.pkgPath, ptrType$5.nil))) {
 			fl = (fl | (32)) >>> 0;
 		}
 		fl = (fl | ((typ.Kind() >>> 0))) >>> 0;
@@ -9132,7 +9147,7 @@ $packages["reflect"] = (function() {
 			}
 			fl$2 = (((v.flag & 32) >>> 0) | 8) >>> 0;
 			c = str.charCodeAt(i);
-			return new Value.ptr(uint8Type, new ptrType$8(function() { return c; }, function($v) { c = $v; }), (fl$2 | 64) >>> 0);
+			return new Value.ptr(uint8Type, new ptrType$9(function() { return c; }, function($v) { c = $v; }), (fl$2 | 64) >>> 0);
 		} else {
 			$panic(new ValueError.ptr("reflect.Value.Index", k));
 		}
@@ -9395,7 +9410,7 @@ $packages["reflect"] = (function() {
 	uncommonType.ptr.prototype.PkgPath = function() {
 		var t;
 		t = this;
-		if (t === ptrType$5.nil || $pointerIsEqual(t.pkgPath, ptrType$4.nil)) {
+		if (t === ptrType$6.nil || $pointerIsEqual(t.pkgPath, ptrType$5.nil)) {
 			return "";
 		}
 		return t.pkgPath.$get();
@@ -9404,7 +9419,7 @@ $packages["reflect"] = (function() {
 	uncommonType.ptr.prototype.Name = function() {
 		var t;
 		t = this;
-		if (t === ptrType$5.nil || $pointerIsEqual(t.name, ptrType$4.nil)) {
+		if (t === ptrType$6.nil || $pointerIsEqual(t.name, ptrType$5.nil)) {
 			return "";
 		}
 		return t.name.$get();
@@ -9462,7 +9477,7 @@ $packages["reflect"] = (function() {
 	uncommonType.ptr.prototype.NumMethod = function() {
 		var t;
 		t = this;
-		if (t === ptrType$5.nil) {
+		if (t === ptrType$6.nil) {
 			return 0;
 		}
 		return t.methods.$length;
@@ -9471,17 +9486,17 @@ $packages["reflect"] = (function() {
 	uncommonType.ptr.prototype.MethodByName = function(name) {
 		var _i, _ref, _tmp, _tmp$1, i, m = new Method.ptr(), name, ok = false, p, t, x;
 		t = this;
-		if (t === ptrType$5.nil) {
+		if (t === ptrType$6.nil) {
 			return [m, ok];
 		}
-		p = ptrType$9.nil;
+		p = ptrType$10.nil;
 		_ref = t.methods;
 		_i = 0;
 		while (true) {
 			if (!(_i < _ref.$length)) { break; }
 			i = _i;
 			p = (x = t.methods, ((i < 0 || i >= x.$length) ? $throwRuntimeError("index out of range") : x.$array[x.$offset + i]));
-			if (!($pointerIsEqual(p.name, ptrType$4.nil)) && p.name.$get() === name) {
+			if (!($pointerIsEqual(p.name, ptrType$5.nil)) && p.name.$get() === name) {
 				_tmp = $clone(t.Method(i), Method); _tmp$1 = true; $copy(m, _tmp, Method); ok = _tmp$1;
 				return [m, ok];
 			}
@@ -9711,7 +9726,7 @@ $packages["reflect"] = (function() {
 		}
 		p = (x = t.methods, ((i < 0 || i >= x.$length) ? $throwRuntimeError("index out of range") : x.$array[x.$offset + i]));
 		m.Name = p.name.$get();
-		if (!($pointerIsEqual(p.pkgPath, ptrType$4.nil))) {
+		if (!($pointerIsEqual(p.pkgPath, ptrType$5.nil))) {
 			m.PkgPath = p.pkgPath.$get();
 		}
 		m.Type = toType(p.typ);
@@ -9728,10 +9743,10 @@ $packages["reflect"] = (function() {
 	interfaceType.ptr.prototype.MethodByName = function(name) {
 		var _i, _ref, _tmp, _tmp$1, i, m = new Method.ptr(), name, ok = false, p, t, x;
 		t = this;
-		if (t === ptrType$10.nil) {
+		if (t === ptrType$11.nil) {
 			return [m, ok];
 		}
-		p = ptrType$11.nil;
+		p = ptrType$12.nil;
 		_ref = t.methods;
 		_i = 0;
 		while (true) {
@@ -9800,7 +9815,7 @@ $packages["reflect"] = (function() {
 		}
 		p = (x = t.fields, ((i < 0 || i >= x.$length) ? $throwRuntimeError("index out of range") : x.$array[x.$offset + i]));
 		f.Type = toType(p.typ);
-		if (!($pointerIsEqual(p.name, ptrType$4.nil))) {
+		if (!($pointerIsEqual(p.name, ptrType$5.nil))) {
 			f.Name = p.name.$get();
 		} else {
 			t$1 = f.Type;
@@ -9810,10 +9825,10 @@ $packages["reflect"] = (function() {
 			f.Name = t$1.Name();
 			f.Anonymous = true;
 		}
-		if (!($pointerIsEqual(p.pkgPath, ptrType$4.nil))) {
+		if (!($pointerIsEqual(p.pkgPath, ptrType$5.nil))) {
 			f.PkgPath = p.pkgPath.$get();
 		}
-		if (!($pointerIsEqual(p.tag, ptrType$4.nil))) {
+		if (!($pointerIsEqual(p.tag, ptrType$5.nil))) {
 			f.Tag = p.tag.$get();
 		}
 		f.Offset = p.offset;
@@ -9875,7 +9890,7 @@ $packages["reflect"] = (function() {
 					f = (x = t$1.fields, ((i < 0 || i >= x.$length) ? $throwRuntimeError("index out of range") : x.$array[x.$offset + i]));
 					fname = "";
 					ntyp = ptrType$1.nil;
-					if (!($pointerIsEqual(f.name, ptrType$4.nil))) {
+					if (!($pointerIsEqual(f.name, ptrType$5.nil))) {
 						fname = f.name.$get();
 					} else {
 						ntyp = f.typ;
@@ -9940,7 +9955,7 @@ $packages["reflect"] = (function() {
 				if (!(_i < _ref.$length)) { break; }
 				i = _i;
 				tf = (x = t.fields, ((i < 0 || i >= x.$length) ? $throwRuntimeError("index out of range") : x.$array[x.$offset + i]));
-				if ($pointerIsEqual(tf.name, ptrType$4.nil)) {
+				if ($pointerIsEqual(tf.name, ptrType$5.nil)) {
 					hasAnon = true;
 					_i++;
 					continue;
@@ -10026,7 +10041,7 @@ $packages["reflect"] = (function() {
 			return false;
 		}
 		v$1 = V.uncommonType.uncommon();
-		if (v$1 === ptrType$5.nil) {
+		if (v$1 === ptrType$6.nil) {
 			return false;
 		}
 		i$1 = 0;
@@ -10128,16 +10143,16 @@ $packages["reflect"] = (function() {
 				i$2 = _i$2;
 				tf = (x$2 = t$2.fields, ((i$2 < 0 || i$2 >= x$2.$length) ? $throwRuntimeError("index out of range") : x$2.$array[x$2.$offset + i$2]));
 				vf = (x$3 = v$2.fields, ((i$2 < 0 || i$2 >= x$3.$length) ? $throwRuntimeError("index out of range") : x$3.$array[x$3.$offset + i$2]));
-				if (!($pointerIsEqual(tf.name, vf.name)) && ($pointerIsEqual(tf.name, ptrType$4.nil) || $pointerIsEqual(vf.name, ptrType$4.nil) || !(tf.name.$get() === vf.name.$get()))) {
+				if (!($pointerIsEqual(tf.name, vf.name)) && ($pointerIsEqual(tf.name, ptrType$5.nil) || $pointerIsEqual(vf.name, ptrType$5.nil) || !(tf.name.$get() === vf.name.$get()))) {
 					return false;
 				}
-				if (!($pointerIsEqual(tf.pkgPath, vf.pkgPath)) && ($pointerIsEqual(tf.pkgPath, ptrType$4.nil) || $pointerIsEqual(vf.pkgPath, ptrType$4.nil) || !(tf.pkgPath.$get() === vf.pkgPath.$get()))) {
+				if (!($pointerIsEqual(tf.pkgPath, vf.pkgPath)) && ($pointerIsEqual(tf.pkgPath, ptrType$5.nil) || $pointerIsEqual(vf.pkgPath, ptrType$5.nil) || !(tf.pkgPath.$get() === vf.pkgPath.$get()))) {
 					return false;
 				}
 				if (!(tf.typ === vf.typ)) {
 					return false;
 				}
-				if (!($pointerIsEqual(tf.tag, vf.tag)) && ($pointerIsEqual(tf.tag, ptrType$4.nil) || $pointerIsEqual(vf.tag, ptrType$4.nil) || !(tf.tag.$get() === vf.tag.$get()))) {
+				if (!($pointerIsEqual(tf.tag, vf.tag)) && ($pointerIsEqual(tf.tag, ptrType$5.nil) || $pointerIsEqual(vf.tag, ptrType$5.nil) || !(tf.tag.$get() === vf.tag.$get()))) {
 					return false;
 				}
 				if (!((tf.offset === vf.offset))) {
@@ -10424,7 +10439,7 @@ $packages["reflect"] = (function() {
 		if (!((((key.flag & 64) >>> 0) === 0))) {
 			k = key.ptr;
 		} else {
-			k = new ptrType$17(function() { return this.$target.ptr; }, function($v) { this.$target.ptr = $v; }, key);
+			k = new ptrType$18(function() { return this.$target.ptr; }, function($v) { this.$target.ptr = $v; }, key);
 		}
 		e = mapaccess(v.typ, v.pointer(), k);
 		if (e === 0) {
@@ -10685,7 +10700,7 @@ $packages["reflect"] = (function() {
 		if (!((((key.flag & 64) >>> 0) === 0))) {
 			k = key.ptr;
 		} else {
-			k = new ptrType$17(function() { return this.$target.ptr; }, function($v) { this.$target.ptr = $v; }, key);
+			k = new ptrType$18(function() { return this.$target.ptr; }, function($v) { this.$target.ptr = $v; }, key);
 		}
 		if (val.typ === ptrType$1.nil) {
 			mapdelete(v.typ, v.pointer(), k);
@@ -10697,7 +10712,7 @@ $packages["reflect"] = (function() {
 		if (!((((val.flag & 64) >>> 0) === 0))) {
 			e = val.ptr;
 		} else {
-			e = new ptrType$17(function() { return this.$target.ptr; }, function($v) { this.$target.ptr = $v; }, val);
+			e = new ptrType$18(function() { return this.$target.ptr; }, function($v) { this.$target.ptr = $v; }, val);
 		}
 		mapassign(v.typ, v.pointer(), k, e);
 	};
@@ -10774,7 +10789,7 @@ $packages["reflect"] = (function() {
 			return m.typ;
 		}
 		ut = v.typ.uncommonType.uncommon();
-		if (ut === ptrType$5.nil || (i >>> 0) >= (ut.methods.$length >>> 0)) {
+		if (ut === ptrType$6.nil || (i >>> 0) >= (ut.methods.$length >>> 0)) {
 			$panic(new $String("reflect: internal error: invalid method index"));
 		}
 		m$1 = (x$1 = ut.methods, ((i < 0 || i >= x$1.$length) ? $throwRuntimeError("index out of range") : x$1.$array[x$1.$offset + i]));
@@ -11070,36 +11085,36 @@ $packages["reflect"] = (function() {
 	};
 	Kind.methods = [{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
 	ptrType$1.methods = [{prop: "ptrTo", name: "ptrTo", pkg: "reflect", typ: $funcType([], [ptrType$1], false)}, {prop: "pointers", name: "pointers", pkg: "reflect", typ: $funcType([], [$Bool], false)}, {prop: "Comparable", name: "Comparable", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Size", name: "Size", pkg: "", typ: $funcType([], [$Uintptr], false)}, {prop: "Bits", name: "Bits", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Align", name: "Align", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "FieldAlign", name: "FieldAlign", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Kind", name: "Kind", pkg: "", typ: $funcType([], [Kind], false)}, {prop: "common", name: "common", pkg: "reflect", typ: $funcType([], [ptrType$1], false)}, {prop: "NumMethod", name: "NumMethod", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Method", name: "Method", pkg: "", typ: $funcType([$Int], [Method], false)}, {prop: "MethodByName", name: "MethodByName", pkg: "", typ: $funcType([$String], [Method, $Bool], false)}, {prop: "PkgPath", name: "PkgPath", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Name", name: "Name", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ChanDir", name: "ChanDir", pkg: "", typ: $funcType([], [ChanDir], false)}, {prop: "IsVariadic", name: "IsVariadic", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "Elem", name: "Elem", pkg: "", typ: $funcType([], [Type], false)}, {prop: "Field", name: "Field", pkg: "", typ: $funcType([$Int], [StructField], false)}, {prop: "FieldByIndex", name: "FieldByIndex", pkg: "", typ: $funcType([sliceType$10], [StructField], false)}, {prop: "FieldByName", name: "FieldByName", pkg: "", typ: $funcType([$String], [StructField, $Bool], false)}, {prop: "FieldByNameFunc", name: "FieldByNameFunc", pkg: "", typ: $funcType([funcType$3], [StructField, $Bool], false)}, {prop: "In", name: "In", pkg: "", typ: $funcType([$Int], [Type], false)}, {prop: "Key", name: "Key", pkg: "", typ: $funcType([], [Type], false)}, {prop: "Len", name: "Len", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "NumField", name: "NumField", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "NumIn", name: "NumIn", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "NumOut", name: "NumOut", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Out", name: "Out", pkg: "", typ: $funcType([$Int], [Type], false)}, {prop: "Implements", name: "Implements", pkg: "", typ: $funcType([Type], [$Bool], false)}, {prop: "AssignableTo", name: "AssignableTo", pkg: "", typ: $funcType([Type], [$Bool], false)}, {prop: "ConvertibleTo", name: "ConvertibleTo", pkg: "", typ: $funcType([Type], [$Bool], false)}];
-	ptrType$5.methods = [{prop: "Method", name: "Method", pkg: "", typ: $funcType([$Int], [Method], false)}, {prop: "uncommon", name: "uncommon", pkg: "reflect", typ: $funcType([], [ptrType$5], false)}, {prop: "PkgPath", name: "PkgPath", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Name", name: "Name", pkg: "", typ: $funcType([], [$String], false)}, {prop: "NumMethod", name: "NumMethod", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "MethodByName", name: "MethodByName", pkg: "", typ: $funcType([$String], [Method, $Bool], false)}];
+	ptrType$6.methods = [{prop: "Method", name: "Method", pkg: "", typ: $funcType([$Int], [Method], false)}, {prop: "uncommon", name: "uncommon", pkg: "reflect", typ: $funcType([], [ptrType$6], false)}, {prop: "PkgPath", name: "PkgPath", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Name", name: "Name", pkg: "", typ: $funcType([], [$String], false)}, {prop: "NumMethod", name: "NumMethod", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "MethodByName", name: "MethodByName", pkg: "", typ: $funcType([$String], [Method, $Bool], false)}];
 	ChanDir.methods = [{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
-	ptrType$10.methods = [{prop: "Method", name: "Method", pkg: "", typ: $funcType([$Int], [Method], false)}, {prop: "NumMethod", name: "NumMethod", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "MethodByName", name: "MethodByName", pkg: "", typ: $funcType([$String], [Method, $Bool], false)}];
-	ptrType$12.methods = [{prop: "Field", name: "Field", pkg: "", typ: $funcType([$Int], [StructField], false)}, {prop: "FieldByIndex", name: "FieldByIndex", pkg: "", typ: $funcType([sliceType$10], [StructField], false)}, {prop: "FieldByNameFunc", name: "FieldByNameFunc", pkg: "", typ: $funcType([funcType$3], [StructField, $Bool], false)}, {prop: "FieldByName", name: "FieldByName", pkg: "", typ: $funcType([$String], [StructField, $Bool], false)}];
+	ptrType$11.methods = [{prop: "Method", name: "Method", pkg: "", typ: $funcType([$Int], [Method], false)}, {prop: "NumMethod", name: "NumMethod", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "MethodByName", name: "MethodByName", pkg: "", typ: $funcType([$String], [Method, $Bool], false)}];
+	ptrType$13.methods = [{prop: "Field", name: "Field", pkg: "", typ: $funcType([$Int], [StructField], false)}, {prop: "FieldByIndex", name: "FieldByIndex", pkg: "", typ: $funcType([sliceType$10], [StructField], false)}, {prop: "FieldByNameFunc", name: "FieldByNameFunc", pkg: "", typ: $funcType([funcType$3], [StructField, $Bool], false)}, {prop: "FieldByName", name: "FieldByName", pkg: "", typ: $funcType([$String], [StructField, $Bool], false)}];
 	StructTag.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([$String], [$String], false)}];
-	Value.methods = [{prop: "object", name: "object", pkg: "reflect", typ: $funcType([], [js.Object], false)}, {prop: "call", name: "call", pkg: "reflect", typ: $funcType([$String, sliceType$7], [sliceType$7], false)}, {prop: "Cap", name: "Cap", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Elem", name: "Elem", pkg: "", typ: $funcType([], [Value], false)}, {prop: "Field", name: "Field", pkg: "", typ: $funcType([$Int], [Value], false)}, {prop: "Index", name: "Index", pkg: "", typ: $funcType([$Int], [Value], false)}, {prop: "IsNil", name: "IsNil", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "Len", name: "Len", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Pointer", name: "Pointer", pkg: "", typ: $funcType([], [$Uintptr], false)}, {prop: "Set", name: "Set", pkg: "", typ: $funcType([Value], [], false)}, {prop: "SetCap", name: "SetCap", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "SetLen", name: "SetLen", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "Slice", name: "Slice", pkg: "", typ: $funcType([$Int, $Int], [Value], false)}, {prop: "Slice3", name: "Slice3", pkg: "", typ: $funcType([$Int, $Int, $Int], [Value], false)}, {prop: "Close", name: "Close", pkg: "", typ: $funcType([], [], false)}, {prop: "TrySend", name: "TrySend", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "Send", name: "Send", pkg: "", typ: $funcType([Value], [], false)}, {prop: "TryRecv", name: "TryRecv", pkg: "", typ: $funcType([], [Value, $Bool], false)}, {prop: "Recv", name: "Recv", pkg: "", typ: $funcType([], [Value, $Bool], false)}, {prop: "pointer", name: "pointer", pkg: "reflect", typ: $funcType([], [$UnsafePointer], false)}, {prop: "Addr", name: "Addr", pkg: "", typ: $funcType([], [Value], false)}, {prop: "Bool", name: "Bool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "Bytes", name: "Bytes", pkg: "", typ: $funcType([], [sliceType$13], false)}, {prop: "runes", name: "runes", pkg: "reflect", typ: $funcType([], [sliceType$14], false)}, {prop: "CanAddr", name: "CanAddr", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "CanSet", name: "CanSet", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "Call", name: "Call", pkg: "", typ: $funcType([sliceType$7], [sliceType$7], false)}, {prop: "CallSlice", name: "CallSlice", pkg: "", typ: $funcType([sliceType$7], [sliceType$7], false)}, {prop: "Complex", name: "Complex", pkg: "", typ: $funcType([], [$Complex128], false)}, {prop: "FieldByIndex", name: "FieldByIndex", pkg: "", typ: $funcType([sliceType$10], [Value], false)}, {prop: "FieldByName", name: "FieldByName", pkg: "", typ: $funcType([$String], [Value], false)}, {prop: "FieldByNameFunc", name: "FieldByNameFunc", pkg: "", typ: $funcType([funcType$3], [Value], false)}, {prop: "Float", name: "Float", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "Int", name: "Int", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "CanInterface", name: "CanInterface", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "Interface", name: "Interface", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "InterfaceData", name: "InterfaceData", pkg: "", typ: $funcType([], [arrayType$3], false)}, {prop: "IsValid", name: "IsValid", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "Kind", name: "Kind", pkg: "", typ: $funcType([], [Kind], false)}, {prop: "MapIndex", name: "MapIndex", pkg: "", typ: $funcType([Value], [Value], false)}, {prop: "MapKeys", name: "MapKeys", pkg: "", typ: $funcType([], [sliceType$7], false)}, {prop: "Method", name: "Method", pkg: "", typ: $funcType([$Int], [Value], false)}, {prop: "NumMethod", name: "NumMethod", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "MethodByName", name: "MethodByName", pkg: "", typ: $funcType([$String], [Value], false)}, {prop: "NumField", name: "NumField", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "OverflowComplex", name: "OverflowComplex", pkg: "", typ: $funcType([$Complex128], [$Bool], false)}, {prop: "OverflowFloat", name: "OverflowFloat", pkg: "", typ: $funcType([$Float64], [$Bool], false)}, {prop: "OverflowInt", name: "OverflowInt", pkg: "", typ: $funcType([$Int64], [$Bool], false)}, {prop: "OverflowUint", name: "OverflowUint", pkg: "", typ: $funcType([$Uint64], [$Bool], false)}, {prop: "recv", name: "recv", pkg: "reflect", typ: $funcType([$Bool], [Value, $Bool], false)}, {prop: "send", name: "send", pkg: "reflect", typ: $funcType([Value, $Bool], [$Bool], false)}, {prop: "SetBool", name: "SetBool", pkg: "", typ: $funcType([$Bool], [], false)}, {prop: "SetBytes", name: "SetBytes", pkg: "", typ: $funcType([sliceType$13], [], false)}, {prop: "setRunes", name: "setRunes", pkg: "reflect", typ: $funcType([sliceType$14], [], false)}, {prop: "SetComplex", name: "SetComplex", pkg: "", typ: $funcType([$Complex128], [], false)}, {prop: "SetFloat", name: "SetFloat", pkg: "", typ: $funcType([$Float64], [], false)}, {prop: "SetInt", name: "SetInt", pkg: "", typ: $funcType([$Int64], [], false)}, {prop: "SetMapIndex", name: "SetMapIndex", pkg: "", typ: $funcType([Value, Value], [], false)}, {prop: "SetUint", name: "SetUint", pkg: "", typ: $funcType([$Uint64], [], false)}, {prop: "SetPointer", name: "SetPointer", pkg: "", typ: $funcType([$UnsafePointer], [], false)}, {prop: "SetString", name: "SetString", pkg: "", typ: $funcType([$String], [], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Type", name: "Type", pkg: "", typ: $funcType([], [Type], false)}, {prop: "Uint", name: "Uint", pkg: "", typ: $funcType([], [$Uint64], false)}, {prop: "UnsafeAddr", name: "UnsafeAddr", pkg: "", typ: $funcType([], [$Uintptr], false)}, {prop: "assignTo", name: "assignTo", pkg: "reflect", typ: $funcType([$String, ptrType$1, $UnsafePointer], [Value], false)}, {prop: "Convert", name: "Convert", pkg: "", typ: $funcType([Type], [Value], false)}];
+	Value.methods = [{prop: "object", name: "object", pkg: "reflect", typ: $funcType([], [ptrType$3], false)}, {prop: "call", name: "call", pkg: "reflect", typ: $funcType([$String, sliceType$7], [sliceType$7], false)}, {prop: "Cap", name: "Cap", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Elem", name: "Elem", pkg: "", typ: $funcType([], [Value], false)}, {prop: "Field", name: "Field", pkg: "", typ: $funcType([$Int], [Value], false)}, {prop: "Index", name: "Index", pkg: "", typ: $funcType([$Int], [Value], false)}, {prop: "IsNil", name: "IsNil", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "Len", name: "Len", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Pointer", name: "Pointer", pkg: "", typ: $funcType([], [$Uintptr], false)}, {prop: "Set", name: "Set", pkg: "", typ: $funcType([Value], [], false)}, {prop: "SetCap", name: "SetCap", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "SetLen", name: "SetLen", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "Slice", name: "Slice", pkg: "", typ: $funcType([$Int, $Int], [Value], false)}, {prop: "Slice3", name: "Slice3", pkg: "", typ: $funcType([$Int, $Int, $Int], [Value], false)}, {prop: "Close", name: "Close", pkg: "", typ: $funcType([], [], false)}, {prop: "TrySend", name: "TrySend", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "Send", name: "Send", pkg: "", typ: $funcType([Value], [], false)}, {prop: "TryRecv", name: "TryRecv", pkg: "", typ: $funcType([], [Value, $Bool], false)}, {prop: "Recv", name: "Recv", pkg: "", typ: $funcType([], [Value, $Bool], false)}, {prop: "pointer", name: "pointer", pkg: "reflect", typ: $funcType([], [$UnsafePointer], false)}, {prop: "Addr", name: "Addr", pkg: "", typ: $funcType([], [Value], false)}, {prop: "Bool", name: "Bool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "Bytes", name: "Bytes", pkg: "", typ: $funcType([], [sliceType$13], false)}, {prop: "runes", name: "runes", pkg: "reflect", typ: $funcType([], [sliceType$14], false)}, {prop: "CanAddr", name: "CanAddr", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "CanSet", name: "CanSet", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "Call", name: "Call", pkg: "", typ: $funcType([sliceType$7], [sliceType$7], false)}, {prop: "CallSlice", name: "CallSlice", pkg: "", typ: $funcType([sliceType$7], [sliceType$7], false)}, {prop: "Complex", name: "Complex", pkg: "", typ: $funcType([], [$Complex128], false)}, {prop: "FieldByIndex", name: "FieldByIndex", pkg: "", typ: $funcType([sliceType$10], [Value], false)}, {prop: "FieldByName", name: "FieldByName", pkg: "", typ: $funcType([$String], [Value], false)}, {prop: "FieldByNameFunc", name: "FieldByNameFunc", pkg: "", typ: $funcType([funcType$3], [Value], false)}, {prop: "Float", name: "Float", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "Int", name: "Int", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "CanInterface", name: "CanInterface", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "Interface", name: "Interface", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "InterfaceData", name: "InterfaceData", pkg: "", typ: $funcType([], [arrayType$3], false)}, {prop: "IsValid", name: "IsValid", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "Kind", name: "Kind", pkg: "", typ: $funcType([], [Kind], false)}, {prop: "MapIndex", name: "MapIndex", pkg: "", typ: $funcType([Value], [Value], false)}, {prop: "MapKeys", name: "MapKeys", pkg: "", typ: $funcType([], [sliceType$7], false)}, {prop: "Method", name: "Method", pkg: "", typ: $funcType([$Int], [Value], false)}, {prop: "NumMethod", name: "NumMethod", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "MethodByName", name: "MethodByName", pkg: "", typ: $funcType([$String], [Value], false)}, {prop: "NumField", name: "NumField", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "OverflowComplex", name: "OverflowComplex", pkg: "", typ: $funcType([$Complex128], [$Bool], false)}, {prop: "OverflowFloat", name: "OverflowFloat", pkg: "", typ: $funcType([$Float64], [$Bool], false)}, {prop: "OverflowInt", name: "OverflowInt", pkg: "", typ: $funcType([$Int64], [$Bool], false)}, {prop: "OverflowUint", name: "OverflowUint", pkg: "", typ: $funcType([$Uint64], [$Bool], false)}, {prop: "recv", name: "recv", pkg: "reflect", typ: $funcType([$Bool], [Value, $Bool], false)}, {prop: "send", name: "send", pkg: "reflect", typ: $funcType([Value, $Bool], [$Bool], false)}, {prop: "SetBool", name: "SetBool", pkg: "", typ: $funcType([$Bool], [], false)}, {prop: "SetBytes", name: "SetBytes", pkg: "", typ: $funcType([sliceType$13], [], false)}, {prop: "setRunes", name: "setRunes", pkg: "reflect", typ: $funcType([sliceType$14], [], false)}, {prop: "SetComplex", name: "SetComplex", pkg: "", typ: $funcType([$Complex128], [], false)}, {prop: "SetFloat", name: "SetFloat", pkg: "", typ: $funcType([$Float64], [], false)}, {prop: "SetInt", name: "SetInt", pkg: "", typ: $funcType([$Int64], [], false)}, {prop: "SetMapIndex", name: "SetMapIndex", pkg: "", typ: $funcType([Value, Value], [], false)}, {prop: "SetUint", name: "SetUint", pkg: "", typ: $funcType([$Uint64], [], false)}, {prop: "SetPointer", name: "SetPointer", pkg: "", typ: $funcType([$UnsafePointer], [], false)}, {prop: "SetString", name: "SetString", pkg: "", typ: $funcType([$String], [], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Type", name: "Type", pkg: "", typ: $funcType([], [Type], false)}, {prop: "Uint", name: "Uint", pkg: "", typ: $funcType([], [$Uint64], false)}, {prop: "UnsafeAddr", name: "UnsafeAddr", pkg: "", typ: $funcType([], [$Uintptr], false)}, {prop: "assignTo", name: "assignTo", pkg: "reflect", typ: $funcType([$String, ptrType$1, $UnsafePointer], [Value], false)}, {prop: "Convert", name: "Convert", pkg: "", typ: $funcType([Type], [Value], false)}];
 	flag.methods = [{prop: "kind", name: "kind", pkg: "reflect", typ: $funcType([], [Kind], false)}, {prop: "mustBe", name: "mustBe", pkg: "reflect", typ: $funcType([Kind], [], false)}, {prop: "mustBeExported", name: "mustBeExported", pkg: "reflect", typ: $funcType([], [], false)}, {prop: "mustBeAssignable", name: "mustBeAssignable", pkg: "reflect", typ: $funcType([], [], false)}];
-	ptrType$20.methods = [{prop: "Error", name: "Error", pkg: "", typ: $funcType([], [$String], false)}];
-	mapIter.init([{prop: "t", name: "t", pkg: "reflect", typ: Type, tag: ""}, {prop: "m", name: "m", pkg: "reflect", typ: js.Object, tag: ""}, {prop: "keys", name: "keys", pkg: "reflect", typ: js.Object, tag: ""}, {prop: "i", name: "i", pkg: "reflect", typ: $Int, tag: ""}]);
-	Type.init([{prop: "Align", name: "Align", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "AssignableTo", name: "AssignableTo", pkg: "", typ: $funcType([Type], [$Bool], false)}, {prop: "Bits", name: "Bits", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "ChanDir", name: "ChanDir", pkg: "", typ: $funcType([], [ChanDir], false)}, {prop: "Comparable", name: "Comparable", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ConvertibleTo", name: "ConvertibleTo", pkg: "", typ: $funcType([Type], [$Bool], false)}, {prop: "Elem", name: "Elem", pkg: "", typ: $funcType([], [Type], false)}, {prop: "Field", name: "Field", pkg: "", typ: $funcType([$Int], [StructField], false)}, {prop: "FieldAlign", name: "FieldAlign", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "FieldByIndex", name: "FieldByIndex", pkg: "", typ: $funcType([sliceType$10], [StructField], false)}, {prop: "FieldByName", name: "FieldByName", pkg: "", typ: $funcType([$String], [StructField, $Bool], false)}, {prop: "FieldByNameFunc", name: "FieldByNameFunc", pkg: "", typ: $funcType([funcType$3], [StructField, $Bool], false)}, {prop: "Implements", name: "Implements", pkg: "", typ: $funcType([Type], [$Bool], false)}, {prop: "In", name: "In", pkg: "", typ: $funcType([$Int], [Type], false)}, {prop: "IsVariadic", name: "IsVariadic", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "Key", name: "Key", pkg: "", typ: $funcType([], [Type], false)}, {prop: "Kind", name: "Kind", pkg: "", typ: $funcType([], [Kind], false)}, {prop: "Len", name: "Len", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Method", name: "Method", pkg: "", typ: $funcType([$Int], [Method], false)}, {prop: "MethodByName", name: "MethodByName", pkg: "", typ: $funcType([$String], [Method, $Bool], false)}, {prop: "Name", name: "Name", pkg: "", typ: $funcType([], [$String], false)}, {prop: "NumField", name: "NumField", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "NumIn", name: "NumIn", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "NumMethod", name: "NumMethod", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "NumOut", name: "NumOut", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Out", name: "Out", pkg: "", typ: $funcType([$Int], [Type], false)}, {prop: "PkgPath", name: "PkgPath", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Size", name: "Size", pkg: "", typ: $funcType([], [$Uintptr], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}, {prop: "common", name: "common", pkg: "reflect", typ: $funcType([], [ptrType$1], false)}, {prop: "uncommon", name: "uncommon", pkg: "reflect", typ: $funcType([], [ptrType$5], false)}]);
-	rtype.init([{prop: "size", name: "size", pkg: "reflect", typ: $Uintptr, tag: ""}, {prop: "hash", name: "hash", pkg: "reflect", typ: $Uint32, tag: ""}, {prop: "_$2", name: "_", pkg: "reflect", typ: $Uint8, tag: ""}, {prop: "align", name: "align", pkg: "reflect", typ: $Uint8, tag: ""}, {prop: "fieldAlign", name: "fieldAlign", pkg: "reflect", typ: $Uint8, tag: ""}, {prop: "kind", name: "kind", pkg: "reflect", typ: $Uint8, tag: ""}, {prop: "alg", name: "alg", pkg: "reflect", typ: ptrType$3, tag: ""}, {prop: "gc", name: "gc", pkg: "reflect", typ: arrayType$1, tag: ""}, {prop: "string", name: "string", pkg: "reflect", typ: ptrType$4, tag: ""}, {prop: "uncommonType", name: "", pkg: "reflect", typ: ptrType$5, tag: ""}, {prop: "ptrToThis", name: "ptrToThis", pkg: "reflect", typ: ptrType$1, tag: ""}, {prop: "zero", name: "zero", pkg: "reflect", typ: $UnsafePointer, tag: ""}]);
+	ptrType$21.methods = [{prop: "Error", name: "Error", pkg: "", typ: $funcType([], [$String], false)}];
+	mapIter.init([{prop: "t", name: "t", pkg: "reflect", typ: Type, tag: ""}, {prop: "m", name: "m", pkg: "reflect", typ: ptrType$3, tag: ""}, {prop: "keys", name: "keys", pkg: "reflect", typ: ptrType$3, tag: ""}, {prop: "i", name: "i", pkg: "reflect", typ: $Int, tag: ""}]);
+	Type.init([{prop: "Align", name: "Align", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "AssignableTo", name: "AssignableTo", pkg: "", typ: $funcType([Type], [$Bool], false)}, {prop: "Bits", name: "Bits", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "ChanDir", name: "ChanDir", pkg: "", typ: $funcType([], [ChanDir], false)}, {prop: "Comparable", name: "Comparable", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ConvertibleTo", name: "ConvertibleTo", pkg: "", typ: $funcType([Type], [$Bool], false)}, {prop: "Elem", name: "Elem", pkg: "", typ: $funcType([], [Type], false)}, {prop: "Field", name: "Field", pkg: "", typ: $funcType([$Int], [StructField], false)}, {prop: "FieldAlign", name: "FieldAlign", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "FieldByIndex", name: "FieldByIndex", pkg: "", typ: $funcType([sliceType$10], [StructField], false)}, {prop: "FieldByName", name: "FieldByName", pkg: "", typ: $funcType([$String], [StructField, $Bool], false)}, {prop: "FieldByNameFunc", name: "FieldByNameFunc", pkg: "", typ: $funcType([funcType$3], [StructField, $Bool], false)}, {prop: "Implements", name: "Implements", pkg: "", typ: $funcType([Type], [$Bool], false)}, {prop: "In", name: "In", pkg: "", typ: $funcType([$Int], [Type], false)}, {prop: "IsVariadic", name: "IsVariadic", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "Key", name: "Key", pkg: "", typ: $funcType([], [Type], false)}, {prop: "Kind", name: "Kind", pkg: "", typ: $funcType([], [Kind], false)}, {prop: "Len", name: "Len", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Method", name: "Method", pkg: "", typ: $funcType([$Int], [Method], false)}, {prop: "MethodByName", name: "MethodByName", pkg: "", typ: $funcType([$String], [Method, $Bool], false)}, {prop: "Name", name: "Name", pkg: "", typ: $funcType([], [$String], false)}, {prop: "NumField", name: "NumField", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "NumIn", name: "NumIn", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "NumMethod", name: "NumMethod", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "NumOut", name: "NumOut", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Out", name: "Out", pkg: "", typ: $funcType([$Int], [Type], false)}, {prop: "PkgPath", name: "PkgPath", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Size", name: "Size", pkg: "", typ: $funcType([], [$Uintptr], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}, {prop: "common", name: "common", pkg: "reflect", typ: $funcType([], [ptrType$1], false)}, {prop: "uncommon", name: "uncommon", pkg: "reflect", typ: $funcType([], [ptrType$6], false)}]);
+	rtype.init([{prop: "size", name: "size", pkg: "reflect", typ: $Uintptr, tag: ""}, {prop: "hash", name: "hash", pkg: "reflect", typ: $Uint32, tag: ""}, {prop: "_$2", name: "_", pkg: "reflect", typ: $Uint8, tag: ""}, {prop: "align", name: "align", pkg: "reflect", typ: $Uint8, tag: ""}, {prop: "fieldAlign", name: "fieldAlign", pkg: "reflect", typ: $Uint8, tag: ""}, {prop: "kind", name: "kind", pkg: "reflect", typ: $Uint8, tag: ""}, {prop: "alg", name: "alg", pkg: "reflect", typ: ptrType$4, tag: ""}, {prop: "gc", name: "gc", pkg: "reflect", typ: arrayType$1, tag: ""}, {prop: "string", name: "string", pkg: "reflect", typ: ptrType$5, tag: ""}, {prop: "uncommonType", name: "", pkg: "reflect", typ: ptrType$6, tag: ""}, {prop: "ptrToThis", name: "ptrToThis", pkg: "reflect", typ: ptrType$1, tag: ""}, {prop: "zero", name: "zero", pkg: "reflect", typ: $UnsafePointer, tag: ""}]);
 	typeAlg.init([{prop: "hash", name: "hash", pkg: "reflect", typ: funcType$4, tag: ""}, {prop: "equal", name: "equal", pkg: "reflect", typ: funcType$5, tag: ""}]);
-	method.init([{prop: "name", name: "name", pkg: "reflect", typ: ptrType$4, tag: ""}, {prop: "pkgPath", name: "pkgPath", pkg: "reflect", typ: ptrType$4, tag: ""}, {prop: "mtyp", name: "mtyp", pkg: "reflect", typ: ptrType$1, tag: ""}, {prop: "typ", name: "typ", pkg: "reflect", typ: ptrType$1, tag: ""}, {prop: "ifn", name: "ifn", pkg: "reflect", typ: $UnsafePointer, tag: ""}, {prop: "tfn", name: "tfn", pkg: "reflect", typ: $UnsafePointer, tag: ""}]);
-	uncommonType.init([{prop: "name", name: "name", pkg: "reflect", typ: ptrType$4, tag: ""}, {prop: "pkgPath", name: "pkgPath", pkg: "reflect", typ: ptrType$4, tag: ""}, {prop: "methods", name: "methods", pkg: "reflect", typ: sliceType$3, tag: ""}]);
+	method.init([{prop: "name", name: "name", pkg: "reflect", typ: ptrType$5, tag: ""}, {prop: "pkgPath", name: "pkgPath", pkg: "reflect", typ: ptrType$5, tag: ""}, {prop: "mtyp", name: "mtyp", pkg: "reflect", typ: ptrType$1, tag: ""}, {prop: "typ", name: "typ", pkg: "reflect", typ: ptrType$1, tag: ""}, {prop: "ifn", name: "ifn", pkg: "reflect", typ: $UnsafePointer, tag: ""}, {prop: "tfn", name: "tfn", pkg: "reflect", typ: $UnsafePointer, tag: ""}]);
+	uncommonType.init([{prop: "name", name: "name", pkg: "reflect", typ: ptrType$5, tag: ""}, {prop: "pkgPath", name: "pkgPath", pkg: "reflect", typ: ptrType$5, tag: ""}, {prop: "methods", name: "methods", pkg: "reflect", typ: sliceType$3, tag: ""}]);
 	arrayType.init([{prop: "rtype", name: "", pkg: "reflect", typ: rtype, tag: "reflect:\"array\""}, {prop: "elem", name: "elem", pkg: "reflect", typ: ptrType$1, tag: ""}, {prop: "slice", name: "slice", pkg: "reflect", typ: ptrType$1, tag: ""}, {prop: "len", name: "len", pkg: "reflect", typ: $Uintptr, tag: ""}]);
 	chanType.init([{prop: "rtype", name: "", pkg: "reflect", typ: rtype, tag: "reflect:\"chan\""}, {prop: "elem", name: "elem", pkg: "reflect", typ: ptrType$1, tag: ""}, {prop: "dir", name: "dir", pkg: "reflect", typ: $Uintptr, tag: ""}]);
 	funcType.init([{prop: "rtype", name: "", pkg: "reflect", typ: rtype, tag: "reflect:\"func\""}, {prop: "dotdotdot", name: "dotdotdot", pkg: "reflect", typ: $Bool, tag: ""}, {prop: "in$2", name: "in", pkg: "reflect", typ: sliceType$4, tag: ""}, {prop: "out", name: "out", pkg: "reflect", typ: sliceType$4, tag: ""}]);
-	imethod.init([{prop: "name", name: "name", pkg: "reflect", typ: ptrType$4, tag: ""}, {prop: "pkgPath", name: "pkgPath", pkg: "reflect", typ: ptrType$4, tag: ""}, {prop: "typ", name: "typ", pkg: "reflect", typ: ptrType$1, tag: ""}]);
+	imethod.init([{prop: "name", name: "name", pkg: "reflect", typ: ptrType$5, tag: ""}, {prop: "pkgPath", name: "pkgPath", pkg: "reflect", typ: ptrType$5, tag: ""}, {prop: "typ", name: "typ", pkg: "reflect", typ: ptrType$1, tag: ""}]);
 	interfaceType.init([{prop: "rtype", name: "", pkg: "reflect", typ: rtype, tag: "reflect:\"interface\""}, {prop: "methods", name: "methods", pkg: "reflect", typ: sliceType$5, tag: ""}]);
 	mapType.init([{prop: "rtype", name: "", pkg: "reflect", typ: rtype, tag: "reflect:\"map\""}, {prop: "key", name: "key", pkg: "reflect", typ: ptrType$1, tag: ""}, {prop: "elem", name: "elem", pkg: "reflect", typ: ptrType$1, tag: ""}, {prop: "bucket", name: "bucket", pkg: "reflect", typ: ptrType$1, tag: ""}, {prop: "hmap", name: "hmap", pkg: "reflect", typ: ptrType$1, tag: ""}, {prop: "keysize", name: "keysize", pkg: "reflect", typ: $Uint8, tag: ""}, {prop: "indirectkey", name: "indirectkey", pkg: "reflect", typ: $Uint8, tag: ""}, {prop: "valuesize", name: "valuesize", pkg: "reflect", typ: $Uint8, tag: ""}, {prop: "indirectvalue", name: "indirectvalue", pkg: "reflect", typ: $Uint8, tag: ""}, {prop: "bucketsize", name: "bucketsize", pkg: "reflect", typ: $Uint16, tag: ""}]);
 	ptrType.init([{prop: "rtype", name: "", pkg: "reflect", typ: rtype, tag: "reflect:\"ptr\""}, {prop: "elem", name: "elem", pkg: "reflect", typ: ptrType$1, tag: ""}]);
 	sliceType.init([{prop: "rtype", name: "", pkg: "reflect", typ: rtype, tag: "reflect:\"slice\""}, {prop: "elem", name: "elem", pkg: "reflect", typ: ptrType$1, tag: ""}]);
-	structField.init([{prop: "name", name: "name", pkg: "reflect", typ: ptrType$4, tag: ""}, {prop: "pkgPath", name: "pkgPath", pkg: "reflect", typ: ptrType$4, tag: ""}, {prop: "typ", name: "typ", pkg: "reflect", typ: ptrType$1, tag: ""}, {prop: "tag", name: "tag", pkg: "reflect", typ: ptrType$4, tag: ""}, {prop: "offset", name: "offset", pkg: "reflect", typ: $Uintptr, tag: ""}]);
+	structField.init([{prop: "name", name: "name", pkg: "reflect", typ: ptrType$5, tag: ""}, {prop: "pkgPath", name: "pkgPath", pkg: "reflect", typ: ptrType$5, tag: ""}, {prop: "typ", name: "typ", pkg: "reflect", typ: ptrType$1, tag: ""}, {prop: "tag", name: "tag", pkg: "reflect", typ: ptrType$5, tag: ""}, {prop: "offset", name: "offset", pkg: "reflect", typ: $Uintptr, tag: ""}]);
 	structType.init([{prop: "rtype", name: "", pkg: "reflect", typ: rtype, tag: "reflect:\"struct\""}, {prop: "fields", name: "fields", pkg: "reflect", typ: sliceType$6, tag: ""}]);
 	Method.init([{prop: "Name", name: "Name", pkg: "", typ: $String, tag: ""}, {prop: "PkgPath", name: "PkgPath", pkg: "", typ: $String, tag: ""}, {prop: "Type", name: "Type", pkg: "", typ: Type, tag: ""}, {prop: "Func", name: "Func", pkg: "", typ: Value, tag: ""}, {prop: "Index", name: "Index", pkg: "", typ: $Int, tag: ""}]);
 	StructField.init([{prop: "Name", name: "Name", pkg: "", typ: $String, tag: ""}, {prop: "PkgPath", name: "PkgPath", pkg: "", typ: $String, tag: ""}, {prop: "Type", name: "Type", pkg: "", typ: Type, tag: ""}, {prop: "Tag", name: "Tag", pkg: "", typ: StructTag, tag: ""}, {prop: "Offset", name: "Offset", pkg: "", typ: $Uintptr, tag: ""}, {prop: "Index", name: "Index", pkg: "", typ: sliceType$10, tag: ""}, {prop: "Anonymous", name: "Anonymous", pkg: "", typ: $Bool, tag: ""}]);
-	fieldScan.init([{prop: "typ", name: "typ", pkg: "reflect", typ: ptrType$12, tag: ""}, {prop: "index", name: "index", pkg: "reflect", typ: sliceType$10, tag: ""}]);
+	fieldScan.init([{prop: "typ", name: "typ", pkg: "reflect", typ: ptrType$13, tag: ""}, {prop: "index", name: "index", pkg: "reflect", typ: sliceType$10, tag: ""}]);
 	Value.init([{prop: "typ", name: "typ", pkg: "reflect", typ: ptrType$1, tag: ""}, {prop: "ptr", name: "ptr", pkg: "reflect", typ: $UnsafePointer, tag: ""}, {prop: "flag", name: "", pkg: "reflect", typ: flag, tag: ""}]);
 	ValueError.init([{prop: "Method", name: "Method", pkg: "", typ: $String, tag: ""}, {prop: "Kind", name: "Kind", pkg: "", typ: Kind, tag: ""}]);
-	nonEmptyInterface.init([{prop: "itab", name: "itab", pkg: "reflect", typ: ptrType$7, tag: ""}, {prop: "word", name: "word", pkg: "reflect", typ: $UnsafePointer, tag: ""}]);
+	nonEmptyInterface.init([{prop: "itab", name: "itab", pkg: "reflect", typ: ptrType$8, tag: ""}, {prop: "word", name: "word", pkg: "reflect", typ: $UnsafePointer, tag: ""}]);
 	$pkg.$init = function() {
 		$pkg.$init = function() {};
 		/* */ var $r, $s = 0; var $init_reflect = function() { while (true) { switch ($s) { case 0:
@@ -11111,8 +11126,7 @@ $packages["reflect"] = (function() {
 		initialized = false;
 		stringPtrMap = new $Map();
 		callHelper = $assertType($internalize($call, $emptyInterface), funcType$1);
-		jsObject = $js.Object;
-		jsContainer = $js.container.ptr;
+		jsObjectPtr = $jsObjectPtr;
 		kindNames = new sliceType$2(["invalid", "bool", "int", "int8", "int16", "int32", "int64", "uint", "uint8", "uint16", "uint32", "uint64", "uintptr", "float32", "float64", "complex64", "complex128", "array", "chan", "func", "interface", "map", "ptr", "slice", "string", "struct", "unsafe.Pointer"]);
 		uint8Type = $assertType(TypeOf(new $Uint8(0)), ptrType$1);
 		init();
@@ -11680,7 +11694,6 @@ $packages["fmt"] = (function() {
 		oldWid = f.wid;
 		i = 0;
 		while (true) {
-			if (!(true)) { break; }
 			_ref = verb;
 			if (_ref === 98) {
 				f.formatFloat(r, 98, 0, size);
@@ -12779,7 +12792,6 @@ $packages["fmt"] = (function() {
 		var r, s, stopAtNewline;
 		s = this;
 		while (true) {
-			if (!(true)) { break; }
 			r = s.getRune();
 			if (r === -1) {
 				return;
@@ -12811,7 +12823,6 @@ $packages["fmt"] = (function() {
 			s.skipSpace(false);
 		}
 		while (true) {
-			if (!(true)) { break; }
 			r = s.getRune();
 			if (r === -1) {
 				break;
@@ -12909,7 +12920,7 @@ $packages["fmt"] = (function() {
 	return $pkg;
 })();
 $packages["github.com/fabioberger/chrome"] = (function() {
-	var $pkg = {}, fmt, js, time, Alarms, Alarm, Bookmarks, BookmarkTreeNode, BrowserAction, ColorArray, BrowsingData, RemovalOptions, DataTypeSet, Object, Chrome, Commands, Command, ContextMenus, Cookies, Cookie, CookieStore, Debugger, Debugee, TargetInfo, DeclarativeContent, OnPageChanged, DesktopCapture, Downloads, DownloadItem, Enterprise, PlatformKeys, Token, Extension, FileBrowserHandler, FileHandlerExecuteEventDetails, FileSystemProvider, EntryMetadata, FileSystemInfo, FontSettings, FontName, Gcm, History, HistoryItem, VisitItem, I18n, Identity, AccountInfo, Idle, Input, Ime, KeyboardEvent, InputContext, Notification, NotificationOptions, Omnibox, SuggestResult, PageAction, PageCapture, Permissions, Power, Privacy, Proxy, Runtime, Port, MessageSender, PlatformInfo, Sessions, Filter, Session, Device, Storage, StorageChange, System, Cpu, Memory, SysStorage, StorageUnitInfo, TabCapture, CaptureInfo, Tabs, Tab, ZoomSettings, TopSites, MostvisitedURL, Tts, TtsEvent, TtsVoice, TtsEngine, WebNavigation, WebRequest, WebStore, Windows, Window, funcType, sliceType, funcType$1, funcType$2, sliceType$1, sliceType$2, funcType$3, funcType$4, funcType$5, funcType$6, funcType$7, funcType$8, funcType$9, funcType$10, funcType$11, funcType$12, funcType$13, funcType$14, sliceType$3, funcType$15, funcType$16, funcType$17, funcType$18, sliceType$4, funcType$19, funcType$20, sliceType$5, funcType$21, funcType$22, sliceType$6, funcType$23, funcType$24, funcType$25, sliceType$7, mapType, sliceType$8, funcType$26, funcType$27, funcType$28, sliceType$9, funcType$29, funcType$30, sliceType$10, funcType$31, funcType$32, funcType$33, funcType$34, funcType$35, sliceType$11, funcType$36, funcType$37, sliceType$12, sliceType$13, funcType$38, funcType$39, sliceType$14, funcType$40, funcType$41, funcType$42, funcType$43, funcType$44, funcType$45, sliceType$15, funcType$46, funcType$47, funcType$48, funcType$49, sliceType$16, funcType$50, funcType$51, funcType$52, funcType$53, funcType$54, sliceType$17, funcType$55, sliceType$18, funcType$56, funcType$57, funcType$58, funcType$59, sliceType$19, funcType$60, funcType$61, funcType$62, funcType$63, funcType$64, funcType$65, funcType$66, funcType$67, funcType$68, funcType$69, funcType$70, funcType$71, funcType$72, funcType$73, funcType$74, funcType$79, funcType$80, funcType$81, funcType$82, funcType$83, funcType$84, funcType$85, sliceType$21, funcType$86, funcType$87, funcType$88, funcType$89, funcType$90, mapType$1, funcType$91, funcType$92, funcType$93, funcType$94, funcType$95, funcType$96, funcType$97, funcType$98, funcType$99, mapType$2, funcType$100, funcType$101, funcType$102, funcType$103, funcType$104, sliceType$22, funcType$105, sliceType$23, funcType$106, funcType$107, mapType$3, funcType$108, funcType$109, mapType$4, funcType$110, sliceType$24, funcType$111, funcType$112, funcType$113, sliceType$25, funcType$114, funcType$115, funcType$116, funcType$117, funcType$118, funcType$119, funcType$120, funcType$121, funcType$122, funcType$123, funcType$124, funcType$125, funcType$126, funcType$127, funcType$128, funcType$129, funcType$130, funcType$131, funcType$132, funcType$133, funcType$134, sliceType$26, funcType$135, funcType$136, sliceType$27, funcType$137, funcType$138, funcType$139, sliceType$28, funcType$140, mapType$5, funcType$141, funcType$142, funcType$143, funcType$144, funcType$145, funcType$146, ptrType, ptrType$1, ptrType$2, ptrType$3, mapType$6, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, ptrType$9, ptrType$10, ptrType$11, ptrType$12, ptrType$13, ptrType$14, ptrType$15, ptrType$16, ptrType$17, ptrType$18, ptrType$19, ptrType$20, ptrType$21, ptrType$22, ptrType$23, ptrType$24, ptrType$25, ptrType$26, ptrType$27, ptrType$28, ptrType$29, ptrType$30, ptrType$31, ptrType$32, ptrType$33, ptrType$34, ptrType$35, ptrType$36, ptrType$37, ptrType$38, ptrType$39, ptrType$40, ptrType$41, ptrType$42, ptrType$43, ptrType$44, ptrType$45, ptrType$47, ptrType$48, ptrType$49, NewChrome, NewContextMenus, NewDeclarativeContent, NewEnterprise, NewExtension, NewGcm, NewInput, NewPrivacy, NewProxy, NewRuntime, NewSessions, NewStorage, NewSystem, NewWebRequest, NewWindows;
+	var $pkg = {}, fmt, js, time, Alarms, Alarm, Bookmarks, BookmarkTreeNode, BrowserAction, ColorArray, BrowsingData, RemovalOptions, DataTypeSet, Object, Chrome, Commands, Command, ContextMenus, Cookies, Cookie, CookieStore, Debugger, Debugee, TargetInfo, DeclarativeContent, OnPageChanged, DesktopCapture, Downloads, DownloadItem, Enterprise, PlatformKeys, Token, Extension, FileBrowserHandler, FileHandlerExecuteEventDetails, FileSystemProvider, EntryMetadata, FileSystemInfo, FontSettings, FontName, Gcm, History, HistoryItem, VisitItem, I18n, Identity, AccountInfo, Idle, Input, Ime, KeyboardEvent, InputContext, Notification, NotificationOptions, Omnibox, SuggestResult, PageAction, PageCapture, Permissions, Power, Privacy, Proxy, Runtime, Port, MessageSender, PlatformInfo, Sessions, Filter, Session, Device, Storage, StorageChange, System, Cpu, Memory, SysStorage, StorageUnitInfo, TabCapture, CaptureInfo, Tabs, Tab, ZoomSettings, TopSites, MostvisitedURL, Tts, TtsEvent, TtsVoice, TtsEngine, WebNavigation, WebRequest, WebStore, Windows, Window, funcType, sliceType, funcType$1, funcType$2, sliceType$1, sliceType$2, funcType$3, funcType$4, funcType$5, funcType$6, funcType$7, funcType$8, funcType$9, funcType$10, funcType$11, funcType$12, funcType$13, funcType$14, sliceType$3, funcType$15, funcType$16, funcType$17, funcType$18, sliceType$4, funcType$19, funcType$20, sliceType$5, funcType$21, funcType$22, sliceType$6, funcType$23, funcType$24, funcType$25, sliceType$7, mapType, sliceType$8, funcType$26, funcType$27, funcType$28, sliceType$9, funcType$29, funcType$30, sliceType$10, funcType$31, funcType$32, funcType$33, funcType$34, funcType$35, sliceType$11, funcType$36, funcType$37, sliceType$12, sliceType$13, funcType$38, funcType$39, sliceType$14, funcType$40, funcType$41, funcType$42, funcType$43, funcType$44, funcType$45, sliceType$15, funcType$46, funcType$47, funcType$48, funcType$49, sliceType$16, funcType$50, funcType$51, funcType$52, funcType$53, funcType$54, sliceType$17, funcType$55, sliceType$18, funcType$56, funcType$57, funcType$58, funcType$59, sliceType$19, funcType$60, funcType$61, funcType$62, funcType$63, funcType$64, funcType$65, funcType$66, funcType$67, funcType$68, funcType$69, funcType$70, funcType$71, funcType$72, funcType$73, funcType$74, funcType$79, funcType$80, funcType$81, funcType$82, funcType$83, funcType$84, funcType$85, sliceType$21, funcType$86, funcType$87, funcType$88, funcType$89, funcType$90, mapType$1, funcType$91, funcType$92, funcType$93, funcType$94, funcType$95, funcType$96, funcType$97, funcType$98, funcType$99, mapType$2, funcType$100, funcType$101, funcType$102, funcType$103, funcType$104, sliceType$22, funcType$105, sliceType$23, funcType$106, funcType$107, mapType$3, funcType$108, funcType$109, mapType$4, funcType$110, sliceType$24, funcType$111, funcType$112, funcType$113, sliceType$25, funcType$114, funcType$115, funcType$116, funcType$117, funcType$118, funcType$119, funcType$120, funcType$121, funcType$122, funcType$123, funcType$124, funcType$125, funcType$126, funcType$127, funcType$128, funcType$129, funcType$130, funcType$131, funcType$132, funcType$133, funcType$134, sliceType$26, funcType$135, funcType$136, sliceType$27, funcType$137, funcType$138, funcType$139, sliceType$28, funcType$140, mapType$5, funcType$141, funcType$142, funcType$143, funcType$144, funcType$145, funcType$146, ptrType, ptrType$1, ptrType$2, ptrType$3, ptrType$4, mapType$6, ptrType$5, ptrType$6, ptrType$7, ptrType$8, ptrType$9, ptrType$10, ptrType$11, ptrType$12, ptrType$13, ptrType$14, ptrType$15, ptrType$16, ptrType$17, ptrType$18, ptrType$19, ptrType$20, ptrType$21, ptrType$22, ptrType$23, ptrType$24, ptrType$25, ptrType$26, ptrType$27, ptrType$28, ptrType$29, ptrType$30, ptrType$31, ptrType$32, ptrType$33, ptrType$34, ptrType$35, ptrType$36, ptrType$37, ptrType$38, ptrType$39, ptrType$40, ptrType$41, ptrType$42, ptrType$43, ptrType$44, ptrType$45, ptrType$46, ptrType$48, ptrType$49, ptrType$50, NewChrome, NewContextMenus, NewDeclarativeContent, NewEnterprise, NewExtension, NewGcm, NewInput, NewPrivacy, NewProxy, NewRuntime, NewSessions, NewStorage, NewSystem, NewWebRequest, NewWindows;
 	fmt = $packages["fmt"];
 	js = $packages["github.com/gopherjs/gopherjs/js"];
 	time = $packages["time"];
@@ -12960,50 +12971,50 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	Object = $pkg.Object = $newType(4, $kindMap, "chrome.Object", "Object", "github.com/fabioberger/chrome", null);
 	Chrome = $pkg.Chrome = $newType(0, $kindStruct, "chrome.Chrome", "Chrome", "github.com/fabioberger/chrome", function(o_, Alarms_, Bookmarks_, BrowserAction_, BrowsingData_, Commands_, ContextMenus_, Cookies_, Debugger_, DeclarativeContent_, DesktopCapture_, Downloads_, Enterprise_, Extension_, FileBrowserHandler_, FileSystemProvider_, FontSettings_, Gcm_, History_, I18n_, Identity_, Idle_, Input_, Notification_, Omnibox_, PageAction_, PageCapture_, Permissions_, Power_, Privacy_, Proxy_, Runtime_, Sessions_, Storage_, System_, Tabs_, TabCapture_, TopSites_, Tts_, TtsEngine_, WebNavigation_, WebRequest_, WebStore_, Windows_) {
 		this.$val = this;
-		this.o = o_ !== undefined ? o_ : null;
+		this.o = o_ !== undefined ? o_ : new js.Object.ptr();
 		this.Alarms = Alarms_ !== undefined ? Alarms_ : ptrType.nil;
-		this.Bookmarks = Bookmarks_ !== undefined ? Bookmarks_ : ptrType$1.nil;
-		this.BrowserAction = BrowserAction_ !== undefined ? BrowserAction_ : ptrType$2.nil;
-		this.BrowsingData = BrowsingData_ !== undefined ? BrowsingData_ : ptrType$3.nil;
-		this.Commands = Commands_ !== undefined ? Commands_ : ptrType$4.nil;
-		this.ContextMenus = ContextMenus_ !== undefined ? ContextMenus_ : ptrType$5.nil;
-		this.Cookies = Cookies_ !== undefined ? Cookies_ : ptrType$6.nil;
-		this.Debugger = Debugger_ !== undefined ? Debugger_ : ptrType$7.nil;
-		this.DeclarativeContent = DeclarativeContent_ !== undefined ? DeclarativeContent_ : ptrType$8.nil;
-		this.DesktopCapture = DesktopCapture_ !== undefined ? DesktopCapture_ : ptrType$9.nil;
-		this.Downloads = Downloads_ !== undefined ? Downloads_ : ptrType$10.nil;
-		this.Enterprise = Enterprise_ !== undefined ? Enterprise_ : ptrType$11.nil;
-		this.Extension = Extension_ !== undefined ? Extension_ : ptrType$12.nil;
-		this.FileBrowserHandler = FileBrowserHandler_ !== undefined ? FileBrowserHandler_ : ptrType$13.nil;
-		this.FileSystemProvider = FileSystemProvider_ !== undefined ? FileSystemProvider_ : ptrType$14.nil;
-		this.FontSettings = FontSettings_ !== undefined ? FontSettings_ : ptrType$15.nil;
-		this.Gcm = Gcm_ !== undefined ? Gcm_ : ptrType$16.nil;
-		this.History = History_ !== undefined ? History_ : ptrType$17.nil;
-		this.I18n = I18n_ !== undefined ? I18n_ : ptrType$18.nil;
-		this.Identity = Identity_ !== undefined ? Identity_ : ptrType$19.nil;
-		this.Idle = Idle_ !== undefined ? Idle_ : ptrType$20.nil;
-		this.Input = Input_ !== undefined ? Input_ : ptrType$21.nil;
-		this.Notification = Notification_ !== undefined ? Notification_ : ptrType$22.nil;
-		this.Omnibox = Omnibox_ !== undefined ? Omnibox_ : ptrType$23.nil;
-		this.PageAction = PageAction_ !== undefined ? PageAction_ : ptrType$24.nil;
-		this.PageCapture = PageCapture_ !== undefined ? PageCapture_ : ptrType$25.nil;
-		this.Permissions = Permissions_ !== undefined ? Permissions_ : ptrType$26.nil;
-		this.Power = Power_ !== undefined ? Power_ : ptrType$27.nil;
-		this.Privacy = Privacy_ !== undefined ? Privacy_ : ptrType$28.nil;
-		this.Proxy = Proxy_ !== undefined ? Proxy_ : ptrType$29.nil;
-		this.Runtime = Runtime_ !== undefined ? Runtime_ : ptrType$30.nil;
-		this.Sessions = Sessions_ !== undefined ? Sessions_ : ptrType$31.nil;
-		this.Storage = Storage_ !== undefined ? Storage_ : ptrType$32.nil;
-		this.System = System_ !== undefined ? System_ : ptrType$33.nil;
-		this.Tabs = Tabs_ !== undefined ? Tabs_ : ptrType$34.nil;
-		this.TabCapture = TabCapture_ !== undefined ? TabCapture_ : ptrType$35.nil;
-		this.TopSites = TopSites_ !== undefined ? TopSites_ : ptrType$36.nil;
-		this.Tts = Tts_ !== undefined ? Tts_ : ptrType$37.nil;
-		this.TtsEngine = TtsEngine_ !== undefined ? TtsEngine_ : ptrType$38.nil;
-		this.WebNavigation = WebNavigation_ !== undefined ? WebNavigation_ : ptrType$39.nil;
-		this.WebRequest = WebRequest_ !== undefined ? WebRequest_ : ptrType$40.nil;
-		this.WebStore = WebStore_ !== undefined ? WebStore_ : ptrType$41.nil;
-		this.Windows = Windows_ !== undefined ? Windows_ : ptrType$42.nil;
+		this.Bookmarks = Bookmarks_ !== undefined ? Bookmarks_ : ptrType$2.nil;
+		this.BrowserAction = BrowserAction_ !== undefined ? BrowserAction_ : ptrType$3.nil;
+		this.BrowsingData = BrowsingData_ !== undefined ? BrowsingData_ : ptrType$4.nil;
+		this.Commands = Commands_ !== undefined ? Commands_ : ptrType$5.nil;
+		this.ContextMenus = ContextMenus_ !== undefined ? ContextMenus_ : ptrType$6.nil;
+		this.Cookies = Cookies_ !== undefined ? Cookies_ : ptrType$7.nil;
+		this.Debugger = Debugger_ !== undefined ? Debugger_ : ptrType$8.nil;
+		this.DeclarativeContent = DeclarativeContent_ !== undefined ? DeclarativeContent_ : ptrType$9.nil;
+		this.DesktopCapture = DesktopCapture_ !== undefined ? DesktopCapture_ : ptrType$10.nil;
+		this.Downloads = Downloads_ !== undefined ? Downloads_ : ptrType$11.nil;
+		this.Enterprise = Enterprise_ !== undefined ? Enterprise_ : ptrType$12.nil;
+		this.Extension = Extension_ !== undefined ? Extension_ : ptrType$13.nil;
+		this.FileBrowserHandler = FileBrowserHandler_ !== undefined ? FileBrowserHandler_ : ptrType$14.nil;
+		this.FileSystemProvider = FileSystemProvider_ !== undefined ? FileSystemProvider_ : ptrType$15.nil;
+		this.FontSettings = FontSettings_ !== undefined ? FontSettings_ : ptrType$16.nil;
+		this.Gcm = Gcm_ !== undefined ? Gcm_ : ptrType$17.nil;
+		this.History = History_ !== undefined ? History_ : ptrType$18.nil;
+		this.I18n = I18n_ !== undefined ? I18n_ : ptrType$19.nil;
+		this.Identity = Identity_ !== undefined ? Identity_ : ptrType$20.nil;
+		this.Idle = Idle_ !== undefined ? Idle_ : ptrType$21.nil;
+		this.Input = Input_ !== undefined ? Input_ : ptrType$22.nil;
+		this.Notification = Notification_ !== undefined ? Notification_ : ptrType$23.nil;
+		this.Omnibox = Omnibox_ !== undefined ? Omnibox_ : ptrType$24.nil;
+		this.PageAction = PageAction_ !== undefined ? PageAction_ : ptrType$25.nil;
+		this.PageCapture = PageCapture_ !== undefined ? PageCapture_ : ptrType$26.nil;
+		this.Permissions = Permissions_ !== undefined ? Permissions_ : ptrType$27.nil;
+		this.Power = Power_ !== undefined ? Power_ : ptrType$28.nil;
+		this.Privacy = Privacy_ !== undefined ? Privacy_ : ptrType$29.nil;
+		this.Proxy = Proxy_ !== undefined ? Proxy_ : ptrType$30.nil;
+		this.Runtime = Runtime_ !== undefined ? Runtime_ : ptrType$31.nil;
+		this.Sessions = Sessions_ !== undefined ? Sessions_ : ptrType$32.nil;
+		this.Storage = Storage_ !== undefined ? Storage_ : ptrType$33.nil;
+		this.System = System_ !== undefined ? System_ : ptrType$34.nil;
+		this.Tabs = Tabs_ !== undefined ? Tabs_ : ptrType$35.nil;
+		this.TabCapture = TabCapture_ !== undefined ? TabCapture_ : ptrType$36.nil;
+		this.TopSites = TopSites_ !== undefined ? TopSites_ : ptrType$37.nil;
+		this.Tts = Tts_ !== undefined ? Tts_ : ptrType$38.nil;
+		this.TtsEngine = TtsEngine_ !== undefined ? TtsEngine_ : ptrType$39.nil;
+		this.WebNavigation = WebNavigation_ !== undefined ? WebNavigation_ : ptrType$40.nil;
+		this.WebRequest = WebRequest_ !== undefined ? WebRequest_ : ptrType$41.nil;
+		this.WebStore = WebStore_ !== undefined ? WebStore_ : ptrType$42.nil;
+		this.Windows = Windows_ !== undefined ? Windows_ : ptrType$43.nil;
 	});
 	Commands = $pkg.Commands = $newType(0, $kindStruct, "chrome.Commands", "Commands", "github.com/fabioberger/chrome", function(o_) {
 		this.$val = this;
@@ -13065,7 +13076,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	DeclarativeContent = $pkg.DeclarativeContent = $newType(0, $kindStruct, "chrome.DeclarativeContent", "DeclarativeContent", "github.com/fabioberger/chrome", function(o_, OnPageChanged_) {
 		this.$val = this;
 		this.o = o_ !== undefined ? o_ : null;
-		this.OnPageChanged = OnPageChanged_ !== undefined ? OnPageChanged_ : ptrType$43.nil;
+		this.OnPageChanged = OnPageChanged_ !== undefined ? OnPageChanged_ : ptrType$44.nil;
 	});
 	OnPageChanged = $pkg.OnPageChanged = $newType(0, $kindStruct, "chrome.OnPageChanged", "OnPageChanged", "github.com/fabioberger/chrome", function(o_) {
 		this.$val = this;
@@ -13106,7 +13117,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	Enterprise = $pkg.Enterprise = $newType(0, $kindStruct, "chrome.Enterprise", "Enterprise", "github.com/fabioberger/chrome", function(o_, PlatformKeys_) {
 		this.$val = this;
 		this.o = o_ !== undefined ? o_ : null;
-		this.PlatformKeys = PlatformKeys_ !== undefined ? PlatformKeys_ : ptrType$44.nil;
+		this.PlatformKeys = PlatformKeys_ !== undefined ? PlatformKeys_ : ptrType$45.nil;
 	});
 	PlatformKeys = $pkg.PlatformKeys = $newType(0, $kindStruct, "chrome.PlatformKeys", "PlatformKeys", "github.com/fabioberger/chrome", function(o_) {
 		this.$val = this;
@@ -13114,9 +13125,9 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	Token = $pkg.Token = $newType(0, $kindStruct, "chrome.Token", "Token", "github.com/fabioberger/chrome", function(Object_, Id_, SubtleCrypto_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : null;
+		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
 		this.Id = Id_ !== undefined ? Id_ : "";
-		this.SubtleCrypto = SubtleCrypto_ !== undefined ? SubtleCrypto_ : null;
+		this.SubtleCrypto = SubtleCrypto_ !== undefined ? SubtleCrypto_ : new js.Object.ptr();
 	});
 	Extension = $pkg.Extension = $newType(0, $kindStruct, "chrome.Extension", "Extension", "github.com/fabioberger/chrome", function(o_, LastError_, InIncognitoContext_) {
 		this.$val = this;
@@ -13215,7 +13226,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	Input = $pkg.Input = $newType(0, $kindStruct, "chrome.Input", "Input", "github.com/fabioberger/chrome", function(o_, Ime_) {
 		this.$val = this;
 		this.o = o_ !== undefined ? o_ : null;
-		this.Ime = Ime_ !== undefined ? Ime_ : ptrType$45.nil;
+		this.Ime = Ime_ !== undefined ? Ime_ : ptrType$46.nil;
 	});
 	Ime = $pkg.Ime = $newType(0, $kindStruct, "chrome.Ime", "Ime", "github.com/fabioberger/chrome", function(o_) {
 		this.$val = this;
@@ -13223,7 +13234,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	KeyboardEvent = $pkg.KeyboardEvent = $newType(0, $kindStruct, "chrome.KeyboardEvent", "KeyboardEvent", "github.com/fabioberger/chrome", function(Object_, Type_, RequestId_, ExtensionId_, Key_, Code_, KeyCode_, AltKey_, CtrlKey_, ShiftKey_, CapsLock_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : null;
+		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
 		this.Type = Type_ !== undefined ? Type_ : "";
 		this.RequestId = RequestId_ !== undefined ? RequestId_ : "";
 		this.ExtensionId = ExtensionId_ !== undefined ? ExtensionId_ : "";
@@ -13237,7 +13248,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	InputContext = $pkg.InputContext = $newType(0, $kindStruct, "chrome.InputContext", "InputContext", "github.com/fabioberger/chrome", function(Object_, ContextID_, Type_, AutoCorrect_, AutoComplete_, SpellCheck_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : null;
+		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
 		this.ContextID = ContextID_ !== undefined ? ContextID_ : 0;
 		this.Type = Type_ !== undefined ? Type_ : "";
 		this.AutoCorrect = AutoCorrect_ !== undefined ? AutoCorrect_ : false;
@@ -13312,8 +13323,8 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 		this.$val = this;
 		this.Object = Object_ !== undefined ? Object_ : null;
 		this.Name = Name_ !== undefined ? Name_ : "";
-		this.OnDisconnect = OnDisconnect_ !== undefined ? OnDisconnect_ : null;
-		this.OnMessage = OnMessage_ !== undefined ? OnMessage_ : null;
+		this.OnDisconnect = OnDisconnect_ !== undefined ? OnDisconnect_ : new js.Object.ptr();
+		this.OnMessage = OnMessage_ !== undefined ? OnMessage_ : new js.Object.ptr();
 		this.Sender = Sender_ !== undefined ? Sender_ : new MessageSender.ptr();
 	});
 	MessageSender = $pkg.MessageSender = $newType(0, $kindStruct, "chrome.MessageSender", "MessageSender", "github.com/fabioberger/chrome", function(Object_, tab_, FrameId_, Id_, Url_, TlsChannelId_) {
@@ -13364,9 +13375,9 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	System = $pkg.System = $newType(0, $kindStruct, "chrome.System", "System", "github.com/fabioberger/chrome", function(o_, Cpu_, Memory_, Storage_) {
 		this.$val = this;
 		this.o = o_ !== undefined ? o_ : null;
-		this.Cpu = Cpu_ !== undefined ? Cpu_ : ptrType$47.nil;
-		this.Memory = Memory_ !== undefined ? Memory_ : ptrType$48.nil;
-		this.Storage = Storage_ !== undefined ? Storage_ : ptrType$49.nil;
+		this.Cpu = Cpu_ !== undefined ? Cpu_ : ptrType$48.nil;
+		this.Memory = Memory_ !== undefined ? Memory_ : ptrType$49.nil;
+		this.Storage = Storage_ !== undefined ? Storage_ : ptrType$50.nil;
 	});
 	Cpu = $pkg.Cpu = $newType(0, $kindStruct, "chrome.Cpu", "Cpu", "github.com/fabioberger/chrome", function(o_) {
 		this.$val = this;
@@ -13479,7 +13490,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	});
 	Window = $pkg.Window = $newType(0, $kindStruct, "chrome.Window", "Window", "github.com/fabioberger/chrome", function(Object_, Id_, Focused_, Top_, Left_, Width_, Height_, Tabs_, Incognito_, Type_, State_, AlwaysOnTop_, SessionId_) {
 		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : null;
+		this.Object = Object_ !== undefined ? Object_ : new js.Object.ptr();
 		this.Id = Id_ !== undefined ? Id_ : 0;
 		this.Focused = Focused_ !== undefined ? Focused_ : false;
 		this.Top = Top_ !== undefined ? Top_ : 0;
@@ -13671,55 +13682,56 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	funcType$145 = $funcType([sliceType$12], [], false);
 	funcType$146 = $funcType([$Int], [], false);
 	ptrType = $ptrType(Alarms);
-	ptrType$1 = $ptrType(Bookmarks);
-	ptrType$2 = $ptrType(BrowserAction);
-	ptrType$3 = $ptrType(BrowsingData);
+	ptrType$1 = $ptrType(js.Object);
+	ptrType$2 = $ptrType(Bookmarks);
+	ptrType$3 = $ptrType(BrowserAction);
+	ptrType$4 = $ptrType(BrowsingData);
 	mapType$6 = $mapType($String, $Bool);
-	ptrType$4 = $ptrType(Commands);
-	ptrType$5 = $ptrType(ContextMenus);
-	ptrType$6 = $ptrType(Cookies);
-	ptrType$7 = $ptrType(Debugger);
-	ptrType$8 = $ptrType(DeclarativeContent);
-	ptrType$9 = $ptrType(DesktopCapture);
-	ptrType$10 = $ptrType(Downloads);
-	ptrType$11 = $ptrType(Enterprise);
-	ptrType$12 = $ptrType(Extension);
-	ptrType$13 = $ptrType(FileBrowserHandler);
-	ptrType$14 = $ptrType(FileSystemProvider);
-	ptrType$15 = $ptrType(FontSettings);
-	ptrType$16 = $ptrType(Gcm);
-	ptrType$17 = $ptrType(History);
-	ptrType$18 = $ptrType(I18n);
-	ptrType$19 = $ptrType(Identity);
-	ptrType$20 = $ptrType(Idle);
-	ptrType$21 = $ptrType(Input);
-	ptrType$22 = $ptrType(Notification);
-	ptrType$23 = $ptrType(Omnibox);
-	ptrType$24 = $ptrType(PageAction);
-	ptrType$25 = $ptrType(PageCapture);
-	ptrType$26 = $ptrType(Permissions);
-	ptrType$27 = $ptrType(Power);
-	ptrType$28 = $ptrType(Privacy);
-	ptrType$29 = $ptrType(Proxy);
-	ptrType$30 = $ptrType(Runtime);
-	ptrType$31 = $ptrType(Sessions);
-	ptrType$32 = $ptrType(Storage);
-	ptrType$33 = $ptrType(System);
-	ptrType$34 = $ptrType(Tabs);
-	ptrType$35 = $ptrType(TabCapture);
-	ptrType$36 = $ptrType(TopSites);
-	ptrType$37 = $ptrType(Tts);
-	ptrType$38 = $ptrType(TtsEngine);
-	ptrType$39 = $ptrType(WebNavigation);
-	ptrType$40 = $ptrType(WebRequest);
-	ptrType$41 = $ptrType(WebStore);
-	ptrType$42 = $ptrType(Windows);
-	ptrType$43 = $ptrType(OnPageChanged);
-	ptrType$44 = $ptrType(PlatformKeys);
-	ptrType$45 = $ptrType(Ime);
-	ptrType$47 = $ptrType(Cpu);
-	ptrType$48 = $ptrType(Memory);
-	ptrType$49 = $ptrType(SysStorage);
+	ptrType$5 = $ptrType(Commands);
+	ptrType$6 = $ptrType(ContextMenus);
+	ptrType$7 = $ptrType(Cookies);
+	ptrType$8 = $ptrType(Debugger);
+	ptrType$9 = $ptrType(DeclarativeContent);
+	ptrType$10 = $ptrType(DesktopCapture);
+	ptrType$11 = $ptrType(Downloads);
+	ptrType$12 = $ptrType(Enterprise);
+	ptrType$13 = $ptrType(Extension);
+	ptrType$14 = $ptrType(FileBrowserHandler);
+	ptrType$15 = $ptrType(FileSystemProvider);
+	ptrType$16 = $ptrType(FontSettings);
+	ptrType$17 = $ptrType(Gcm);
+	ptrType$18 = $ptrType(History);
+	ptrType$19 = $ptrType(I18n);
+	ptrType$20 = $ptrType(Identity);
+	ptrType$21 = $ptrType(Idle);
+	ptrType$22 = $ptrType(Input);
+	ptrType$23 = $ptrType(Notification);
+	ptrType$24 = $ptrType(Omnibox);
+	ptrType$25 = $ptrType(PageAction);
+	ptrType$26 = $ptrType(PageCapture);
+	ptrType$27 = $ptrType(Permissions);
+	ptrType$28 = $ptrType(Power);
+	ptrType$29 = $ptrType(Privacy);
+	ptrType$30 = $ptrType(Proxy);
+	ptrType$31 = $ptrType(Runtime);
+	ptrType$32 = $ptrType(Sessions);
+	ptrType$33 = $ptrType(Storage);
+	ptrType$34 = $ptrType(System);
+	ptrType$35 = $ptrType(Tabs);
+	ptrType$36 = $ptrType(TabCapture);
+	ptrType$37 = $ptrType(TopSites);
+	ptrType$38 = $ptrType(Tts);
+	ptrType$39 = $ptrType(TtsEngine);
+	ptrType$40 = $ptrType(WebNavigation);
+	ptrType$41 = $ptrType(WebRequest);
+	ptrType$42 = $ptrType(WebStore);
+	ptrType$43 = $ptrType(Windows);
+	ptrType$44 = $ptrType(OnPageChanged);
+	ptrType$45 = $ptrType(PlatformKeys);
+	ptrType$46 = $ptrType(Ime);
+	ptrType$48 = $ptrType(Cpu);
+	ptrType$49 = $ptrType(Memory);
+	ptrType$50 = $ptrType(SysStorage);
 	Alarms.ptr.prototype.Create = function(name, alarmInfo) {
 		var a, alarmInfo, name;
 		a = this;
@@ -14024,50 +14036,50 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	NewChrome = $pkg.NewChrome = function() {
 		var c;
 		c = new Chrome.ptr();
-		c.o = $global.chrome;
-		c.Alarms = new Alarms.ptr(c.o.alarms);
-		c.Bookmarks = new Bookmarks.ptr(c.o.bookmarks);
-		c.BrowserAction = new BrowserAction.ptr(c.o.browserAction);
-		c.BrowsingData = new BrowsingData.ptr(c.o.browsingData);
-		c.Commands = new Commands.ptr(c.o.commands);
-		c.ContextMenus = NewContextMenus(c.o.contextMenus);
-		c.Cookies = new Cookies.ptr(c.o.cookies);
-		c.Debugger = new Debugger.ptr(c.o.debugger);
-		c.DeclarativeContent = NewDeclarativeContent(c.o.declarativeContent);
-		c.DesktopCapture = new DesktopCapture.ptr(c.o.desktopCapture);
-		c.Downloads = new Downloads.ptr(c.o.downloads);
-		c.Enterprise = NewEnterprise(c.o.enterprise);
-		c.Extension = NewExtension(c.o.extension);
-		c.FileBrowserHandler = new FileBrowserHandler.ptr(c.o.fileBrowserHandler);
-		c.FileSystemProvider = new FileSystemProvider.ptr(c.o.fileSystemProvider);
-		c.FontSettings = new FontSettings.ptr(c.o.fontSettings);
-		c.Gcm = NewGcm(c.o.gcm);
-		c.History = new History.ptr(c.o.history);
-		c.I18n = new I18n.ptr(c.o.i18n);
-		c.Identity = new Identity.ptr(c.o.identity);
-		c.Idle = new Idle.ptr(c.o.idle);
-		c.Input = NewInput(c.o.input);
-		c.Notification = new Notification.ptr(c.o.notification);
-		c.Omnibox = new Omnibox.ptr(c.o.omnibox);
-		c.PageAction = new PageAction.ptr(c.o.pageAction);
-		c.PageCapture = new PageCapture.ptr(c.o.pageCapture);
-		c.Permissions = new Permissions.ptr(c.o.permissions);
-		c.Power = new Power.ptr(c.o.power);
-		c.Privacy = NewPrivacy(c.o.privacy);
-		c.Proxy = NewProxy(c.o.proxy);
-		c.Runtime = NewRuntime(c.o.runtime);
-		c.Sessions = NewSessions(c.o.sessions);
-		c.Storage = NewStorage(c.o.storage);
-		c.System = NewSystem(c.o.system);
-		c.Tabs = new Tabs.ptr(c.o.tabs);
-		c.TabCapture = new TabCapture.ptr(c.o.tabCapture);
-		c.TopSites = new TopSites.ptr(c.o.topSites);
-		c.Tts = new Tts.ptr(c.o.tts);
-		c.TtsEngine = new TtsEngine.ptr(c.o.ttsEngine);
-		c.WebNavigation = new WebNavigation.ptr(c.o.webNavigation);
-		c.WebRequest = NewWebRequest(c.o.webRequest);
-		c.WebStore = new WebStore.ptr(c.o.webstore);
-		c.Windows = NewWindows(c.o.windows);
+		$copy(c.o, new $jsObjectPtr($global.chrome), js.Object);
+		c.Alarms = new Alarms.ptr(c.o.object.alarms);
+		c.Bookmarks = new Bookmarks.ptr(c.o.object.bookmarks);
+		c.BrowserAction = new BrowserAction.ptr(c.o.object.browserAction);
+		c.BrowsingData = new BrowsingData.ptr(c.o.object.browsingData);
+		c.Commands = new Commands.ptr(c.o.object.commands);
+		c.ContextMenus = NewContextMenus(c.o.object.contextMenus);
+		c.Cookies = new Cookies.ptr(c.o.object.cookies);
+		c.Debugger = new Debugger.ptr(c.o.object.debugger);
+		c.DeclarativeContent = NewDeclarativeContent(c.o.object.declarativeContent);
+		c.DesktopCapture = new DesktopCapture.ptr(c.o.object.desktopCapture);
+		c.Downloads = new Downloads.ptr(c.o.object.downloads);
+		c.Enterprise = NewEnterprise(c.o.object.enterprise);
+		c.Extension = NewExtension(c.o.object.extension);
+		c.FileBrowserHandler = new FileBrowserHandler.ptr(c.o.object.fileBrowserHandler);
+		c.FileSystemProvider = new FileSystemProvider.ptr(c.o.object.fileSystemProvider);
+		c.FontSettings = new FontSettings.ptr(c.o.object.fontSettings);
+		c.Gcm = NewGcm(c.o.object.gcm);
+		c.History = new History.ptr(c.o.object.history);
+		c.I18n = new I18n.ptr(c.o.object.i18n);
+		c.Identity = new Identity.ptr(c.o.object.identity);
+		c.Idle = new Idle.ptr(c.o.object.idle);
+		c.Input = NewInput(c.o.object.input);
+		c.Notification = new Notification.ptr(c.o.object.notification);
+		c.Omnibox = new Omnibox.ptr(c.o.object.omnibox);
+		c.PageAction = new PageAction.ptr(c.o.object.pageAction);
+		c.PageCapture = new PageCapture.ptr(c.o.object.pageCapture);
+		c.Permissions = new Permissions.ptr(c.o.object.permissions);
+		c.Power = new Power.ptr(c.o.object.power);
+		c.Privacy = NewPrivacy(c.o.object.privacy);
+		c.Proxy = NewProxy(c.o.object.proxy);
+		c.Runtime = NewRuntime(c.o.object.runtime);
+		c.Sessions = NewSessions(c.o.object.sessions);
+		c.Storage = NewStorage(c.o.object.storage);
+		c.System = NewSystem(c.o.object.system);
+		c.Tabs = new Tabs.ptr(c.o.object.tabs);
+		c.TabCapture = new TabCapture.ptr(c.o.object.tabCapture);
+		c.TopSites = new TopSites.ptr(c.o.object.topSites);
+		c.Tts = new Tts.ptr(c.o.object.tts);
+		c.TtsEngine = new TtsEngine.ptr(c.o.object.ttsEngine);
+		c.WebNavigation = new WebNavigation.ptr(c.o.object.webNavigation);
+		c.WebRequest = NewWebRequest(c.o.object.webRequest);
+		c.WebStore = new WebStore.ptr(c.o.object.webstore);
+		c.Windows = NewWindows(c.o.object.windows);
 		return c;
 	};
 	Commands.ptr.prototype.GetAll = function(callback) {
@@ -14407,7 +14419,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 		while (true) {
 			if (!(i < $parseInt(windowObjs.length))) { break; }
 			window = windowObjs[i];
-			windows = $append(windows, new Window.ptr(window, 0, false, 0, 0, 0, 0, sliceType$13.nil, false, "", "", false, ""));
+			windows = $append(windows, new Window.ptr($clone(new $jsObjectPtr(window), js.Object), 0, false, 0, 0, 0, 0, sliceType$13.nil, false, "", "", false, ""));
 			i = i + (1) >> 0;
 		}
 		return windows;
@@ -14416,7 +14428,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	Extension.ptr.prototype.GetBackgroundPage = function() {
 		var e;
 		e = this;
-		return new Window.ptr(e.o.getBackgroundPage(), 0, false, 0, 0, 0, 0, sliceType$13.nil, false, "", "", false, "");
+		return new Window.ptr($clone(new $jsObjectPtr(e.o.getBackgroundPage()), js.Object), 0, false, 0, 0, 0, 0, sliceType$13.nil, false, "", "", false, "");
 	};
 	Extension.prototype.GetBackgroundPage = function() { return this.$val.GetBackgroundPage(); };
 	Extension.ptr.prototype.GetExtensionTabs = function(windowId) {
@@ -14428,7 +14440,7 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 		while (true) {
 			if (!(i < $parseInt(windowObjs.length))) { break; }
 			window = windowObjs[i];
-			windows = $append(windows, new Window.ptr(window, 0, false, 0, 0, 0, 0, sliceType$13.nil, false, "", "", false, ""));
+			windows = $append(windows, new Window.ptr($clone(new $jsObjectPtr(window), js.Object), 0, false, 0, 0, 0, 0, sliceType$13.nil, false, "", "", false, ""));
 			i = i + (1) >> 0;
 		}
 		return windows;
@@ -15254,15 +15266,17 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	};
 	Runtime.prototype.Restart = function() { return this.$val.Restart(); };
 	Runtime.ptr.prototype.Connect = function(extensionId, connectInfo) {
-		var connectInfo, extensionId, r;
+		var connectInfo, extensionId, portObj, r;
 		r = this;
-		return $assertType(r.o.connect($externalize(extensionId, $String), $externalize(connectInfo, $emptyInterface)), Port);
+		portObj = r.o.connect($externalize(extensionId, $String), $externalize(connectInfo, $emptyInterface));
+		return new Port.ptr(portObj, "", new js.Object.ptr(), new js.Object.ptr(), new MessageSender.ptr());
 	};
 	Runtime.prototype.Connect = function(extensionId, connectInfo) { return this.$val.Connect(extensionId, connectInfo); };
 	Runtime.ptr.prototype.ConnectNative = function(application) {
-		var application, r;
+		var application, portObj, r;
 		r = this;
-		return $assertType(r.o.connectNative($externalize(application, $String)), Port);
+		portObj = r.o.connectNative($externalize(application, $String));
+		return new Port.ptr(portObj, "", new js.Object.ptr(), new js.Object.ptr(), new MessageSender.ptr());
 	};
 	Runtime.prototype.ConnectNative = function(application) { return this.$val.ConnectNative(application); };
 	Runtime.ptr.prototype.SendMessage = function(extensionId, message, options, responseCallback) {
@@ -15954,137 +15968,137 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	};
 	Windows.prototype.OnRemoved = function(callback) { return this.$val.OnRemoved(callback); };
 	ptrType.methods = [{prop: "Create", name: "Create", pkg: "", typ: $funcType([$String, Object], [], false)}, {prop: "Get", name: "Get", pkg: "", typ: $funcType([$String, funcType], [], false)}, {prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([funcType$1], [], false)}, {prop: "Clear", name: "Clear", pkg: "", typ: $funcType([$String, funcType$2], [], false)}, {prop: "ClearAll", name: "ClearAll", pkg: "", typ: $funcType([funcType$2], [], false)}, {prop: "OnAlarm", name: "OnAlarm", pkg: "", typ: $funcType([funcType], [], false)}];
-	ptrType$1.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([sliceType$1, funcType$3], [], false)}, {prop: "GetChildren", name: "GetChildren", pkg: "", typ: $funcType([$String, funcType$3], [], false)}, {prop: "GetRecent", name: "GetRecent", pkg: "", typ: $funcType([$Int, funcType$3], [], false)}, {prop: "GetTree", name: "GetTree", pkg: "", typ: $funcType([funcType$3], [], false)}, {prop: "GetSubTree", name: "GetSubTree", pkg: "", typ: $funcType([$String, funcType$3], [], false)}, {prop: "Search", name: "Search", pkg: "", typ: $funcType([$emptyInterface, funcType$3], [], false)}, {prop: "Create", name: "Create", pkg: "", typ: $funcType([Object, funcType$4], [], false)}, {prop: "Move", name: "Move", pkg: "", typ: $funcType([$String, Object, funcType$4], [], false)}, {prop: "Update", name: "Update", pkg: "", typ: $funcType([$String, Object, funcType$4], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([$String, funcType$5], [], false)}, {prop: "RemoveTree", name: "RemoveTree", pkg: "", typ: $funcType([$String, funcType$5], [], false)}, {prop: "OnCreated", name: "OnCreated", pkg: "", typ: $funcType([funcType$6], [], false)}, {prop: "OnRemoved", name: "OnRemoved", pkg: "", typ: $funcType([funcType$7], [], false)}, {prop: "onChanged", name: "onChanged", pkg: "github.com/fabioberger/chrome", typ: $funcType([funcType$8], [], false)}, {prop: "OnMoved", name: "OnMoved", pkg: "", typ: $funcType([funcType$9], [], false)}, {prop: "OnChildrenReordered", name: "OnChildrenReordered", pkg: "", typ: $funcType([funcType$10], [], false)}, {prop: "OnImportBegan", name: "OnImportBegan", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnImportEnded", name: "OnImportEnded", pkg: "", typ: $funcType([funcType$5], [], false)}];
-	ptrType$2.methods = [{prop: "SetTitle", name: "SetTitle", pkg: "", typ: $funcType([Object], [], false)}, {prop: "GetTitle", name: "GetTitle", pkg: "", typ: $funcType([Object, funcType$11], [], false)}, {prop: "SetIcon", name: "SetIcon", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "SetPopup", name: "SetPopup", pkg: "", typ: $funcType([Object], [], false)}, {prop: "GetPopup", name: "GetPopup", pkg: "", typ: $funcType([Object, funcType$11], [], false)}, {prop: "SetBadgeText", name: "SetBadgeText", pkg: "", typ: $funcType([Object], [], false)}, {prop: "getBadgeText", name: "getBadgeText", pkg: "github.com/fabioberger/chrome", typ: $funcType([Object, funcType$11], [], false)}, {prop: "SetBadgeBackgroundColor", name: "SetBadgeBackgroundColor", pkg: "", typ: $funcType([Object], [], false)}, {prop: "GetBadgeBackgroundColor", name: "GetBadgeBackgroundColor", pkg: "", typ: $funcType([Object, funcType$12], [], false)}, {prop: "Enable", name: "Enable", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "Disable", name: "Disable", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "OnClicked", name: "OnClicked", pkg: "", typ: $funcType([funcType$13], [], false)}];
-	ptrType$3.methods = [{prop: "Settings", name: "Settings", pkg: "", typ: $funcType([funcType$14], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([RemovalOptions, DataTypeSet, funcType$5], [], false)}, {prop: "RemoveAppCache", name: "RemoveAppCache", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveCache", name: "RemoveCache", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveCookies", name: "RemoveCookies", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveDownloads", name: "RemoveDownloads", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveFileSystems", name: "RemoveFileSystems", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveFormData", name: "RemoveFormData", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveHistory", name: "RemoveHistory", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveIndexedDB", name: "RemoveIndexedDB", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveLocalStorage", name: "RemoveLocalStorage", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemovePluginData", name: "RemovePluginData", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemovePasswords", name: "RemovePasswords", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveWebSQL", name: "RemoveWebSQL", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}];
-	ptrType$4.methods = [{prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([funcType$15], [], false)}, {prop: "OnCommand", name: "OnCommand", pkg: "", typ: $funcType([funcType$16], [], false)}];
-	ptrType$5.methods = [{prop: "Create", name: "Create", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "Update", name: "Update", pkg: "", typ: $funcType([$emptyInterface, Object, funcType$5], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([$emptyInterface, funcType$5], [], false)}, {prop: "RemoveAll", name: "RemoveAll", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnClicked", name: "OnClicked", pkg: "", typ: $funcType([funcType$17], [], false)}];
-	ptrType$6.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([Object, funcType$18], [], false)}, {prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([Object, funcType$19], [], false)}, {prop: "Set", name: "Set", pkg: "", typ: $funcType([Object, funcType$18], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([Object, funcType$20], [], false)}, {prop: "GetAllCookieStores", name: "GetAllCookieStores", pkg: "", typ: $funcType([funcType$21], [], false)}, {prop: "OnChanged", name: "OnChanged", pkg: "", typ: $funcType([funcType$22], [], false)}];
-	ptrType$7.methods = [{prop: "Attach", name: "Attach", pkg: "", typ: $funcType([Debugee, $String, funcType$5], [], false)}, {prop: "Detach", name: "Detach", pkg: "", typ: $funcType([Debugee, funcType$5], [], false)}, {prop: "SendCommand", name: "SendCommand", pkg: "", typ: $funcType([Debugee, $String, Object, funcType$14], [], false)}, {prop: "GetTargets", name: "GetTargets", pkg: "", typ: $funcType([funcType$23], [], false)}, {prop: "OnEvent", name: "OnEvent", pkg: "", typ: $funcType([funcType$24], [], false)}, {prop: "OnDetach", name: "OnDetach", pkg: "", typ: $funcType([funcType$25], [], false)}];
-	ptrType$43.methods = [{prop: "AddRules", name: "AddRules", pkg: "", typ: $funcType([sliceType$8, funcType$26], [], false)}, {prop: "RemoveRules", name: "RemoveRules", pkg: "", typ: $funcType([sliceType$1, funcType$5], [], false)}, {prop: "GetRules", name: "GetRules", pkg: "", typ: $funcType([sliceType$1, funcType$26], [], false)}];
-	ptrType$9.methods = [{prop: "ChooseDesktopMedia", name: "ChooseDesktopMedia", pkg: "", typ: $funcType([sliceType$1, Tab, funcType$27], [$Int], false)}, {prop: "CancelChooseDesktopMedia", name: "CancelChooseDesktopMedia", pkg: "", typ: $funcType([$Int], [], false)}];
-	ptrType$10.methods = [{prop: "Download", name: "Download", pkg: "", typ: $funcType([Object, funcType$28], [], false)}, {prop: "Search", name: "Search", pkg: "", typ: $funcType([Object, funcType$29], [], false)}, {prop: "Pause", name: "Pause", pkg: "", typ: $funcType([$Int, funcType$5], [], false)}, {prop: "Resume", name: "Resume", pkg: "", typ: $funcType([$Int, funcType$5], [], false)}, {prop: "Cancel", name: "Cancel", pkg: "", typ: $funcType([$Int, funcType$5], [], false)}, {prop: "GetFileIcon", name: "GetFileIcon", pkg: "", typ: $funcType([$Int, Object, funcType$30], [], false)}, {prop: "Open", name: "Open", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "Show", name: "Show", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "ShowDefaultFolder", name: "ShowDefaultFolder", pkg: "", typ: $funcType([], [], false)}, {prop: "Erase", name: "Erase", pkg: "", typ: $funcType([Object, funcType$31], [], false)}, {prop: "RemoveFile", name: "RemoveFile", pkg: "", typ: $funcType([$Int, funcType$5], [], false)}, {prop: "AcceptDanger", name: "AcceptDanger", pkg: "", typ: $funcType([$Int, funcType$5], [], false)}, {prop: "Drag", name: "Drag", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "SetShelfEnabled", name: "SetShelfEnabled", pkg: "", typ: $funcType([$Bool], [], false)}, {prop: "OnCreated", name: "OnCreated", pkg: "", typ: $funcType([funcType$32], [], false)}, {prop: "OnErased", name: "OnErased", pkg: "", typ: $funcType([funcType$28], [], false)}, {prop: "OnChanged", name: "OnChanged", pkg: "", typ: $funcType([funcType$33], [], false)}, {prop: "OnDeterminingFilename", name: "OnDeterminingFilename", pkg: "", typ: $funcType([funcType$35], [], false)}];
-	ptrType$44.methods = [{prop: "GetTokens", name: "GetTokens", pkg: "", typ: $funcType([funcType$36], [], false)}, {prop: "GetCertificates", name: "GetCertificates", pkg: "", typ: $funcType([$String, funcType$37], [], false)}, {prop: "ImportCertificates", name: "ImportCertificates", pkg: "", typ: $funcType([$String, $emptyInterface, funcType$5], [], false)}, {prop: "RemoveCertificate", name: "RemoveCertificate", pkg: "", typ: $funcType([$String, $emptyInterface, funcType$5], [], false)}];
-	ptrType$12.methods = [{prop: "GetURL", name: "GetURL", pkg: "", typ: $funcType([$String], [], false)}, {prop: "GetViews", name: "GetViews", pkg: "", typ: $funcType([Object], [sliceType$12], false)}, {prop: "GetBackgroundPage", name: "GetBackgroundPage", pkg: "", typ: $funcType([], [Window], false)}, {prop: "GetExtensionTabs", name: "GetExtensionTabs", pkg: "", typ: $funcType([$Int], [sliceType$12], false)}, {prop: "IsAllowedIncognitoAccess", name: "IsAllowedIncognitoAccess", pkg: "", typ: $funcType([funcType$38], [], false)}, {prop: "IsAllowedFileSchemeAccess", name: "IsAllowedFileSchemeAccess", pkg: "", typ: $funcType([funcType$38], [], false)}, {prop: "SetUpdateUrlData", name: "SetUpdateUrlData", pkg: "", typ: $funcType([$String], [], false)}];
-	ptrType$13.methods = [{prop: "SelectFile", name: "SelectFile", pkg: "", typ: $funcType([Object, funcType$14], [], false)}, {prop: "OnExecute", name: "OnExecute", pkg: "", typ: $funcType([funcType$39], [], false)}];
-	ptrType$14.methods = [{prop: "Mount", name: "Mount", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "Unmount", name: "Unmount", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([funcType$40], [], false)}, {prop: "Get", name: "Get", pkg: "", typ: $funcType([$String, funcType$41], [], false)}, {prop: "OnUnmountRequested", name: "OnUnmountRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnGetMetadataRequested", name: "OnGetMetadataRequested", pkg: "", typ: $funcType([funcType$45], [], false)}, {prop: "OnReadDirectoryRequested", name: "OnReadDirectoryRequested", pkg: "", typ: $funcType([funcType$47], [], false)}, {prop: "OnOpenFileRequested", name: "OnOpenFileRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnCloseFileRequested", name: "OnCloseFileRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnReadFileRequested", name: "OnReadFileRequested", pkg: "", typ: $funcType([funcType$49], [], false)}, {prop: "OnCreateDirectoryRequested", name: "OnCreateDirectoryRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnDeleteEntryRequested", name: "OnDeleteEntryRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnCreateFileReqested", name: "OnCreateFileReqested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnCopyEntryRequested", name: "OnCopyEntryRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnMoveEntryRequested", name: "OnMoveEntryRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnTruncateRequested", name: "OnTruncateRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnWriteFileRequested", name: "OnWriteFileRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnAbortRequested", name: "OnAbortRequested", pkg: "", typ: $funcType([funcType$43], [], false)}];
-	ptrType$15.methods = [{prop: "ClearFont", name: "ClearFont", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetFont", name: "GetFont", pkg: "", typ: $funcType([Object, funcType$20], [], false)}, {prop: "SetFont", name: "SetFont", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetFontList", name: "GetFontList", pkg: "", typ: $funcType([funcType$50], [], false)}, {prop: "ClearDefaultFontSize", name: "ClearDefaultFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetDefaultFontSize", name: "GetDefaultFontSize", pkg: "", typ: $funcType([Object, funcType$20], [], false)}, {prop: "SetDefaultFontSize", name: "SetDefaultFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "ClearDefaultFixedFontSize", name: "ClearDefaultFixedFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetDefaultFixedFontSize", name: "GetDefaultFixedFontSize", pkg: "", typ: $funcType([Object, funcType$20], [], false)}, {prop: "SetDefaultFixedFontSize", name: "SetDefaultFixedFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "ClearMinimumFontSize", name: "ClearMinimumFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetMinimumFontSize", name: "GetMinimumFontSize", pkg: "", typ: $funcType([Object, funcType$20], [], false)}, {prop: "SetMinimumFontSize", name: "SetMinimumFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "OnFontChanged", name: "OnFontChanged", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnDefaultFontSizeChanged", name: "OnDefaultFontSizeChanged", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnDefaultFixedFontSizeChanged", name: "OnDefaultFixedFontSizeChanged", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnMinimumFontSizeChanged", name: "OnMinimumFontSizeChanged", pkg: "", typ: $funcType([funcType$20], [], false)}];
-	ptrType$16.methods = [{prop: "Register", name: "Register", pkg: "", typ: $funcType([sliceType$1, funcType$51], [], false)}, {prop: "Unregister", name: "Unregister", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "Send", name: "Send", pkg: "", typ: $funcType([Object, funcType$52], [], false)}, {prop: "OnMessage", name: "OnMessage", pkg: "", typ: $funcType([funcType$53], [], false)}, {prop: "OnMessageDeleted", name: "OnMessageDeleted", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnSendError", name: "OnSendError", pkg: "", typ: $funcType([funcType$54], [], false)}];
-	ptrType$17.methods = [{prop: "Search", name: "Search", pkg: "", typ: $funcType([Object, funcType$55], [], false)}, {prop: "GetVisits", name: "GetVisits", pkg: "", typ: $funcType([Object, funcType$56], [], false)}, {prop: "AddUrl", name: "AddUrl", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "DeleteUrl", name: "DeleteUrl", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "DeleteRange", name: "DeleteRange", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "DeleteAll", name: "DeleteAll", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnVisited", name: "OnVisited", pkg: "", typ: $funcType([funcType$57], [], false)}, {prop: "OnVisitedRemoved", name: "OnVisitedRemoved", pkg: "", typ: $funcType([funcType$58], [], false)}];
-	ptrType$18.methods = [{prop: "GetAcceptLanguages", name: "GetAcceptLanguages", pkg: "", typ: $funcType([funcType$59], [], false)}, {prop: "GetMessage", name: "GetMessage", pkg: "", typ: $funcType([$String, $emptyInterface], [$String], false)}, {prop: "GetUILanguage", name: "GetUILanguage", pkg: "", typ: $funcType([], [$String], false)}];
-	ptrType$19.methods = [{prop: "GetAccounts", name: "GetAccounts", pkg: "", typ: $funcType([funcType$60], [], false)}, {prop: "GetAuthToken", name: "GetAuthToken", pkg: "", typ: $funcType([Object, funcType$61], [], false)}, {prop: "GetProfileUserInfo", name: "GetProfileUserInfo", pkg: "", typ: $funcType([funcType$62], [], false)}, {prop: "RemoveCacheAuthToken", name: "RemoveCacheAuthToken", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "LaunchWebAuthFrom", name: "LaunchWebAuthFrom", pkg: "", typ: $funcType([Object, funcType$63], [], false)}, {prop: "GetRedirectURL", name: "GetRedirectURL", pkg: "", typ: $funcType([$String], [], false)}, {prop: "OnSignInChanged", name: "OnSignInChanged", pkg: "", typ: $funcType([funcType$64], [], false)}];
-	ptrType$20.methods = [{prop: "QueryState", name: "QueryState", pkg: "", typ: $funcType([$Int, funcType$65], [], false)}, {prop: "SetDetectionInterval", name: "SetDetectionInterval", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "OnStateChanged", name: "OnStateChanged", pkg: "", typ: $funcType([funcType$65], [], false)}];
-	ptrType$45.methods = [{prop: "SetComposition", name: "SetComposition", pkg: "", typ: $funcType([Object, funcType$66], [], false)}, {prop: "ClearComposition", name: "ClearComposition", pkg: "", typ: $funcType([Object, funcType$66], [], false)}, {prop: "CommitText", name: "CommitText", pkg: "", typ: $funcType([Object, funcType$66], [], false)}, {prop: "SendKeyEvents", name: "SendKeyEvents", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "HideInputView", name: "HideInputView", pkg: "", typ: $funcType([], [], false)}, {prop: "SetCandidateWindowProperties", name: "SetCandidateWindowProperties", pkg: "", typ: $funcType([Object, funcType$66], [], false)}, {prop: "SetCandidates", name: "SetCandidates", pkg: "", typ: $funcType([Object, funcType$66], [], false)}, {prop: "SetCursorPosition", name: "SetCursorPosition", pkg: "", typ: $funcType([Object, funcType$66], [], false)}, {prop: "SetMenuItems", name: "SetMenuItems", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "UpdateMenuItems", name: "UpdateMenuItems", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "DeleteSurroundingText", name: "DeleteSurroundingText", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "KeyEventHandled", name: "KeyEventHandled", pkg: "", typ: $funcType([$String, $Bool], [], false)}, {prop: "OnActivate", name: "OnActivate", pkg: "", typ: $funcType([funcType$67], [], false)}, {prop: "OnDeactivated", name: "OnDeactivated", pkg: "", typ: $funcType([funcType$68], [], false)}, {prop: "OnFocus", name: "OnFocus", pkg: "", typ: $funcType([funcType$69], [], false)}, {prop: "OnBlur", name: "OnBlur", pkg: "", typ: $funcType([funcType$70], [], false)}, {prop: "OnInputContextUpdate", name: "OnInputContextUpdate", pkg: "", typ: $funcType([funcType$69], [], false)}, {prop: "OnKeyEvent", name: "OnKeyEvent", pkg: "", typ: $funcType([funcType$71], [], false)}, {prop: "OnCandidateClicked", name: "OnCandidateClicked", pkg: "", typ: $funcType([funcType$72], [], false)}, {prop: "OnMenuItemActivated", name: "OnMenuItemActivated", pkg: "", typ: $funcType([funcType$73], [], false)}, {prop: "OnSurroundingTextChanged", name: "OnSurroundingTextChanged", pkg: "", typ: $funcType([funcType$74], [], false)}, {prop: "OnReset", name: "OnReset", pkg: "", typ: $funcType([funcType$68], [], false)}];
-	ptrType$22.methods = [{prop: "Create", name: "Create", pkg: "", typ: $funcType([$String, NotificationOptions, funcType$80], [], false)}, {prop: "Update", name: "Update", pkg: "", typ: $funcType([$String, NotificationOptions, funcType$81], [], false)}, {prop: "Clear", name: "Clear", pkg: "", typ: $funcType([$String, funcType$80], [], false)}, {prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([funcType$82], [], false)}, {prop: "GetPermissionLevel", name: "GetPermissionLevel", pkg: "", typ: $funcType([funcType$83], [], false)}, {prop: "OnClosed", name: "OnClosed", pkg: "", typ: $funcType([funcType$84], [], false)}, {prop: "OnClicked", name: "OnClicked", pkg: "", typ: $funcType([funcType$80], [], false)}, {prop: "OnButtonClicked", name: "OnButtonClicked", pkg: "", typ: $funcType([funcType$85], [], false)}, {prop: "OnPermissionLevelChanged", name: "OnPermissionLevelChanged", pkg: "", typ: $funcType([funcType$83], [], false)}, {prop: "OnShowSettings", name: "OnShowSettings", pkg: "", typ: $funcType([funcType$5], [], false)}];
-	ptrType$23.methods = [{prop: "SetDefaultSuggestion", name: "SetDefaultSuggestion", pkg: "", typ: $funcType([Object], [], false)}, {prop: "OnInputStarted", name: "OnInputStarted", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnInputChanged", name: "OnInputChanged", pkg: "", typ: $funcType([funcType$87], [], false)}, {prop: "OnInputEntered", name: "OnInputEntered", pkg: "", typ: $funcType([funcType$88], [], false)}, {prop: "OnInputCancelled", name: "OnInputCancelled", pkg: "", typ: $funcType([funcType$5], [], false)}];
-	ptrType$24.methods = [{prop: "Show", name: "Show", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "Hide", name: "Hide", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "SetTitle", name: "SetTitle", pkg: "", typ: $funcType([Object], [], false)}, {prop: "GetTitle", name: "GetTitle", pkg: "", typ: $funcType([Object, funcType$11], [], false)}, {prop: "SetIcon", name: "SetIcon", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "SetPopup", name: "SetPopup", pkg: "", typ: $funcType([Object], [], false)}, {prop: "GetPopup", name: "GetPopup", pkg: "", typ: $funcType([Object, funcType$11], [], false)}, {prop: "OnClicked", name: "OnClicked", pkg: "", typ: $funcType([funcType$89], [], false)}];
-	ptrType$25.methods = [{prop: "SaveAsMHTML", name: "SaveAsMHTML", pkg: "", typ: $funcType([Object, funcType$90], [], false)}];
-	ptrType$26.methods = [{prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([funcType$91], [], false)}, {prop: "Contains", name: "Contains", pkg: "", typ: $funcType([mapType$1, funcType$92], [], false)}, {prop: "Request", name: "Request", pkg: "", typ: $funcType([mapType$1, funcType$93], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([mapType$1, funcType$94], [], false)}, {prop: "OnAdded", name: "OnAdded", pkg: "", typ: $funcType([funcType$91], [], false)}, {prop: "OnRemoved", name: "OnRemoved", pkg: "", typ: $funcType([funcType$91], [], false)}];
-	ptrType$27.methods = [{prop: "RequestKeepAwake", name: "RequestKeepAwake", pkg: "", typ: $funcType([$String], [], false)}, {prop: "ReleaseKeepAwake", name: "ReleaseKeepAwake", pkg: "", typ: $funcType([], [], false)}];
-	ptrType$29.methods = [{prop: "OnProxyError", name: "OnProxyError", pkg: "", typ: $funcType([funcType$20], [], false)}];
-	ptrType$30.methods = [{prop: "GetBackgroundPage", name: "GetBackgroundPage", pkg: "", typ: $funcType([funcType$95], [], false)}, {prop: "GetManifest", name: "GetManifest", pkg: "", typ: $funcType([], [js.Object], false)}, {prop: "GetURL", name: "GetURL", pkg: "", typ: $funcType([$String], [$String], false)}, {prop: "Reload", name: "Reload", pkg: "", typ: $funcType([], [], false)}, {prop: "RequestUpdateCheck", name: "RequestUpdateCheck", pkg: "", typ: $funcType([funcType$96], [], false)}, {prop: "Restart", name: "Restart", pkg: "", typ: $funcType([], [], false)}, {prop: "Connect", name: "Connect", pkg: "", typ: $funcType([$String, $emptyInterface], [Port], false)}, {prop: "ConnectNative", name: "ConnectNative", pkg: "", typ: $funcType([$String], [Port], false)}, {prop: "SendMessage", name: "SendMessage", pkg: "", typ: $funcType([$String, $emptyInterface, $emptyInterface, funcType$97], [], false)}, {prop: "SendNativeMessage", name: "SendNativeMessage", pkg: "", typ: $funcType([$String, $emptyInterface, funcType$97], [], false)}, {prop: "GetPlatformInfo", name: "GetPlatformInfo", pkg: "", typ: $funcType([funcType$98], [], false)}, {prop: "GetPackageDirectoryEntry", name: "GetPackageDirectoryEntry", pkg: "", typ: $funcType([funcType$99], [], false)}, {prop: "OnStartup", name: "OnStartup", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnInstalled", name: "OnInstalled", pkg: "", typ: $funcType([funcType$100], [], false)}, {prop: "OnSuspend", name: "OnSuspend", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnSuspendCanceled", name: "OnSuspendCanceled", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnUpdateAvailable", name: "OnUpdateAvailable", pkg: "", typ: $funcType([funcType$100], [], false)}, {prop: "OnConnect", name: "OnConnect", pkg: "", typ: $funcType([funcType$101], [], false)}, {prop: "OnConnectExternal", name: "OnConnectExternal", pkg: "", typ: $funcType([funcType$101], [], false)}, {prop: "OnMessage", name: "OnMessage", pkg: "", typ: $funcType([funcType$103], [], false)}, {prop: "OnMessageExternal", name: "OnMessageExternal", pkg: "", typ: $funcType([funcType$103], [], false)}, {prop: "OnRestartRequired", name: "OnRestartRequired", pkg: "", typ: $funcType([funcType$104], [], false)}];
-	ptrType$31.methods = [{prop: "GetRecentlyClosed", name: "GetRecentlyClosed", pkg: "", typ: $funcType([Filter, funcType$105], [], false)}, {prop: "GetDevices", name: "GetDevices", pkg: "", typ: $funcType([Filter, funcType$106], [], false)}, {prop: "Restore", name: "Restore", pkg: "", typ: $funcType([$String, funcType$107], [], false)}, {prop: "OnChanged", name: "OnChanged", pkg: "", typ: $funcType([funcType$5], [], false)}];
-	ptrType$32.methods = [{prop: "OnChanged", name: "OnChanged", pkg: "", typ: $funcType([funcType$108], [], false)}];
-	ptrType$47.methods = [{prop: "GetInfo", name: "GetInfo", pkg: "", typ: $funcType([funcType$109], [], false)}];
-	ptrType$48.methods = [{prop: "GetInfo", name: "GetInfo", pkg: "", typ: $funcType([funcType$110], [], false)}];
-	ptrType$49.methods = [{prop: "GetInfo", name: "GetInfo", pkg: "", typ: $funcType([funcType$111], [], false)}, {prop: "EjectDevice", name: "EjectDevice", pkg: "", typ: $funcType([$String, funcType$11], [], false)}, {prop: "GetAvailableCapacity", name: "GetAvailableCapacity", pkg: "", typ: $funcType([funcType$109], [], false)}, {prop: "OnAttached", name: "OnAttached", pkg: "", typ: $funcType([funcType$112], [], false)}, {prop: "OnDetached", name: "OnDetached", pkg: "", typ: $funcType([funcType$79], [], false)}];
-	ptrType$35.methods = [{prop: "Capture", name: "Capture", pkg: "", typ: $funcType([Object, funcType$113], [], false)}, {prop: "GetCapturedTabs", name: "GetCapturedTabs", pkg: "", typ: $funcType([funcType$114], [], false)}, {prop: "OnStatusChanged", name: "OnStatusChanged", pkg: "", typ: $funcType([funcType$115], [], false)}];
-	ptrType$34.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([$Int, funcType$89], [], false)}, {prop: "GetCurrent", name: "GetCurrent", pkg: "", typ: $funcType([funcType$89], [], false)}, {prop: "Connect", name: "Connect", pkg: "", typ: $funcType([$Int, $emptyInterface], [], false)}, {prop: "SendMessage", name: "SendMessage", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$116], [], false)}, {prop: "GetSelected", name: "GetSelected", pkg: "", typ: $funcType([$Int, funcType$89], [], false)}, {prop: "GetAllInWindow", name: "GetAllInWindow", pkg: "", typ: $funcType([$Int, funcType$117], [], false)}, {prop: "Create", name: "Create", pkg: "", typ: $funcType([$emptyInterface, funcType$89], [], false)}, {prop: "Duplicate", name: "Duplicate", pkg: "", typ: $funcType([$Int, funcType$89], [], false)}, {prop: "Query", name: "Query", pkg: "", typ: $funcType([$emptyInterface, funcType$118], [], false)}, {prop: "Highlight", name: "Highlight", pkg: "", typ: $funcType([$emptyInterface, funcType$119], [], false)}, {prop: "Update", name: "Update", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$89], [], false)}, {prop: "Move", name: "Move", pkg: "", typ: $funcType([sliceType$7, $emptyInterface, funcType$117], [], false)}, {prop: "Reload", name: "Reload", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$119], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([sliceType$7, funcType$119], [], false)}, {prop: "DetectLanguage", name: "DetectLanguage", pkg: "", typ: $funcType([$Int, funcType$120], [], false)}, {prop: "CaptureVisibleTab", name: "CaptureVisibleTab", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$121], [], false)}, {prop: "ExecuteScript", name: "ExecuteScript", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$122], [], false)}, {prop: "InsertCss", name: "InsertCss", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$5], [], false)}, {prop: "SetZoom", name: "SetZoom", pkg: "", typ: $funcType([$Int, $Int64, funcType$5], [], false)}, {prop: "GetZoom", name: "GetZoom", pkg: "", typ: $funcType([$Int, funcType$123], [], false)}, {prop: "SetZoomSettings", name: "SetZoomSettings", pkg: "", typ: $funcType([$Int, ZoomSettings, funcType$5], [], false)}, {prop: "GetZoomSettings", name: "GetZoomSettings", pkg: "", typ: $funcType([$Int, funcType$124], [], false)}, {prop: "OnCreated", name: "OnCreated", pkg: "", typ: $funcType([funcType$89], [], false)}, {prop: "OnUpdated", name: "OnUpdated", pkg: "", typ: $funcType([funcType$125], [], false)}, {prop: "OnMoved", name: "OnMoved", pkg: "", typ: $funcType([funcType$126], [], false)}, {prop: "OnActivated", name: "OnActivated", pkg: "", typ: $funcType([funcType$127], [], false)}, {prop: "OnHighlightChanged", name: "OnHighlightChanged", pkg: "", typ: $funcType([funcType$128], [], false)}, {prop: "OnHighlighted", name: "OnHighlighted", pkg: "", typ: $funcType([funcType$129], [], false)}, {prop: "OnDetached", name: "OnDetached", pkg: "", typ: $funcType([funcType$130], [], false)}, {prop: "OnAttached", name: "OnAttached", pkg: "", typ: $funcType([funcType$131], [], false)}, {prop: "OnRemoved", name: "OnRemoved", pkg: "", typ: $funcType([funcType$132], [], false)}, {prop: "OnReplaced", name: "OnReplaced", pkg: "", typ: $funcType([funcType$133], [], false)}, {prop: "OnZoomChange", name: "OnZoomChange", pkg: "", typ: $funcType([funcType$134], [], false)}];
-	ptrType$36.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([funcType$135], [], false)}];
-	ptrType$37.methods = [{prop: "Speak", name: "Speak", pkg: "", typ: $funcType([$String, Object, funcType$5], [], false)}, {prop: "Stop", name: "Stop", pkg: "", typ: $funcType([], [], false)}, {prop: "Pause", name: "Pause", pkg: "", typ: $funcType([], [], false)}, {prop: "Resume", name: "Resume", pkg: "", typ: $funcType([], [], false)}, {prop: "IsSpeaking", name: "IsSpeaking", pkg: "", typ: $funcType([funcType$136], [], false)}, {prop: "GetVoices", name: "GetVoices", pkg: "", typ: $funcType([funcType$137], [], false)}];
-	ptrType$38.methods = [{prop: "OnSpeak", name: "OnSpeak", pkg: "", typ: $funcType([funcType$139], [], false)}, {prop: "OnStop", name: "OnStop", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnPause", name: "OnPause", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnResume", name: "OnResume", pkg: "", typ: $funcType([funcType$5], [], false)}];
-	ptrType$39.methods = [{prop: "GetFrame", name: "GetFrame", pkg: "", typ: $funcType([Object, funcType$20], [], false)}, {prop: "GetAllFrames", name: "GetAllFrames", pkg: "", typ: $funcType([Object, funcType$140], [], false)}, {prop: "OnBeforeNavigate", name: "OnBeforeNavigate", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnCommited", name: "OnCommited", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnDOMContentLoaded", name: "OnDOMContentLoaded", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnCompleted", name: "OnCompleted", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnErrorOccurred", name: "OnErrorOccurred", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnCreatedNavigationTarget", name: "OnCreatedNavigationTarget", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnReferenceFragmentUpdated", name: "OnReferenceFragmentUpdated", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnTabReplaced", name: "OnTabReplaced", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnHistoryStateUpdated", name: "OnHistoryStateUpdated", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}];
-	ptrType$40.methods = [{prop: "HandlerBehaviorChanged", name: "HandlerBehaviorChanged", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnBeforeRequest", name: "OnBeforeRequest", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnBeforeSendHeaders", name: "OnBeforeSendHeaders", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnSendHeaders", name: "OnSendHeaders", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnHeadersReceived", name: "OnHeadersReceived", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnAuthRequired", name: "OnAuthRequired", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnResponseStarted", name: "OnResponseStarted", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnBeforeRedirect", name: "OnBeforeRedirect", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnCompleted", name: "OnCompleted", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnErrorOccured", name: "OnErrorOccured", pkg: "", typ: $funcType([funcType$20], [], false)}];
-	ptrType$41.methods = [{prop: "Install", name: "Install", pkg: "", typ: $funcType([$String, funcType$5, funcType$141], [], false)}, {prop: "OnInstallStageChanged", name: "OnInstallStageChanged", pkg: "", typ: $funcType([funcType$142], [], false)}, {prop: "OnDownloadProgress", name: "OnDownloadProgress", pkg: "", typ: $funcType([funcType$143], [], false)}];
-	ptrType$42.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([$Int, Object, funcType$144], [], false)}, {prop: "GetCurrent", name: "GetCurrent", pkg: "", typ: $funcType([Object, funcType$144], [], false)}, {prop: "GetLastFocused", name: "GetLastFocused", pkg: "", typ: $funcType([Object, funcType$144], [], false)}, {prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([Object, funcType$145], [], false)}, {prop: "Create", name: "Create", pkg: "", typ: $funcType([Object, funcType$144], [], false)}, {prop: "Update", name: "Update", pkg: "", typ: $funcType([$Int, Object, funcType$144], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([$Int, funcType$119], [], false)}, {prop: "OnCreated", name: "OnCreated", pkg: "", typ: $funcType([funcType$144], [], false)}, {prop: "OnRemoved", name: "OnRemoved", pkg: "", typ: $funcType([funcType$146], [], false)}, {prop: "onFocusChanged", name: "onFocusChanged", pkg: "github.com/fabioberger/chrome", typ: $funcType([funcType$146], [], false)}];
-	Alarms.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	Alarm.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Name", name: "Name", pkg: "", typ: $String, tag: "js:\"name\""}, {prop: "ScheduledTime", name: "ScheduledTime", pkg: "", typ: $String, tag: "js:\"scheduledTime\""}, {prop: "PeriodInMinutes", name: "PeriodInMinutes", pkg: "", typ: $String, tag: "js:\"periodInMinutes\""}]);
-	Bookmarks.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	BookmarkTreeNode.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "ParentId", name: "ParentId", pkg: "", typ: $String, tag: "js:\"parentId\""}, {prop: "Index", name: "Index", pkg: "", typ: $Int, tag: "js:\"index\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "Title", name: "Title", pkg: "", typ: $String, tag: "js:\"title\""}, {prop: "DateAdded", name: "DateAdded", pkg: "", typ: $Int64, tag: "js:\"dateAdded\""}, {prop: "DateGroupModified", name: "DateGroupModified", pkg: "", typ: $Int64, tag: "js:\"dateGroupModified\""}, {prop: "Unmodifiable", name: "Unmodifiable", pkg: "", typ: $String, tag: "js:\"unmodifiable\""}, {prop: "Children", name: "Children", pkg: "", typ: sliceType$2, tag: "js:\"children\""}]);
-	BrowserAction.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
+	ptrType$2.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([sliceType$1, funcType$3], [], false)}, {prop: "GetChildren", name: "GetChildren", pkg: "", typ: $funcType([$String, funcType$3], [], false)}, {prop: "GetRecent", name: "GetRecent", pkg: "", typ: $funcType([$Int, funcType$3], [], false)}, {prop: "GetTree", name: "GetTree", pkg: "", typ: $funcType([funcType$3], [], false)}, {prop: "GetSubTree", name: "GetSubTree", pkg: "", typ: $funcType([$String, funcType$3], [], false)}, {prop: "Search", name: "Search", pkg: "", typ: $funcType([$emptyInterface, funcType$3], [], false)}, {prop: "Create", name: "Create", pkg: "", typ: $funcType([Object, funcType$4], [], false)}, {prop: "Move", name: "Move", pkg: "", typ: $funcType([$String, Object, funcType$4], [], false)}, {prop: "Update", name: "Update", pkg: "", typ: $funcType([$String, Object, funcType$4], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([$String, funcType$5], [], false)}, {prop: "RemoveTree", name: "RemoveTree", pkg: "", typ: $funcType([$String, funcType$5], [], false)}, {prop: "OnCreated", name: "OnCreated", pkg: "", typ: $funcType([funcType$6], [], false)}, {prop: "OnRemoved", name: "OnRemoved", pkg: "", typ: $funcType([funcType$7], [], false)}, {prop: "onChanged", name: "onChanged", pkg: "github.com/fabioberger/chrome", typ: $funcType([funcType$8], [], false)}, {prop: "OnMoved", name: "OnMoved", pkg: "", typ: $funcType([funcType$9], [], false)}, {prop: "OnChildrenReordered", name: "OnChildrenReordered", pkg: "", typ: $funcType([funcType$10], [], false)}, {prop: "OnImportBegan", name: "OnImportBegan", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnImportEnded", name: "OnImportEnded", pkg: "", typ: $funcType([funcType$5], [], false)}];
+	ptrType$3.methods = [{prop: "SetTitle", name: "SetTitle", pkg: "", typ: $funcType([Object], [], false)}, {prop: "GetTitle", name: "GetTitle", pkg: "", typ: $funcType([Object, funcType$11], [], false)}, {prop: "SetIcon", name: "SetIcon", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "SetPopup", name: "SetPopup", pkg: "", typ: $funcType([Object], [], false)}, {prop: "GetPopup", name: "GetPopup", pkg: "", typ: $funcType([Object, funcType$11], [], false)}, {prop: "SetBadgeText", name: "SetBadgeText", pkg: "", typ: $funcType([Object], [], false)}, {prop: "getBadgeText", name: "getBadgeText", pkg: "github.com/fabioberger/chrome", typ: $funcType([Object, funcType$11], [], false)}, {prop: "SetBadgeBackgroundColor", name: "SetBadgeBackgroundColor", pkg: "", typ: $funcType([Object], [], false)}, {prop: "GetBadgeBackgroundColor", name: "GetBadgeBackgroundColor", pkg: "", typ: $funcType([Object, funcType$12], [], false)}, {prop: "Enable", name: "Enable", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "Disable", name: "Disable", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "OnClicked", name: "OnClicked", pkg: "", typ: $funcType([funcType$13], [], false)}];
+	ptrType$4.methods = [{prop: "Settings", name: "Settings", pkg: "", typ: $funcType([funcType$14], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([RemovalOptions, DataTypeSet, funcType$5], [], false)}, {prop: "RemoveAppCache", name: "RemoveAppCache", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveCache", name: "RemoveCache", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveCookies", name: "RemoveCookies", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveDownloads", name: "RemoveDownloads", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveFileSystems", name: "RemoveFileSystems", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveFormData", name: "RemoveFormData", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveHistory", name: "RemoveHistory", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveIndexedDB", name: "RemoveIndexedDB", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveLocalStorage", name: "RemoveLocalStorage", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemovePluginData", name: "RemovePluginData", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemovePasswords", name: "RemovePasswords", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}, {prop: "RemoveWebSQL", name: "RemoveWebSQL", pkg: "", typ: $funcType([RemovalOptions, funcType$5], [], false)}];
+	ptrType$5.methods = [{prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([funcType$15], [], false)}, {prop: "OnCommand", name: "OnCommand", pkg: "", typ: $funcType([funcType$16], [], false)}];
+	ptrType$6.methods = [{prop: "Create", name: "Create", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "Update", name: "Update", pkg: "", typ: $funcType([$emptyInterface, Object, funcType$5], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([$emptyInterface, funcType$5], [], false)}, {prop: "RemoveAll", name: "RemoveAll", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnClicked", name: "OnClicked", pkg: "", typ: $funcType([funcType$17], [], false)}];
+	ptrType$7.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([Object, funcType$18], [], false)}, {prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([Object, funcType$19], [], false)}, {prop: "Set", name: "Set", pkg: "", typ: $funcType([Object, funcType$18], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([Object, funcType$20], [], false)}, {prop: "GetAllCookieStores", name: "GetAllCookieStores", pkg: "", typ: $funcType([funcType$21], [], false)}, {prop: "OnChanged", name: "OnChanged", pkg: "", typ: $funcType([funcType$22], [], false)}];
+	ptrType$8.methods = [{prop: "Attach", name: "Attach", pkg: "", typ: $funcType([Debugee, $String, funcType$5], [], false)}, {prop: "Detach", name: "Detach", pkg: "", typ: $funcType([Debugee, funcType$5], [], false)}, {prop: "SendCommand", name: "SendCommand", pkg: "", typ: $funcType([Debugee, $String, Object, funcType$14], [], false)}, {prop: "GetTargets", name: "GetTargets", pkg: "", typ: $funcType([funcType$23], [], false)}, {prop: "OnEvent", name: "OnEvent", pkg: "", typ: $funcType([funcType$24], [], false)}, {prop: "OnDetach", name: "OnDetach", pkg: "", typ: $funcType([funcType$25], [], false)}];
+	ptrType$44.methods = [{prop: "AddRules", name: "AddRules", pkg: "", typ: $funcType([sliceType$8, funcType$26], [], false)}, {prop: "RemoveRules", name: "RemoveRules", pkg: "", typ: $funcType([sliceType$1, funcType$5], [], false)}, {prop: "GetRules", name: "GetRules", pkg: "", typ: $funcType([sliceType$1, funcType$26], [], false)}];
+	ptrType$10.methods = [{prop: "ChooseDesktopMedia", name: "ChooseDesktopMedia", pkg: "", typ: $funcType([sliceType$1, Tab, funcType$27], [$Int], false)}, {prop: "CancelChooseDesktopMedia", name: "CancelChooseDesktopMedia", pkg: "", typ: $funcType([$Int], [], false)}];
+	ptrType$11.methods = [{prop: "Download", name: "Download", pkg: "", typ: $funcType([Object, funcType$28], [], false)}, {prop: "Search", name: "Search", pkg: "", typ: $funcType([Object, funcType$29], [], false)}, {prop: "Pause", name: "Pause", pkg: "", typ: $funcType([$Int, funcType$5], [], false)}, {prop: "Resume", name: "Resume", pkg: "", typ: $funcType([$Int, funcType$5], [], false)}, {prop: "Cancel", name: "Cancel", pkg: "", typ: $funcType([$Int, funcType$5], [], false)}, {prop: "GetFileIcon", name: "GetFileIcon", pkg: "", typ: $funcType([$Int, Object, funcType$30], [], false)}, {prop: "Open", name: "Open", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "Show", name: "Show", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "ShowDefaultFolder", name: "ShowDefaultFolder", pkg: "", typ: $funcType([], [], false)}, {prop: "Erase", name: "Erase", pkg: "", typ: $funcType([Object, funcType$31], [], false)}, {prop: "RemoveFile", name: "RemoveFile", pkg: "", typ: $funcType([$Int, funcType$5], [], false)}, {prop: "AcceptDanger", name: "AcceptDanger", pkg: "", typ: $funcType([$Int, funcType$5], [], false)}, {prop: "Drag", name: "Drag", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "SetShelfEnabled", name: "SetShelfEnabled", pkg: "", typ: $funcType([$Bool], [], false)}, {prop: "OnCreated", name: "OnCreated", pkg: "", typ: $funcType([funcType$32], [], false)}, {prop: "OnErased", name: "OnErased", pkg: "", typ: $funcType([funcType$28], [], false)}, {prop: "OnChanged", name: "OnChanged", pkg: "", typ: $funcType([funcType$33], [], false)}, {prop: "OnDeterminingFilename", name: "OnDeterminingFilename", pkg: "", typ: $funcType([funcType$35], [], false)}];
+	ptrType$45.methods = [{prop: "GetTokens", name: "GetTokens", pkg: "", typ: $funcType([funcType$36], [], false)}, {prop: "GetCertificates", name: "GetCertificates", pkg: "", typ: $funcType([$String, funcType$37], [], false)}, {prop: "ImportCertificates", name: "ImportCertificates", pkg: "", typ: $funcType([$String, $emptyInterface, funcType$5], [], false)}, {prop: "RemoveCertificate", name: "RemoveCertificate", pkg: "", typ: $funcType([$String, $emptyInterface, funcType$5], [], false)}];
+	ptrType$13.methods = [{prop: "GetURL", name: "GetURL", pkg: "", typ: $funcType([$String], [], false)}, {prop: "GetViews", name: "GetViews", pkg: "", typ: $funcType([Object], [sliceType$12], false)}, {prop: "GetBackgroundPage", name: "GetBackgroundPage", pkg: "", typ: $funcType([], [Window], false)}, {prop: "GetExtensionTabs", name: "GetExtensionTabs", pkg: "", typ: $funcType([$Int], [sliceType$12], false)}, {prop: "IsAllowedIncognitoAccess", name: "IsAllowedIncognitoAccess", pkg: "", typ: $funcType([funcType$38], [], false)}, {prop: "IsAllowedFileSchemeAccess", name: "IsAllowedFileSchemeAccess", pkg: "", typ: $funcType([funcType$38], [], false)}, {prop: "SetUpdateUrlData", name: "SetUpdateUrlData", pkg: "", typ: $funcType([$String], [], false)}];
+	ptrType$14.methods = [{prop: "SelectFile", name: "SelectFile", pkg: "", typ: $funcType([Object, funcType$14], [], false)}, {prop: "OnExecute", name: "OnExecute", pkg: "", typ: $funcType([funcType$39], [], false)}];
+	ptrType$15.methods = [{prop: "Mount", name: "Mount", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "Unmount", name: "Unmount", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([funcType$40], [], false)}, {prop: "Get", name: "Get", pkg: "", typ: $funcType([$String, funcType$41], [], false)}, {prop: "OnUnmountRequested", name: "OnUnmountRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnGetMetadataRequested", name: "OnGetMetadataRequested", pkg: "", typ: $funcType([funcType$45], [], false)}, {prop: "OnReadDirectoryRequested", name: "OnReadDirectoryRequested", pkg: "", typ: $funcType([funcType$47], [], false)}, {prop: "OnOpenFileRequested", name: "OnOpenFileRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnCloseFileRequested", name: "OnCloseFileRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnReadFileRequested", name: "OnReadFileRequested", pkg: "", typ: $funcType([funcType$49], [], false)}, {prop: "OnCreateDirectoryRequested", name: "OnCreateDirectoryRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnDeleteEntryRequested", name: "OnDeleteEntryRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnCreateFileReqested", name: "OnCreateFileReqested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnCopyEntryRequested", name: "OnCopyEntryRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnMoveEntryRequested", name: "OnMoveEntryRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnTruncateRequested", name: "OnTruncateRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnWriteFileRequested", name: "OnWriteFileRequested", pkg: "", typ: $funcType([funcType$43], [], false)}, {prop: "OnAbortRequested", name: "OnAbortRequested", pkg: "", typ: $funcType([funcType$43], [], false)}];
+	ptrType$16.methods = [{prop: "ClearFont", name: "ClearFont", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetFont", name: "GetFont", pkg: "", typ: $funcType([Object, funcType$20], [], false)}, {prop: "SetFont", name: "SetFont", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetFontList", name: "GetFontList", pkg: "", typ: $funcType([funcType$50], [], false)}, {prop: "ClearDefaultFontSize", name: "ClearDefaultFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetDefaultFontSize", name: "GetDefaultFontSize", pkg: "", typ: $funcType([Object, funcType$20], [], false)}, {prop: "SetDefaultFontSize", name: "SetDefaultFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "ClearDefaultFixedFontSize", name: "ClearDefaultFixedFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetDefaultFixedFontSize", name: "GetDefaultFixedFontSize", pkg: "", typ: $funcType([Object, funcType$20], [], false)}, {prop: "SetDefaultFixedFontSize", name: "SetDefaultFixedFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "ClearMinimumFontSize", name: "ClearMinimumFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "GetMinimumFontSize", name: "GetMinimumFontSize", pkg: "", typ: $funcType([Object, funcType$20], [], false)}, {prop: "SetMinimumFontSize", name: "SetMinimumFontSize", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "OnFontChanged", name: "OnFontChanged", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnDefaultFontSizeChanged", name: "OnDefaultFontSizeChanged", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnDefaultFixedFontSizeChanged", name: "OnDefaultFixedFontSizeChanged", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnMinimumFontSizeChanged", name: "OnMinimumFontSizeChanged", pkg: "", typ: $funcType([funcType$20], [], false)}];
+	ptrType$17.methods = [{prop: "Register", name: "Register", pkg: "", typ: $funcType([sliceType$1, funcType$51], [], false)}, {prop: "Unregister", name: "Unregister", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "Send", name: "Send", pkg: "", typ: $funcType([Object, funcType$52], [], false)}, {prop: "OnMessage", name: "OnMessage", pkg: "", typ: $funcType([funcType$53], [], false)}, {prop: "OnMessageDeleted", name: "OnMessageDeleted", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnSendError", name: "OnSendError", pkg: "", typ: $funcType([funcType$54], [], false)}];
+	ptrType$18.methods = [{prop: "Search", name: "Search", pkg: "", typ: $funcType([Object, funcType$55], [], false)}, {prop: "GetVisits", name: "GetVisits", pkg: "", typ: $funcType([Object, funcType$56], [], false)}, {prop: "AddUrl", name: "AddUrl", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "DeleteUrl", name: "DeleteUrl", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "DeleteRange", name: "DeleteRange", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "DeleteAll", name: "DeleteAll", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnVisited", name: "OnVisited", pkg: "", typ: $funcType([funcType$57], [], false)}, {prop: "OnVisitedRemoved", name: "OnVisitedRemoved", pkg: "", typ: $funcType([funcType$58], [], false)}];
+	ptrType$19.methods = [{prop: "GetAcceptLanguages", name: "GetAcceptLanguages", pkg: "", typ: $funcType([funcType$59], [], false)}, {prop: "GetMessage", name: "GetMessage", pkg: "", typ: $funcType([$String, $emptyInterface], [$String], false)}, {prop: "GetUILanguage", name: "GetUILanguage", pkg: "", typ: $funcType([], [$String], false)}];
+	ptrType$20.methods = [{prop: "GetAccounts", name: "GetAccounts", pkg: "", typ: $funcType([funcType$60], [], false)}, {prop: "GetAuthToken", name: "GetAuthToken", pkg: "", typ: $funcType([Object, funcType$61], [], false)}, {prop: "GetProfileUserInfo", name: "GetProfileUserInfo", pkg: "", typ: $funcType([funcType$62], [], false)}, {prop: "RemoveCacheAuthToken", name: "RemoveCacheAuthToken", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "LaunchWebAuthFrom", name: "LaunchWebAuthFrom", pkg: "", typ: $funcType([Object, funcType$63], [], false)}, {prop: "GetRedirectURL", name: "GetRedirectURL", pkg: "", typ: $funcType([$String], [], false)}, {prop: "OnSignInChanged", name: "OnSignInChanged", pkg: "", typ: $funcType([funcType$64], [], false)}];
+	ptrType$21.methods = [{prop: "QueryState", name: "QueryState", pkg: "", typ: $funcType([$Int, funcType$65], [], false)}, {prop: "SetDetectionInterval", name: "SetDetectionInterval", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "OnStateChanged", name: "OnStateChanged", pkg: "", typ: $funcType([funcType$65], [], false)}];
+	ptrType$46.methods = [{prop: "SetComposition", name: "SetComposition", pkg: "", typ: $funcType([Object, funcType$66], [], false)}, {prop: "ClearComposition", name: "ClearComposition", pkg: "", typ: $funcType([Object, funcType$66], [], false)}, {prop: "CommitText", name: "CommitText", pkg: "", typ: $funcType([Object, funcType$66], [], false)}, {prop: "SendKeyEvents", name: "SendKeyEvents", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "HideInputView", name: "HideInputView", pkg: "", typ: $funcType([], [], false)}, {prop: "SetCandidateWindowProperties", name: "SetCandidateWindowProperties", pkg: "", typ: $funcType([Object, funcType$66], [], false)}, {prop: "SetCandidates", name: "SetCandidates", pkg: "", typ: $funcType([Object, funcType$66], [], false)}, {prop: "SetCursorPosition", name: "SetCursorPosition", pkg: "", typ: $funcType([Object, funcType$66], [], false)}, {prop: "SetMenuItems", name: "SetMenuItems", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "UpdateMenuItems", name: "UpdateMenuItems", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "DeleteSurroundingText", name: "DeleteSurroundingText", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "KeyEventHandled", name: "KeyEventHandled", pkg: "", typ: $funcType([$String, $Bool], [], false)}, {prop: "OnActivate", name: "OnActivate", pkg: "", typ: $funcType([funcType$67], [], false)}, {prop: "OnDeactivated", name: "OnDeactivated", pkg: "", typ: $funcType([funcType$68], [], false)}, {prop: "OnFocus", name: "OnFocus", pkg: "", typ: $funcType([funcType$69], [], false)}, {prop: "OnBlur", name: "OnBlur", pkg: "", typ: $funcType([funcType$70], [], false)}, {prop: "OnInputContextUpdate", name: "OnInputContextUpdate", pkg: "", typ: $funcType([funcType$69], [], false)}, {prop: "OnKeyEvent", name: "OnKeyEvent", pkg: "", typ: $funcType([funcType$71], [], false)}, {prop: "OnCandidateClicked", name: "OnCandidateClicked", pkg: "", typ: $funcType([funcType$72], [], false)}, {prop: "OnMenuItemActivated", name: "OnMenuItemActivated", pkg: "", typ: $funcType([funcType$73], [], false)}, {prop: "OnSurroundingTextChanged", name: "OnSurroundingTextChanged", pkg: "", typ: $funcType([funcType$74], [], false)}, {prop: "OnReset", name: "OnReset", pkg: "", typ: $funcType([funcType$68], [], false)}];
+	ptrType$23.methods = [{prop: "Create", name: "Create", pkg: "", typ: $funcType([$String, NotificationOptions, funcType$80], [], false)}, {prop: "Update", name: "Update", pkg: "", typ: $funcType([$String, NotificationOptions, funcType$81], [], false)}, {prop: "Clear", name: "Clear", pkg: "", typ: $funcType([$String, funcType$80], [], false)}, {prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([funcType$82], [], false)}, {prop: "GetPermissionLevel", name: "GetPermissionLevel", pkg: "", typ: $funcType([funcType$83], [], false)}, {prop: "OnClosed", name: "OnClosed", pkg: "", typ: $funcType([funcType$84], [], false)}, {prop: "OnClicked", name: "OnClicked", pkg: "", typ: $funcType([funcType$80], [], false)}, {prop: "OnButtonClicked", name: "OnButtonClicked", pkg: "", typ: $funcType([funcType$85], [], false)}, {prop: "OnPermissionLevelChanged", name: "OnPermissionLevelChanged", pkg: "", typ: $funcType([funcType$83], [], false)}, {prop: "OnShowSettings", name: "OnShowSettings", pkg: "", typ: $funcType([funcType$5], [], false)}];
+	ptrType$24.methods = [{prop: "SetDefaultSuggestion", name: "SetDefaultSuggestion", pkg: "", typ: $funcType([Object], [], false)}, {prop: "OnInputStarted", name: "OnInputStarted", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnInputChanged", name: "OnInputChanged", pkg: "", typ: $funcType([funcType$87], [], false)}, {prop: "OnInputEntered", name: "OnInputEntered", pkg: "", typ: $funcType([funcType$88], [], false)}, {prop: "OnInputCancelled", name: "OnInputCancelled", pkg: "", typ: $funcType([funcType$5], [], false)}];
+	ptrType$25.methods = [{prop: "Show", name: "Show", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "Hide", name: "Hide", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "SetTitle", name: "SetTitle", pkg: "", typ: $funcType([Object], [], false)}, {prop: "GetTitle", name: "GetTitle", pkg: "", typ: $funcType([Object, funcType$11], [], false)}, {prop: "SetIcon", name: "SetIcon", pkg: "", typ: $funcType([Object, funcType$5], [], false)}, {prop: "SetPopup", name: "SetPopup", pkg: "", typ: $funcType([Object], [], false)}, {prop: "GetPopup", name: "GetPopup", pkg: "", typ: $funcType([Object, funcType$11], [], false)}, {prop: "OnClicked", name: "OnClicked", pkg: "", typ: $funcType([funcType$89], [], false)}];
+	ptrType$26.methods = [{prop: "SaveAsMHTML", name: "SaveAsMHTML", pkg: "", typ: $funcType([Object, funcType$90], [], false)}];
+	ptrType$27.methods = [{prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([funcType$91], [], false)}, {prop: "Contains", name: "Contains", pkg: "", typ: $funcType([mapType$1, funcType$92], [], false)}, {prop: "Request", name: "Request", pkg: "", typ: $funcType([mapType$1, funcType$93], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([mapType$1, funcType$94], [], false)}, {prop: "OnAdded", name: "OnAdded", pkg: "", typ: $funcType([funcType$91], [], false)}, {prop: "OnRemoved", name: "OnRemoved", pkg: "", typ: $funcType([funcType$91], [], false)}];
+	ptrType$28.methods = [{prop: "RequestKeepAwake", name: "RequestKeepAwake", pkg: "", typ: $funcType([$String], [], false)}, {prop: "ReleaseKeepAwake", name: "ReleaseKeepAwake", pkg: "", typ: $funcType([], [], false)}];
+	ptrType$30.methods = [{prop: "OnProxyError", name: "OnProxyError", pkg: "", typ: $funcType([funcType$20], [], false)}];
+	ptrType$31.methods = [{prop: "GetBackgroundPage", name: "GetBackgroundPage", pkg: "", typ: $funcType([funcType$95], [], false)}, {prop: "GetManifest", name: "GetManifest", pkg: "", typ: $funcType([], [ptrType$1], false)}, {prop: "GetURL", name: "GetURL", pkg: "", typ: $funcType([$String], [$String], false)}, {prop: "Reload", name: "Reload", pkg: "", typ: $funcType([], [], false)}, {prop: "RequestUpdateCheck", name: "RequestUpdateCheck", pkg: "", typ: $funcType([funcType$96], [], false)}, {prop: "Restart", name: "Restart", pkg: "", typ: $funcType([], [], false)}, {prop: "Connect", name: "Connect", pkg: "", typ: $funcType([$String, $emptyInterface], [Port], false)}, {prop: "ConnectNative", name: "ConnectNative", pkg: "", typ: $funcType([$String], [Port], false)}, {prop: "SendMessage", name: "SendMessage", pkg: "", typ: $funcType([$String, $emptyInterface, $emptyInterface, funcType$97], [], false)}, {prop: "SendNativeMessage", name: "SendNativeMessage", pkg: "", typ: $funcType([$String, $emptyInterface, funcType$97], [], false)}, {prop: "GetPlatformInfo", name: "GetPlatformInfo", pkg: "", typ: $funcType([funcType$98], [], false)}, {prop: "GetPackageDirectoryEntry", name: "GetPackageDirectoryEntry", pkg: "", typ: $funcType([funcType$99], [], false)}, {prop: "OnStartup", name: "OnStartup", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnInstalled", name: "OnInstalled", pkg: "", typ: $funcType([funcType$100], [], false)}, {prop: "OnSuspend", name: "OnSuspend", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnSuspendCanceled", name: "OnSuspendCanceled", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnUpdateAvailable", name: "OnUpdateAvailable", pkg: "", typ: $funcType([funcType$100], [], false)}, {prop: "OnConnect", name: "OnConnect", pkg: "", typ: $funcType([funcType$101], [], false)}, {prop: "OnConnectExternal", name: "OnConnectExternal", pkg: "", typ: $funcType([funcType$101], [], false)}, {prop: "OnMessage", name: "OnMessage", pkg: "", typ: $funcType([funcType$103], [], false)}, {prop: "OnMessageExternal", name: "OnMessageExternal", pkg: "", typ: $funcType([funcType$103], [], false)}, {prop: "OnRestartRequired", name: "OnRestartRequired", pkg: "", typ: $funcType([funcType$104], [], false)}];
+	ptrType$32.methods = [{prop: "GetRecentlyClosed", name: "GetRecentlyClosed", pkg: "", typ: $funcType([Filter, funcType$105], [], false)}, {prop: "GetDevices", name: "GetDevices", pkg: "", typ: $funcType([Filter, funcType$106], [], false)}, {prop: "Restore", name: "Restore", pkg: "", typ: $funcType([$String, funcType$107], [], false)}, {prop: "OnChanged", name: "OnChanged", pkg: "", typ: $funcType([funcType$5], [], false)}];
+	ptrType$33.methods = [{prop: "OnChanged", name: "OnChanged", pkg: "", typ: $funcType([funcType$108], [], false)}];
+	ptrType$48.methods = [{prop: "GetInfo", name: "GetInfo", pkg: "", typ: $funcType([funcType$109], [], false)}];
+	ptrType$49.methods = [{prop: "GetInfo", name: "GetInfo", pkg: "", typ: $funcType([funcType$110], [], false)}];
+	ptrType$50.methods = [{prop: "GetInfo", name: "GetInfo", pkg: "", typ: $funcType([funcType$111], [], false)}, {prop: "EjectDevice", name: "EjectDevice", pkg: "", typ: $funcType([$String, funcType$11], [], false)}, {prop: "GetAvailableCapacity", name: "GetAvailableCapacity", pkg: "", typ: $funcType([funcType$109], [], false)}, {prop: "OnAttached", name: "OnAttached", pkg: "", typ: $funcType([funcType$112], [], false)}, {prop: "OnDetached", name: "OnDetached", pkg: "", typ: $funcType([funcType$79], [], false)}];
+	ptrType$36.methods = [{prop: "Capture", name: "Capture", pkg: "", typ: $funcType([Object, funcType$113], [], false)}, {prop: "GetCapturedTabs", name: "GetCapturedTabs", pkg: "", typ: $funcType([funcType$114], [], false)}, {prop: "OnStatusChanged", name: "OnStatusChanged", pkg: "", typ: $funcType([funcType$115], [], false)}];
+	ptrType$35.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([$Int, funcType$89], [], false)}, {prop: "GetCurrent", name: "GetCurrent", pkg: "", typ: $funcType([funcType$89], [], false)}, {prop: "Connect", name: "Connect", pkg: "", typ: $funcType([$Int, $emptyInterface], [], false)}, {prop: "SendMessage", name: "SendMessage", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$116], [], false)}, {prop: "GetSelected", name: "GetSelected", pkg: "", typ: $funcType([$Int, funcType$89], [], false)}, {prop: "GetAllInWindow", name: "GetAllInWindow", pkg: "", typ: $funcType([$Int, funcType$117], [], false)}, {prop: "Create", name: "Create", pkg: "", typ: $funcType([$emptyInterface, funcType$89], [], false)}, {prop: "Duplicate", name: "Duplicate", pkg: "", typ: $funcType([$Int, funcType$89], [], false)}, {prop: "Query", name: "Query", pkg: "", typ: $funcType([$emptyInterface, funcType$118], [], false)}, {prop: "Highlight", name: "Highlight", pkg: "", typ: $funcType([$emptyInterface, funcType$119], [], false)}, {prop: "Update", name: "Update", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$89], [], false)}, {prop: "Move", name: "Move", pkg: "", typ: $funcType([sliceType$7, $emptyInterface, funcType$117], [], false)}, {prop: "Reload", name: "Reload", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$119], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([sliceType$7, funcType$119], [], false)}, {prop: "DetectLanguage", name: "DetectLanguage", pkg: "", typ: $funcType([$Int, funcType$120], [], false)}, {prop: "CaptureVisibleTab", name: "CaptureVisibleTab", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$121], [], false)}, {prop: "ExecuteScript", name: "ExecuteScript", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$122], [], false)}, {prop: "InsertCss", name: "InsertCss", pkg: "", typ: $funcType([$Int, $emptyInterface, funcType$5], [], false)}, {prop: "SetZoom", name: "SetZoom", pkg: "", typ: $funcType([$Int, $Int64, funcType$5], [], false)}, {prop: "GetZoom", name: "GetZoom", pkg: "", typ: $funcType([$Int, funcType$123], [], false)}, {prop: "SetZoomSettings", name: "SetZoomSettings", pkg: "", typ: $funcType([$Int, ZoomSettings, funcType$5], [], false)}, {prop: "GetZoomSettings", name: "GetZoomSettings", pkg: "", typ: $funcType([$Int, funcType$124], [], false)}, {prop: "OnCreated", name: "OnCreated", pkg: "", typ: $funcType([funcType$89], [], false)}, {prop: "OnUpdated", name: "OnUpdated", pkg: "", typ: $funcType([funcType$125], [], false)}, {prop: "OnMoved", name: "OnMoved", pkg: "", typ: $funcType([funcType$126], [], false)}, {prop: "OnActivated", name: "OnActivated", pkg: "", typ: $funcType([funcType$127], [], false)}, {prop: "OnHighlightChanged", name: "OnHighlightChanged", pkg: "", typ: $funcType([funcType$128], [], false)}, {prop: "OnHighlighted", name: "OnHighlighted", pkg: "", typ: $funcType([funcType$129], [], false)}, {prop: "OnDetached", name: "OnDetached", pkg: "", typ: $funcType([funcType$130], [], false)}, {prop: "OnAttached", name: "OnAttached", pkg: "", typ: $funcType([funcType$131], [], false)}, {prop: "OnRemoved", name: "OnRemoved", pkg: "", typ: $funcType([funcType$132], [], false)}, {prop: "OnReplaced", name: "OnReplaced", pkg: "", typ: $funcType([funcType$133], [], false)}, {prop: "OnZoomChange", name: "OnZoomChange", pkg: "", typ: $funcType([funcType$134], [], false)}];
+	ptrType$37.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([funcType$135], [], false)}];
+	ptrType$38.methods = [{prop: "Speak", name: "Speak", pkg: "", typ: $funcType([$String, Object, funcType$5], [], false)}, {prop: "Stop", name: "Stop", pkg: "", typ: $funcType([], [], false)}, {prop: "Pause", name: "Pause", pkg: "", typ: $funcType([], [], false)}, {prop: "Resume", name: "Resume", pkg: "", typ: $funcType([], [], false)}, {prop: "IsSpeaking", name: "IsSpeaking", pkg: "", typ: $funcType([funcType$136], [], false)}, {prop: "GetVoices", name: "GetVoices", pkg: "", typ: $funcType([funcType$137], [], false)}];
+	ptrType$39.methods = [{prop: "OnSpeak", name: "OnSpeak", pkg: "", typ: $funcType([funcType$139], [], false)}, {prop: "OnStop", name: "OnStop", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnPause", name: "OnPause", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnResume", name: "OnResume", pkg: "", typ: $funcType([funcType$5], [], false)}];
+	ptrType$40.methods = [{prop: "GetFrame", name: "GetFrame", pkg: "", typ: $funcType([Object, funcType$20], [], false)}, {prop: "GetAllFrames", name: "GetAllFrames", pkg: "", typ: $funcType([Object, funcType$140], [], false)}, {prop: "OnBeforeNavigate", name: "OnBeforeNavigate", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnCommited", name: "OnCommited", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnDOMContentLoaded", name: "OnDOMContentLoaded", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnCompleted", name: "OnCompleted", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnErrorOccurred", name: "OnErrorOccurred", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnCreatedNavigationTarget", name: "OnCreatedNavigationTarget", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnReferenceFragmentUpdated", name: "OnReferenceFragmentUpdated", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}, {prop: "OnTabReplaced", name: "OnTabReplaced", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnHistoryStateUpdated", name: "OnHistoryStateUpdated", pkg: "", typ: $funcType([funcType$20, mapType$5], [], false)}];
+	ptrType$41.methods = [{prop: "HandlerBehaviorChanged", name: "HandlerBehaviorChanged", pkg: "", typ: $funcType([funcType$5], [], false)}, {prop: "OnBeforeRequest", name: "OnBeforeRequest", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnBeforeSendHeaders", name: "OnBeforeSendHeaders", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnSendHeaders", name: "OnSendHeaders", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnHeadersReceived", name: "OnHeadersReceived", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnAuthRequired", name: "OnAuthRequired", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnResponseStarted", name: "OnResponseStarted", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnBeforeRedirect", name: "OnBeforeRedirect", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnCompleted", name: "OnCompleted", pkg: "", typ: $funcType([funcType$20], [], false)}, {prop: "OnErrorOccured", name: "OnErrorOccured", pkg: "", typ: $funcType([funcType$20], [], false)}];
+	ptrType$42.methods = [{prop: "Install", name: "Install", pkg: "", typ: $funcType([$String, funcType$5, funcType$141], [], false)}, {prop: "OnInstallStageChanged", name: "OnInstallStageChanged", pkg: "", typ: $funcType([funcType$142], [], false)}, {prop: "OnDownloadProgress", name: "OnDownloadProgress", pkg: "", typ: $funcType([funcType$143], [], false)}];
+	ptrType$43.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([$Int, Object, funcType$144], [], false)}, {prop: "GetCurrent", name: "GetCurrent", pkg: "", typ: $funcType([Object, funcType$144], [], false)}, {prop: "GetLastFocused", name: "GetLastFocused", pkg: "", typ: $funcType([Object, funcType$144], [], false)}, {prop: "GetAll", name: "GetAll", pkg: "", typ: $funcType([Object, funcType$145], [], false)}, {prop: "Create", name: "Create", pkg: "", typ: $funcType([Object, funcType$144], [], false)}, {prop: "Update", name: "Update", pkg: "", typ: $funcType([$Int, Object, funcType$144], [], false)}, {prop: "Remove", name: "Remove", pkg: "", typ: $funcType([$Int, funcType$119], [], false)}, {prop: "OnCreated", name: "OnCreated", pkg: "", typ: $funcType([funcType$144], [], false)}, {prop: "OnRemoved", name: "OnRemoved", pkg: "", typ: $funcType([funcType$146], [], false)}, {prop: "onFocusChanged", name: "onFocusChanged", pkg: "github.com/fabioberger/chrome", typ: $funcType([funcType$146], [], false)}];
+	Alarms.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	Alarm.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Name", name: "Name", pkg: "", typ: $String, tag: "js:\"name\""}, {prop: "ScheduledTime", name: "ScheduledTime", pkg: "", typ: $String, tag: "js:\"scheduledTime\""}, {prop: "PeriodInMinutes", name: "PeriodInMinutes", pkg: "", typ: $String, tag: "js:\"periodInMinutes\""}]);
+	Bookmarks.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	BookmarkTreeNode.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "ParentId", name: "ParentId", pkg: "", typ: $String, tag: "js:\"parentId\""}, {prop: "Index", name: "Index", pkg: "", typ: $Int, tag: "js:\"index\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "Title", name: "Title", pkg: "", typ: $String, tag: "js:\"title\""}, {prop: "DateAdded", name: "DateAdded", pkg: "", typ: $Int64, tag: "js:\"dateAdded\""}, {prop: "DateGroupModified", name: "DateGroupModified", pkg: "", typ: $Int64, tag: "js:\"dateGroupModified\""}, {prop: "Unmodifiable", name: "Unmodifiable", pkg: "", typ: $String, tag: "js:\"unmodifiable\""}, {prop: "Children", name: "Children", pkg: "", typ: sliceType$2, tag: "js:\"children\""}]);
+	BrowserAction.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
 	ColorArray.init($Int);
-	BrowsingData.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	RemovalOptions.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Since", name: "Since", pkg: "", typ: $Float64, tag: "js:\"since\""}, {prop: "OriginTypes", name: "OriginTypes", pkg: "", typ: mapType$6, tag: "js:\"originTypes\""}]);
+	BrowsingData.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	RemovalOptions.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Since", name: "Since", pkg: "", typ: $Float64, tag: "js:\"since\""}, {prop: "OriginTypes", name: "OriginTypes", pkg: "", typ: mapType$6, tag: "js:\"originTypes\""}]);
 	DataTypeSet.init($String, $Bool);
 	Object.init($String, $emptyInterface);
-	Chrome.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}, {prop: "Alarms", name: "Alarms", pkg: "", typ: ptrType, tag: ""}, {prop: "Bookmarks", name: "Bookmarks", pkg: "", typ: ptrType$1, tag: ""}, {prop: "BrowserAction", name: "BrowserAction", pkg: "", typ: ptrType$2, tag: ""}, {prop: "BrowsingData", name: "BrowsingData", pkg: "", typ: ptrType$3, tag: ""}, {prop: "Commands", name: "Commands", pkg: "", typ: ptrType$4, tag: ""}, {prop: "ContextMenus", name: "ContextMenus", pkg: "", typ: ptrType$5, tag: ""}, {prop: "Cookies", name: "Cookies", pkg: "", typ: ptrType$6, tag: ""}, {prop: "Debugger", name: "Debugger", pkg: "", typ: ptrType$7, tag: ""}, {prop: "DeclarativeContent", name: "DeclarativeContent", pkg: "", typ: ptrType$8, tag: ""}, {prop: "DesktopCapture", name: "DesktopCapture", pkg: "", typ: ptrType$9, tag: ""}, {prop: "Downloads", name: "Downloads", pkg: "", typ: ptrType$10, tag: ""}, {prop: "Enterprise", name: "Enterprise", pkg: "", typ: ptrType$11, tag: ""}, {prop: "Extension", name: "Extension", pkg: "", typ: ptrType$12, tag: ""}, {prop: "FileBrowserHandler", name: "FileBrowserHandler", pkg: "", typ: ptrType$13, tag: ""}, {prop: "FileSystemProvider", name: "FileSystemProvider", pkg: "", typ: ptrType$14, tag: ""}, {prop: "FontSettings", name: "FontSettings", pkg: "", typ: ptrType$15, tag: ""}, {prop: "Gcm", name: "Gcm", pkg: "", typ: ptrType$16, tag: ""}, {prop: "History", name: "History", pkg: "", typ: ptrType$17, tag: ""}, {prop: "I18n", name: "I18n", pkg: "", typ: ptrType$18, tag: ""}, {prop: "Identity", name: "Identity", pkg: "", typ: ptrType$19, tag: ""}, {prop: "Idle", name: "Idle", pkg: "", typ: ptrType$20, tag: ""}, {prop: "Input", name: "Input", pkg: "", typ: ptrType$21, tag: ""}, {prop: "Notification", name: "Notification", pkg: "", typ: ptrType$22, tag: ""}, {prop: "Omnibox", name: "Omnibox", pkg: "", typ: ptrType$23, tag: ""}, {prop: "PageAction", name: "PageAction", pkg: "", typ: ptrType$24, tag: ""}, {prop: "PageCapture", name: "PageCapture", pkg: "", typ: ptrType$25, tag: ""}, {prop: "Permissions", name: "Permissions", pkg: "", typ: ptrType$26, tag: ""}, {prop: "Power", name: "Power", pkg: "", typ: ptrType$27, tag: ""}, {prop: "Privacy", name: "Privacy", pkg: "", typ: ptrType$28, tag: ""}, {prop: "Proxy", name: "Proxy", pkg: "", typ: ptrType$29, tag: ""}, {prop: "Runtime", name: "Runtime", pkg: "", typ: ptrType$30, tag: ""}, {prop: "Sessions", name: "Sessions", pkg: "", typ: ptrType$31, tag: ""}, {prop: "Storage", name: "Storage", pkg: "", typ: ptrType$32, tag: ""}, {prop: "System", name: "System", pkg: "", typ: ptrType$33, tag: ""}, {prop: "Tabs", name: "Tabs", pkg: "", typ: ptrType$34, tag: ""}, {prop: "TabCapture", name: "TabCapture", pkg: "", typ: ptrType$35, tag: ""}, {prop: "TopSites", name: "TopSites", pkg: "", typ: ptrType$36, tag: ""}, {prop: "Tts", name: "Tts", pkg: "", typ: ptrType$37, tag: ""}, {prop: "TtsEngine", name: "TtsEngine", pkg: "", typ: ptrType$38, tag: ""}, {prop: "WebNavigation", name: "WebNavigation", pkg: "", typ: ptrType$39, tag: ""}, {prop: "WebRequest", name: "WebRequest", pkg: "", typ: ptrType$40, tag: ""}, {prop: "WebStore", name: "WebStore", pkg: "", typ: ptrType$41, tag: ""}, {prop: "Windows", name: "Windows", pkg: "", typ: ptrType$42, tag: ""}]);
-	Commands.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
+	Chrome.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}, {prop: "Alarms", name: "Alarms", pkg: "", typ: ptrType, tag: ""}, {prop: "Bookmarks", name: "Bookmarks", pkg: "", typ: ptrType$2, tag: ""}, {prop: "BrowserAction", name: "BrowserAction", pkg: "", typ: ptrType$3, tag: ""}, {prop: "BrowsingData", name: "BrowsingData", pkg: "", typ: ptrType$4, tag: ""}, {prop: "Commands", name: "Commands", pkg: "", typ: ptrType$5, tag: ""}, {prop: "ContextMenus", name: "ContextMenus", pkg: "", typ: ptrType$6, tag: ""}, {prop: "Cookies", name: "Cookies", pkg: "", typ: ptrType$7, tag: ""}, {prop: "Debugger", name: "Debugger", pkg: "", typ: ptrType$8, tag: ""}, {prop: "DeclarativeContent", name: "DeclarativeContent", pkg: "", typ: ptrType$9, tag: ""}, {prop: "DesktopCapture", name: "DesktopCapture", pkg: "", typ: ptrType$10, tag: ""}, {prop: "Downloads", name: "Downloads", pkg: "", typ: ptrType$11, tag: ""}, {prop: "Enterprise", name: "Enterprise", pkg: "", typ: ptrType$12, tag: ""}, {prop: "Extension", name: "Extension", pkg: "", typ: ptrType$13, tag: ""}, {prop: "FileBrowserHandler", name: "FileBrowserHandler", pkg: "", typ: ptrType$14, tag: ""}, {prop: "FileSystemProvider", name: "FileSystemProvider", pkg: "", typ: ptrType$15, tag: ""}, {prop: "FontSettings", name: "FontSettings", pkg: "", typ: ptrType$16, tag: ""}, {prop: "Gcm", name: "Gcm", pkg: "", typ: ptrType$17, tag: ""}, {prop: "History", name: "History", pkg: "", typ: ptrType$18, tag: ""}, {prop: "I18n", name: "I18n", pkg: "", typ: ptrType$19, tag: ""}, {prop: "Identity", name: "Identity", pkg: "", typ: ptrType$20, tag: ""}, {prop: "Idle", name: "Idle", pkg: "", typ: ptrType$21, tag: ""}, {prop: "Input", name: "Input", pkg: "", typ: ptrType$22, tag: ""}, {prop: "Notification", name: "Notification", pkg: "", typ: ptrType$23, tag: ""}, {prop: "Omnibox", name: "Omnibox", pkg: "", typ: ptrType$24, tag: ""}, {prop: "PageAction", name: "PageAction", pkg: "", typ: ptrType$25, tag: ""}, {prop: "PageCapture", name: "PageCapture", pkg: "", typ: ptrType$26, tag: ""}, {prop: "Permissions", name: "Permissions", pkg: "", typ: ptrType$27, tag: ""}, {prop: "Power", name: "Power", pkg: "", typ: ptrType$28, tag: ""}, {prop: "Privacy", name: "Privacy", pkg: "", typ: ptrType$29, tag: ""}, {prop: "Proxy", name: "Proxy", pkg: "", typ: ptrType$30, tag: ""}, {prop: "Runtime", name: "Runtime", pkg: "", typ: ptrType$31, tag: ""}, {prop: "Sessions", name: "Sessions", pkg: "", typ: ptrType$32, tag: ""}, {prop: "Storage", name: "Storage", pkg: "", typ: ptrType$33, tag: ""}, {prop: "System", name: "System", pkg: "", typ: ptrType$34, tag: ""}, {prop: "Tabs", name: "Tabs", pkg: "", typ: ptrType$35, tag: ""}, {prop: "TabCapture", name: "TabCapture", pkg: "", typ: ptrType$36, tag: ""}, {prop: "TopSites", name: "TopSites", pkg: "", typ: ptrType$37, tag: ""}, {prop: "Tts", name: "Tts", pkg: "", typ: ptrType$38, tag: ""}, {prop: "TtsEngine", name: "TtsEngine", pkg: "", typ: ptrType$39, tag: ""}, {prop: "WebNavigation", name: "WebNavigation", pkg: "", typ: ptrType$40, tag: ""}, {prop: "WebRequest", name: "WebRequest", pkg: "", typ: ptrType$41, tag: ""}, {prop: "WebStore", name: "WebStore", pkg: "", typ: ptrType$42, tag: ""}, {prop: "Windows", name: "Windows", pkg: "", typ: ptrType$43, tag: ""}]);
+	Commands.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
 	Command.init($String, $String);
-	ContextMenus.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}, {prop: "ACTION_MENU_TOP_LEVEL_LIMIT", name: "ACTION_MENU_TOP_LEVEL_LIMIT", pkg: "", typ: $Int, tag: ""}]);
-	Cookies.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	Cookie.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Name", name: "Name", pkg: "", typ: $String, tag: "js:\"name\""}, {prop: "Value", name: "Value", pkg: "", typ: $String, tag: "js:\"value\""}, {prop: "Domain", name: "Domain", pkg: "", typ: $String, tag: "js:\"domain\""}, {prop: "HostOnly", name: "HostOnly", pkg: "", typ: $Bool, tag: "js:\"hostOnly\""}, {prop: "Path", name: "Path", pkg: "", typ: $String, tag: "js:\"path\""}, {prop: "Secure", name: "Secure", pkg: "", typ: $Bool, tag: "js:\"secure\""}, {prop: "HttpOnly", name: "HttpOnly", pkg: "", typ: $Bool, tag: "js:\"httpOnly\""}, {prop: "Session", name: "Session", pkg: "", typ: $Bool, tag: "js:\"session\""}, {prop: "ExpirationDate", name: "ExpirationDate", pkg: "", typ: $Int64, tag: "js:\"expirationDate\""}, {prop: "StoreId", name: "StoreId", pkg: "", typ: $String, tag: "js:\"storeId\""}]);
-	CookieStore.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "TabIds", name: "TabIds", pkg: "", typ: sliceType$10, tag: "js:\"tabIds\""}]);
-	Debugger.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	Debugee.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "TabId", name: "TabId", pkg: "", typ: $Int, tag: "js:\"tabId\""}, {prop: "ExtensionId", name: "ExtensionId", pkg: "", typ: $String, tag: "js:\"extensionId\""}, {prop: "TargetId", name: "TargetId", pkg: "", typ: $String, tag: "js:\"targetId\""}]);
-	TargetInfo.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Type", name: "Type", pkg: "", typ: $String, tag: "js:\"type\""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "TabId", name: "TabId", pkg: "", typ: $Int, tag: "js:\"tabId\""}, {prop: "ExtensionId", name: "ExtensionId", pkg: "", typ: $String, tag: "js:\"extensionId\""}, {prop: "Attached", name: "Attached", pkg: "", typ: $Bool, tag: "js:\"attached\""}, {prop: "Title", name: "Title", pkg: "", typ: $String, tag: "js:\"title\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "FaviconUrl", name: "FaviconUrl", pkg: "", typ: $String, tag: "js:\"faviconUrl\""}]);
-	DeclarativeContent.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}, {prop: "OnPageChanged", name: "OnPageChanged", pkg: "", typ: ptrType$43, tag: ""}]);
-	OnPageChanged.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	DesktopCapture.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	Downloads.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	DownloadItem.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $Int, tag: "js:\"id\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "Referrer", name: "Referrer", pkg: "", typ: $String, tag: "js:\"referrer\""}, {prop: "Filename", name: "Filename", pkg: "", typ: $String, tag: "js:\"filename\""}, {prop: "Incognito", name: "Incognito", pkg: "", typ: $Bool, tag: "js:\"incognito\""}, {prop: "Danger", name: "Danger", pkg: "", typ: $String, tag: "js:\"danger\""}, {prop: "Mime", name: "Mime", pkg: "", typ: $String, tag: "js:\"mime\""}, {prop: "StartTime", name: "StartTime", pkg: "", typ: $String, tag: "js:\"startTime\""}, {prop: "EndTime", name: "EndTime", pkg: "", typ: $String, tag: "js:\"endTime\""}, {prop: "EstimatedEndTime", name: "EstimatedEndTime", pkg: "", typ: $String, tag: "js:\"estimatedEndTime\""}, {prop: "State", name: "State", pkg: "", typ: $String, tag: "js:\"state\""}, {prop: "Paused", name: "Paused", pkg: "", typ: $Bool, tag: "js:\"paused\""}, {prop: "CanResume", name: "CanResume", pkg: "", typ: $Bool, tag: "js:\"canResume\""}, {prop: "Error", name: "Error", pkg: "", typ: $String, tag: "js:\"error\""}, {prop: "BytesReceived", name: "BytesReceived", pkg: "", typ: $Int64, tag: "js:\"bytesReceived\""}, {prop: "TotalBytes", name: "TotalBytes", pkg: "", typ: $Int64, tag: "js:\"totalBytes\""}, {prop: "FileSize", name: "FileSize", pkg: "", typ: $Int64, tag: "js:\"fileSize\""}, {prop: "Exists", name: "Exists", pkg: "", typ: $Bool, tag: "js:\"exists\""}, {prop: "ByExtensionId", name: "ByExtensionId", pkg: "", typ: $String, tag: "js:\"byExtensionId\""}, {prop: "ByExtensionName", name: "ByExtensionName", pkg: "", typ: $String, tag: "js:\"byExtensionName\""}]);
-	Enterprise.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}, {prop: "PlatformKeys", name: "PlatformKeys", pkg: "", typ: ptrType$44, tag: ""}]);
-	PlatformKeys.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
+	ContextMenus.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "ACTION_MENU_TOP_LEVEL_LIMIT", name: "ACTION_MENU_TOP_LEVEL_LIMIT", pkg: "", typ: $Int, tag: ""}]);
+	Cookies.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	Cookie.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Name", name: "Name", pkg: "", typ: $String, tag: "js:\"name\""}, {prop: "Value", name: "Value", pkg: "", typ: $String, tag: "js:\"value\""}, {prop: "Domain", name: "Domain", pkg: "", typ: $String, tag: "js:\"domain\""}, {prop: "HostOnly", name: "HostOnly", pkg: "", typ: $Bool, tag: "js:\"hostOnly\""}, {prop: "Path", name: "Path", pkg: "", typ: $String, tag: "js:\"path\""}, {prop: "Secure", name: "Secure", pkg: "", typ: $Bool, tag: "js:\"secure\""}, {prop: "HttpOnly", name: "HttpOnly", pkg: "", typ: $Bool, tag: "js:\"httpOnly\""}, {prop: "Session", name: "Session", pkg: "", typ: $Bool, tag: "js:\"session\""}, {prop: "ExpirationDate", name: "ExpirationDate", pkg: "", typ: $Int64, tag: "js:\"expirationDate\""}, {prop: "StoreId", name: "StoreId", pkg: "", typ: $String, tag: "js:\"storeId\""}]);
+	CookieStore.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "TabIds", name: "TabIds", pkg: "", typ: sliceType$10, tag: "js:\"tabIds\""}]);
+	Debugger.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	Debugee.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "TabId", name: "TabId", pkg: "", typ: $Int, tag: "js:\"tabId\""}, {prop: "ExtensionId", name: "ExtensionId", pkg: "", typ: $String, tag: "js:\"extensionId\""}, {prop: "TargetId", name: "TargetId", pkg: "", typ: $String, tag: "js:\"targetId\""}]);
+	TargetInfo.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Type", name: "Type", pkg: "", typ: $String, tag: "js:\"type\""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "TabId", name: "TabId", pkg: "", typ: $Int, tag: "js:\"tabId\""}, {prop: "ExtensionId", name: "ExtensionId", pkg: "", typ: $String, tag: "js:\"extensionId\""}, {prop: "Attached", name: "Attached", pkg: "", typ: $Bool, tag: "js:\"attached\""}, {prop: "Title", name: "Title", pkg: "", typ: $String, tag: "js:\"title\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "FaviconUrl", name: "FaviconUrl", pkg: "", typ: $String, tag: "js:\"faviconUrl\""}]);
+	DeclarativeContent.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "OnPageChanged", name: "OnPageChanged", pkg: "", typ: ptrType$44, tag: ""}]);
+	OnPageChanged.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	DesktopCapture.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	Downloads.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	DownloadItem.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $Int, tag: "js:\"id\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "Referrer", name: "Referrer", pkg: "", typ: $String, tag: "js:\"referrer\""}, {prop: "Filename", name: "Filename", pkg: "", typ: $String, tag: "js:\"filename\""}, {prop: "Incognito", name: "Incognito", pkg: "", typ: $Bool, tag: "js:\"incognito\""}, {prop: "Danger", name: "Danger", pkg: "", typ: $String, tag: "js:\"danger\""}, {prop: "Mime", name: "Mime", pkg: "", typ: $String, tag: "js:\"mime\""}, {prop: "StartTime", name: "StartTime", pkg: "", typ: $String, tag: "js:\"startTime\""}, {prop: "EndTime", name: "EndTime", pkg: "", typ: $String, tag: "js:\"endTime\""}, {prop: "EstimatedEndTime", name: "EstimatedEndTime", pkg: "", typ: $String, tag: "js:\"estimatedEndTime\""}, {prop: "State", name: "State", pkg: "", typ: $String, tag: "js:\"state\""}, {prop: "Paused", name: "Paused", pkg: "", typ: $Bool, tag: "js:\"paused\""}, {prop: "CanResume", name: "CanResume", pkg: "", typ: $Bool, tag: "js:\"canResume\""}, {prop: "Error", name: "Error", pkg: "", typ: $String, tag: "js:\"error\""}, {prop: "BytesReceived", name: "BytesReceived", pkg: "", typ: $Int64, tag: "js:\"bytesReceived\""}, {prop: "TotalBytes", name: "TotalBytes", pkg: "", typ: $Int64, tag: "js:\"totalBytes\""}, {prop: "FileSize", name: "FileSize", pkg: "", typ: $Int64, tag: "js:\"fileSize\""}, {prop: "Exists", name: "Exists", pkg: "", typ: $Bool, tag: "js:\"exists\""}, {prop: "ByExtensionId", name: "ByExtensionId", pkg: "", typ: $String, tag: "js:\"byExtensionId\""}, {prop: "ByExtensionName", name: "ByExtensionName", pkg: "", typ: $String, tag: "js:\"byExtensionName\""}]);
+	Enterprise.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "PlatformKeys", name: "PlatformKeys", pkg: "", typ: ptrType$45, tag: ""}]);
+	PlatformKeys.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
 	Token.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "SubtleCrypto", name: "SubtleCrypto", pkg: "", typ: js.Object, tag: "js:\"subtleCrypto\""}]);
-	Extension.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}, {prop: "LastError", name: "LastError", pkg: "", typ: js.Object, tag: ""}, {prop: "InIncognitoContext", name: "InIncognitoContext", pkg: "", typ: $Bool, tag: ""}]);
-	FileBrowserHandler.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	FileHandlerExecuteEventDetails.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Entries", name: "Entries", pkg: "", typ: sliceType$7, tag: "js:\"entries\""}, {prop: "Tab_id", name: "Tab_id", pkg: "", typ: $Int, tag: "js:\"tab_id\""}]);
-	FileSystemProvider.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	EntryMetadata.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "IsDirectory", name: "IsDirectory", pkg: "", typ: $Bool, tag: "js:\"isDirectory\""}, {prop: "Name", name: "Name", pkg: "", typ: $String, tag: "js:\"name\""}, {prop: "Size", name: "Size", pkg: "", typ: $Int64, tag: "js:\"size\""}, {prop: "ModificationTime", name: "ModificationTime", pkg: "", typ: time.Time, tag: "js:\"modificationTime\""}, {prop: "MimeType", name: "MimeType", pkg: "", typ: $String, tag: "js:\"mimeType\""}, {prop: "Thumbnail", name: "Thumbnail", pkg: "", typ: $String, tag: "js:\"thumbnail\""}]);
-	FileSystemInfo.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "FileSystemId", name: "FileSystemId", pkg: "", typ: $String, tag: "js:\"fileSystemId\""}, {prop: "DisplayName", name: "DisplayName", pkg: "", typ: $String, tag: "js:\"displayName\""}, {prop: "Writable", name: "Writable", pkg: "", typ: $Bool, tag: "js:\"writable\""}, {prop: "OpenedFileLimit", name: "OpenedFileLimit", pkg: "", typ: $Int64, tag: "js:\"openedFileLimit\""}, {prop: "OpenedFiles", name: "OpenedFiles", pkg: "", typ: sliceType$28, tag: "js:\"openedFiles\""}]);
-	FontSettings.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	FontName.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "FontId", name: "FontId", pkg: "", typ: $String, tag: "js:\"fontId\""}, {prop: "DisplayName", name: "DisplayName", pkg: "", typ: $String, tag: "js:\"displayName\""}]);
-	Gcm.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}, {prop: "MAX_MESSAGE_SIZE", name: "MAX_MESSAGE_SIZE", pkg: "", typ: $Int, tag: ""}]);
-	History.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	HistoryItem.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "Title", name: "Title", pkg: "", typ: $String, tag: "js:\"title\""}, {prop: "LastVisitTime", name: "LastVisitTime", pkg: "", typ: $Int64, tag: "js:\"lastVisitTime\""}, {prop: "VisitCount", name: "VisitCount", pkg: "", typ: $Int, tag: "js:\"visitCount\""}, {prop: "TypedCount", name: "TypedCount", pkg: "", typ: $Int, tag: "js:\"typedCount\""}]);
-	VisitItem.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "VisitId", name: "VisitId", pkg: "", typ: $String, tag: "js:\"visitId\""}, {prop: "VisitTime", name: "VisitTime", pkg: "", typ: $Int64, tag: "js:\"visitTime\""}, {prop: "ReferringVisitId", name: "ReferringVisitId", pkg: "", typ: $String, tag: "js:\"referringVisitId\""}, {prop: "Transition", name: "Transition", pkg: "", typ: $String, tag: "js:\"transition\""}]);
-	I18n.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	Identity.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	AccountInfo.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}]);
-	Idle.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	Input.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}, {prop: "Ime", name: "Ime", pkg: "", typ: ptrType$45, tag: ""}]);
-	Ime.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
+	Extension.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "LastError", name: "LastError", pkg: "", typ: ptrType$1, tag: ""}, {prop: "InIncognitoContext", name: "InIncognitoContext", pkg: "", typ: $Bool, tag: ""}]);
+	FileBrowserHandler.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	FileHandlerExecuteEventDetails.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Entries", name: "Entries", pkg: "", typ: sliceType$7, tag: "js:\"entries\""}, {prop: "Tab_id", name: "Tab_id", pkg: "", typ: $Int, tag: "js:\"tab_id\""}]);
+	FileSystemProvider.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	EntryMetadata.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "IsDirectory", name: "IsDirectory", pkg: "", typ: $Bool, tag: "js:\"isDirectory\""}, {prop: "Name", name: "Name", pkg: "", typ: $String, tag: "js:\"name\""}, {prop: "Size", name: "Size", pkg: "", typ: $Int64, tag: "js:\"size\""}, {prop: "ModificationTime", name: "ModificationTime", pkg: "", typ: time.Time, tag: "js:\"modificationTime\""}, {prop: "MimeType", name: "MimeType", pkg: "", typ: $String, tag: "js:\"mimeType\""}, {prop: "Thumbnail", name: "Thumbnail", pkg: "", typ: $String, tag: "js:\"thumbnail\""}]);
+	FileSystemInfo.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "FileSystemId", name: "FileSystemId", pkg: "", typ: $String, tag: "js:\"fileSystemId\""}, {prop: "DisplayName", name: "DisplayName", pkg: "", typ: $String, tag: "js:\"displayName\""}, {prop: "Writable", name: "Writable", pkg: "", typ: $Bool, tag: "js:\"writable\""}, {prop: "OpenedFileLimit", name: "OpenedFileLimit", pkg: "", typ: $Int64, tag: "js:\"openedFileLimit\""}, {prop: "OpenedFiles", name: "OpenedFiles", pkg: "", typ: sliceType$28, tag: "js:\"openedFiles\""}]);
+	FontSettings.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	FontName.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "FontId", name: "FontId", pkg: "", typ: $String, tag: "js:\"fontId\""}, {prop: "DisplayName", name: "DisplayName", pkg: "", typ: $String, tag: "js:\"displayName\""}]);
+	Gcm.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "MAX_MESSAGE_SIZE", name: "MAX_MESSAGE_SIZE", pkg: "", typ: $Int, tag: ""}]);
+	History.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	HistoryItem.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "Title", name: "Title", pkg: "", typ: $String, tag: "js:\"title\""}, {prop: "LastVisitTime", name: "LastVisitTime", pkg: "", typ: $Int64, tag: "js:\"lastVisitTime\""}, {prop: "VisitCount", name: "VisitCount", pkg: "", typ: $Int, tag: "js:\"visitCount\""}, {prop: "TypedCount", name: "TypedCount", pkg: "", typ: $Int, tag: "js:\"typedCount\""}]);
+	VisitItem.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "VisitId", name: "VisitId", pkg: "", typ: $String, tag: "js:\"visitId\""}, {prop: "VisitTime", name: "VisitTime", pkg: "", typ: $Int64, tag: "js:\"visitTime\""}, {prop: "ReferringVisitId", name: "ReferringVisitId", pkg: "", typ: $String, tag: "js:\"referringVisitId\""}, {prop: "Transition", name: "Transition", pkg: "", typ: $String, tag: "js:\"transition\""}]);
+	I18n.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	Identity.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	AccountInfo.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}]);
+	Idle.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	Input.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "Ime", name: "Ime", pkg: "", typ: ptrType$46, tag: ""}]);
+	Ime.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
 	KeyboardEvent.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Type", name: "Type", pkg: "", typ: $String, tag: "js:\"type\""}, {prop: "RequestId", name: "RequestId", pkg: "", typ: $String, tag: "js:\"requestId\""}, {prop: "ExtensionId", name: "ExtensionId", pkg: "", typ: $String, tag: "js:\"extensionId\""}, {prop: "Key", name: "Key", pkg: "", typ: $String, tag: "js:\"key\""}, {prop: "Code", name: "Code", pkg: "", typ: $String, tag: "js:\"code\""}, {prop: "KeyCode", name: "KeyCode", pkg: "", typ: $Int, tag: "js:\"keyCode\""}, {prop: "AltKey", name: "AltKey", pkg: "", typ: $Bool, tag: "js:\"altKey\""}, {prop: "CtrlKey", name: "CtrlKey", pkg: "", typ: $Bool, tag: "js:\"ctrlKey\""}, {prop: "ShiftKey", name: "ShiftKey", pkg: "", typ: $Bool, tag: "js:\"shiftKey\""}, {prop: "CapsLock", name: "CapsLock", pkg: "", typ: $Bool, tag: "js:\"capsLock\""}]);
 	InputContext.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "ContextID", name: "ContextID", pkg: "", typ: $Int, tag: "js:\"contextID\""}, {prop: "Type", name: "Type", pkg: "", typ: $String, tag: "js:\"type\""}, {prop: "AutoCorrect", name: "AutoCorrect", pkg: "", typ: $Bool, tag: "js:\"autoCorrect\""}, {prop: "AutoComplete", name: "AutoComplete", pkg: "", typ: $Bool, tag: "js:\"autoComplete\""}, {prop: "SpellCheck", name: "SpellCheck", pkg: "", typ: $Bool, tag: "js:\"spellCheck\""}]);
-	Notification.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	NotificationOptions.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Type", name: "Type", pkg: "", typ: $String, tag: "js:\"type\""}, {prop: "IconUrl", name: "IconUrl", pkg: "", typ: $String, tag: "js:\"iconUrl\""}, {prop: "AppIconMaskUrl", name: "AppIconMaskUrl", pkg: "", typ: $String, tag: "js:\"appIconMaskUrl\""}, {prop: "Title", name: "Title", pkg: "", typ: $String, tag: "js:\"title\""}, {prop: "Message", name: "Message", pkg: "", typ: $String, tag: "js:\"message\""}, {prop: "ContextMessage", name: "ContextMessage", pkg: "", typ: $String, tag: "js:\"contextMessage\""}, {prop: "Priority", name: "Priority", pkg: "", typ: $Int, tag: "js:\"priority\""}, {prop: "EventTime", name: "EventTime", pkg: "", typ: $Int64, tag: "js:\"eventTime\""}, {prop: "Buttons", name: "Buttons", pkg: "", typ: sliceType$28, tag: "js:\"buttons\""}, {prop: "ImageUrl", name: "ImageUrl", pkg: "", typ: $String, tag: "js:\"imageUrl\""}, {prop: "Items", name: "Items", pkg: "", typ: sliceType$28, tag: "js:\"items\""}, {prop: "Progress", name: "Progress", pkg: "", typ: $Int, tag: "js:\"progress\""}, {prop: "IsClickable", name: "IsClickable", pkg: "", typ: $Bool, tag: "js:\"isClickable\""}]);
-	Omnibox.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	SuggestResult.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Content", name: "Content", pkg: "", typ: $String, tag: "js:\"content\""}, {prop: "Description", name: "Description", pkg: "", typ: $String, tag: "js:\"description\""}]);
-	PageAction.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	PageCapture.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	Permissions.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	Power.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	Privacy.init([{prop: "Services", name: "Services", pkg: "", typ: js.Object, tag: ""}, {prop: "Network", name: "Network", pkg: "", typ: js.Object, tag: ""}, {prop: "Websites", name: "Websites", pkg: "", typ: js.Object, tag: ""}]);
-	Proxy.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}, {prop: "Settings", name: "Settings", pkg: "", typ: js.Object, tag: ""}]);
-	Runtime.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}, {prop: "LastError", name: "LastError", pkg: "", typ: js.Object, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: ""}]);
-	Port.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Name", name: "Name", pkg: "", typ: $String, tag: "js:\"name\""}, {prop: "OnDisconnect", name: "OnDisconnect", pkg: "", typ: js.Object, tag: "js:\"onDisconnect\""}, {prop: "OnMessage", name: "OnMessage", pkg: "", typ: js.Object, tag: "js:\"onMessage\""}, {prop: "Sender", name: "Sender", pkg: "", typ: MessageSender, tag: "js:\"sender\""}]);
-	MessageSender.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "tab", name: "tab", pkg: "github.com/fabioberger/chrome", typ: Tab, tag: "js:\"tab\""}, {prop: "FrameId", name: "FrameId", pkg: "", typ: $Int, tag: "js:\"frameId\""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "TlsChannelId", name: "TlsChannelId", pkg: "", typ: $String, tag: "js:\"tlsChannelId\""}]);
+	Notification.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	NotificationOptions.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Type", name: "Type", pkg: "", typ: $String, tag: "js:\"type\""}, {prop: "IconUrl", name: "IconUrl", pkg: "", typ: $String, tag: "js:\"iconUrl\""}, {prop: "AppIconMaskUrl", name: "AppIconMaskUrl", pkg: "", typ: $String, tag: "js:\"appIconMaskUrl\""}, {prop: "Title", name: "Title", pkg: "", typ: $String, tag: "js:\"title\""}, {prop: "Message", name: "Message", pkg: "", typ: $String, tag: "js:\"message\""}, {prop: "ContextMessage", name: "ContextMessage", pkg: "", typ: $String, tag: "js:\"contextMessage\""}, {prop: "Priority", name: "Priority", pkg: "", typ: $Int, tag: "js:\"priority\""}, {prop: "EventTime", name: "EventTime", pkg: "", typ: $Int64, tag: "js:\"eventTime\""}, {prop: "Buttons", name: "Buttons", pkg: "", typ: sliceType$28, tag: "js:\"buttons\""}, {prop: "ImageUrl", name: "ImageUrl", pkg: "", typ: $String, tag: "js:\"imageUrl\""}, {prop: "Items", name: "Items", pkg: "", typ: sliceType$28, tag: "js:\"items\""}, {prop: "Progress", name: "Progress", pkg: "", typ: $Int, tag: "js:\"progress\""}, {prop: "IsClickable", name: "IsClickable", pkg: "", typ: $Bool, tag: "js:\"isClickable\""}]);
+	Omnibox.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	SuggestResult.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Content", name: "Content", pkg: "", typ: $String, tag: "js:\"content\""}, {prop: "Description", name: "Description", pkg: "", typ: $String, tag: "js:\"description\""}]);
+	PageAction.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	PageCapture.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	Permissions.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	Power.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	Privacy.init([{prop: "Services", name: "Services", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Network", name: "Network", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Websites", name: "Websites", pkg: "", typ: ptrType$1, tag: ""}]);
+	Proxy.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "Settings", name: "Settings", pkg: "", typ: ptrType$1, tag: ""}]);
+	Runtime.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "LastError", name: "LastError", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: ""}]);
+	Port.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Name", name: "Name", pkg: "", typ: $String, tag: "js:\"name\""}, {prop: "OnDisconnect", name: "OnDisconnect", pkg: "", typ: js.Object, tag: "js:\"onDisconnect\""}, {prop: "OnMessage", name: "OnMessage", pkg: "", typ: js.Object, tag: "js:\"onMessage\""}, {prop: "Sender", name: "Sender", pkg: "", typ: MessageSender, tag: "js:\"sender\""}]);
+	MessageSender.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "tab", name: "tab", pkg: "github.com/fabioberger/chrome", typ: Tab, tag: "js:\"tab\""}, {prop: "FrameId", name: "FrameId", pkg: "", typ: $Int, tag: "js:\"frameId\""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "TlsChannelId", name: "TlsChannelId", pkg: "", typ: $String, tag: "js:\"tlsChannelId\""}]);
 	PlatformInfo.init($String, $String);
-	Sessions.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}, {prop: "MAX_SESSION_RESULTS", name: "MAX_SESSION_RESULTS", pkg: "", typ: $Int, tag: ""}]);
-	Filter.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "MaxResults", name: "MaxResults", pkg: "", typ: $Int, tag: "js:\"maxResults\""}]);
-	Session.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "LastModified", name: "LastModified", pkg: "", typ: $Int, tag: "js:\"lastModified\""}, {prop: "Tab", name: "Tab", pkg: "", typ: Tab, tag: "js:\"tab\""}, {prop: "Window", name: "Window", pkg: "", typ: Window, tag: "js:\"window\""}]);
-	Device.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "DeviceName", name: "DeviceName", pkg: "", typ: $String, tag: "js:\"deviceName\""}, {prop: "Sessions", name: "Sessions", pkg: "", typ: sliceType$22, tag: "js:\"sessions\""}]);
-	Storage.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}, {prop: "Sync", name: "Sync", pkg: "", typ: js.Object, tag: ""}, {prop: "Local", name: "Local", pkg: "", typ: js.Object, tag: ""}, {prop: "Managed", name: "Managed", pkg: "", typ: js.Object, tag: ""}]);
+	Sessions.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "MAX_SESSION_RESULTS", name: "MAX_SESSION_RESULTS", pkg: "", typ: $Int, tag: ""}]);
+	Filter.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "MaxResults", name: "MaxResults", pkg: "", typ: $Int, tag: "js:\"maxResults\""}]);
+	Session.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "LastModified", name: "LastModified", pkg: "", typ: $Int, tag: "js:\"lastModified\""}, {prop: "Tab", name: "Tab", pkg: "", typ: Tab, tag: "js:\"tab\""}, {prop: "Window", name: "Window", pkg: "", typ: Window, tag: "js:\"window\""}]);
+	Device.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "DeviceName", name: "DeviceName", pkg: "", typ: $String, tag: "js:\"deviceName\""}, {prop: "Sessions", name: "Sessions", pkg: "", typ: sliceType$22, tag: "js:\"sessions\""}]);
+	Storage.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "Sync", name: "Sync", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Local", name: "Local", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Managed", name: "Managed", pkg: "", typ: ptrType$1, tag: ""}]);
 	StorageChange.init([{prop: "OldValue", name: "OldValue", pkg: "", typ: $emptyInterface, tag: "js:\"oldValue\""}, {prop: "NewValue", name: "NewValue", pkg: "", typ: $emptyInterface, tag: "js:\"newValue\""}]);
-	System.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}, {prop: "Cpu", name: "Cpu", pkg: "", typ: ptrType$47, tag: ""}, {prop: "Memory", name: "Memory", pkg: "", typ: ptrType$48, tag: ""}, {prop: "Storage", name: "Storage", pkg: "", typ: ptrType$49, tag: ""}]);
-	Cpu.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	Memory.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	SysStorage.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	StorageUnitInfo.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "Name", name: "Name", pkg: "", typ: $String, tag: "js:\"name\""}, {prop: "Type", name: "Type", pkg: "", typ: $String, tag: "js:\"type\""}, {prop: "Capacity", name: "Capacity", pkg: "", typ: $Int64, tag: "js:\"capacity\""}]);
-	TabCapture.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	CaptureInfo.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "TabId", name: "TabId", pkg: "", typ: $Int, tag: "js:\"tabId\""}, {prop: "Status", name: "Status", pkg: "", typ: $String, tag: "js:\"status\""}, {prop: "FullScreen", name: "FullScreen", pkg: "", typ: $Bool, tag: "js:\"fullScreen\""}]);
-	Tabs.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	Tab.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $Int, tag: "js:\"id\""}, {prop: "Index", name: "Index", pkg: "", typ: $Int, tag: "js:\"index\""}, {prop: "WindowId", name: "WindowId", pkg: "", typ: $Int, tag: "js:\"windowId\""}, {prop: "OpenerTabId", name: "OpenerTabId", pkg: "", typ: $Int, tag: "js:\"openerTabId\""}, {prop: "Selected", name: "Selected", pkg: "", typ: $Bool, tag: "js:\"selected\""}, {prop: "Highlighted", name: "Highlighted", pkg: "", typ: $Bool, tag: "js:\"highlighted\""}, {prop: "Active", name: "Active", pkg: "", typ: $Bool, tag: "js:\"active\""}, {prop: "Pinned", name: "Pinned", pkg: "", typ: $Bool, tag: "js:\"pinned\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "Title", name: "Title", pkg: "", typ: $String, tag: "js:\"title\""}, {prop: "FavIconUrl", name: "FavIconUrl", pkg: "", typ: $String, tag: "js:\"favIconUrl\""}, {prop: "Status", name: "Status", pkg: "", typ: $String, tag: "js:\"status\""}, {prop: "Incognito", name: "Incognito", pkg: "", typ: $Bool, tag: "js:\"incognito\""}, {prop: "Width", name: "Width", pkg: "", typ: $Int, tag: "js:\"width\""}, {prop: "Height", name: "Height", pkg: "", typ: $Int, tag: "js:\"height\""}, {prop: "SessionId", name: "SessionId", pkg: "", typ: $String, tag: "js:\"sessionId\""}]);
+	System.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "Cpu", name: "Cpu", pkg: "", typ: ptrType$48, tag: ""}, {prop: "Memory", name: "Memory", pkg: "", typ: ptrType$49, tag: ""}, {prop: "Storage", name: "Storage", pkg: "", typ: ptrType$50, tag: ""}]);
+	Cpu.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	Memory.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	SysStorage.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	StorageUnitInfo.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $String, tag: "js:\"id\""}, {prop: "Name", name: "Name", pkg: "", typ: $String, tag: "js:\"name\""}, {prop: "Type", name: "Type", pkg: "", typ: $String, tag: "js:\"type\""}, {prop: "Capacity", name: "Capacity", pkg: "", typ: $Int64, tag: "js:\"capacity\""}]);
+	TabCapture.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	CaptureInfo.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "TabId", name: "TabId", pkg: "", typ: $Int, tag: "js:\"tabId\""}, {prop: "Status", name: "Status", pkg: "", typ: $String, tag: "js:\"status\""}, {prop: "FullScreen", name: "FullScreen", pkg: "", typ: $Bool, tag: "js:\"fullScreen\""}]);
+	Tabs.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	Tab.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $Int, tag: "js:\"id\""}, {prop: "Index", name: "Index", pkg: "", typ: $Int, tag: "js:\"index\""}, {prop: "WindowId", name: "WindowId", pkg: "", typ: $Int, tag: "js:\"windowId\""}, {prop: "OpenerTabId", name: "OpenerTabId", pkg: "", typ: $Int, tag: "js:\"openerTabId\""}, {prop: "Selected", name: "Selected", pkg: "", typ: $Bool, tag: "js:\"selected\""}, {prop: "Highlighted", name: "Highlighted", pkg: "", typ: $Bool, tag: "js:\"highlighted\""}, {prop: "Active", name: "Active", pkg: "", typ: $Bool, tag: "js:\"active\""}, {prop: "Pinned", name: "Pinned", pkg: "", typ: $Bool, tag: "js:\"pinned\""}, {prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "Title", name: "Title", pkg: "", typ: $String, tag: "js:\"title\""}, {prop: "FavIconUrl", name: "FavIconUrl", pkg: "", typ: $String, tag: "js:\"favIconUrl\""}, {prop: "Status", name: "Status", pkg: "", typ: $String, tag: "js:\"status\""}, {prop: "Incognito", name: "Incognito", pkg: "", typ: $Bool, tag: "js:\"incognito\""}, {prop: "Width", name: "Width", pkg: "", typ: $Int, tag: "js:\"width\""}, {prop: "Height", name: "Height", pkg: "", typ: $Int, tag: "js:\"height\""}, {prop: "SessionId", name: "SessionId", pkg: "", typ: $String, tag: "js:\"sessionId\""}]);
 	ZoomSettings.init($String, $String);
-	TopSites.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
+	TopSites.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
 	MostvisitedURL.init([{prop: "Url", name: "Url", pkg: "", typ: $String, tag: "js:\"url\""}, {prop: "Title", name: "Title", pkg: "", typ: $String, tag: "js:\"title\""}]);
-	Tts.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	TtsEvent.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Type", name: "Type", pkg: "", typ: $String, tag: "js:\"type\""}, {prop: "CharIndex", name: "CharIndex", pkg: "", typ: $Int64, tag: "js:\"charIndex\""}, {prop: "ErrorMessage", name: "ErrorMessage", pkg: "", typ: $String, tag: "js:\"errorMessage\""}]);
-	TtsVoice.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "VoiceName", name: "VoiceName", pkg: "", typ: $String, tag: "js:\"voiceName\""}, {prop: "Lang", name: "Lang", pkg: "", typ: $String, tag: "js:\"lang\""}, {prop: "Gender", name: "Gender", pkg: "", typ: $String, tag: "js:\"gender\""}, {prop: "Remote", name: "Remote", pkg: "", typ: $Bool, tag: "js:\"remote\""}, {prop: "ExtensionId", name: "ExtensionId", pkg: "", typ: $String, tag: "js:\"extensionId\""}, {prop: "EventTypes", name: "EventTypes", pkg: "", typ: sliceType$1, tag: "js:\"eventTypes\""}]);
-	TtsEngine.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	WebNavigation.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	WebRequest.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}, {prop: "MAX_HANDLER_BEHAVIOR_CHANGED_CALLS_PER_10_MINUTES", name: "MAX_HANDLER_BEHAVIOR_CHANGED_CALLS_PER_10_MINUTES", pkg: "", typ: $Int, tag: ""}]);
-	WebStore.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}]);
-	Windows.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: js.Object, tag: ""}, {prop: "WINDOW_ID_NONE", name: "WINDOW_ID_NONE", pkg: "", typ: $Int, tag: ""}, {prop: "WINDOW_ID_CURRENT", name: "WINDOW_ID_CURRENT", pkg: "", typ: $Int, tag: ""}]);
+	Tts.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	TtsEvent.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "Type", name: "Type", pkg: "", typ: $String, tag: "js:\"type\""}, {prop: "CharIndex", name: "CharIndex", pkg: "", typ: $Int64, tag: "js:\"charIndex\""}, {prop: "ErrorMessage", name: "ErrorMessage", pkg: "", typ: $String, tag: "js:\"errorMessage\""}]);
+	TtsVoice.init([{prop: "Object", name: "", pkg: "", typ: ptrType$1, tag: ""}, {prop: "VoiceName", name: "VoiceName", pkg: "", typ: $String, tag: "js:\"voiceName\""}, {prop: "Lang", name: "Lang", pkg: "", typ: $String, tag: "js:\"lang\""}, {prop: "Gender", name: "Gender", pkg: "", typ: $String, tag: "js:\"gender\""}, {prop: "Remote", name: "Remote", pkg: "", typ: $Bool, tag: "js:\"remote\""}, {prop: "ExtensionId", name: "ExtensionId", pkg: "", typ: $String, tag: "js:\"extensionId\""}, {prop: "EventTypes", name: "EventTypes", pkg: "", typ: sliceType$1, tag: "js:\"eventTypes\""}]);
+	TtsEngine.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	WebNavigation.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	WebRequest.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "MAX_HANDLER_BEHAVIOR_CHANGED_CALLS_PER_10_MINUTES", name: "MAX_HANDLER_BEHAVIOR_CHANGED_CALLS_PER_10_MINUTES", pkg: "", typ: $Int, tag: ""}]);
+	WebStore.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}]);
+	Windows.init([{prop: "o", name: "o", pkg: "github.com/fabioberger/chrome", typ: ptrType$1, tag: ""}, {prop: "WINDOW_ID_NONE", name: "WINDOW_ID_NONE", pkg: "", typ: $Int, tag: ""}, {prop: "WINDOW_ID_CURRENT", name: "WINDOW_ID_CURRENT", pkg: "", typ: $Int, tag: ""}]);
 	Window.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}, {prop: "Id", name: "Id", pkg: "", typ: $Int, tag: "js:\"id\""}, {prop: "Focused", name: "Focused", pkg: "", typ: $Bool, tag: "js:\"focused\""}, {prop: "Top", name: "Top", pkg: "", typ: $Int, tag: "js:\"top\""}, {prop: "Left", name: "Left", pkg: "", typ: $Int, tag: "js:\"left\""}, {prop: "Width", name: "Width", pkg: "", typ: $Int, tag: "js:\"width\""}, {prop: "Height", name: "Height", pkg: "", typ: $Int, tag: "js:\"height\""}, {prop: "Tabs", name: "Tabs", pkg: "", typ: sliceType$13, tag: "js:\"tabs\""}, {prop: "Incognito", name: "Incognito", pkg: "", typ: $Bool, tag: "js:\"incognito\""}, {prop: "Type", name: "Type", pkg: "", typ: $String, tag: "js:\"type\""}, {prop: "State", name: "State", pkg: "", typ: $String, tag: "js:\"state\""}, {prop: "AlwaysOnTop", name: "AlwaysOnTop", pkg: "", typ: $Bool, tag: "js:\"alwaysOnTop\""}, {prop: "SessionId", name: "SessionId", pkg: "", typ: $String, tag: "js:\"sessionId\""}]);
 	$pkg.$init = function() {
 		$pkg.$init = function() {};
@@ -16096,126 +16110,18 @@ $packages["github.com/fabioberger/chrome"] = (function() {
 	};
 	return $pkg;
 })();
-$packages["github.com/fabioberger/qunit"] = (function() {
-	var $pkg = {}, js, QUnitAssert, sliceType, funcType, funcType$1, log, Test, Module;
-	js = $packages["github.com/gopherjs/gopherjs/js"];
-	QUnitAssert = $pkg.QUnitAssert = $newType(0, $kindStruct, "qunit.QUnitAssert", "QUnitAssert", "github.com/fabioberger/qunit", function(Object_) {
-		this.$val = this;
-		this.Object = Object_ !== undefined ? Object_ : null;
-	});
-	sliceType = $sliceType($emptyInterface);
-	funcType = $funcType([], [$emptyInterface], false);
-	funcType$1 = $funcType([js.Object], [], false);
-	log = function(i) {
-		var i, obj;
-		(obj = $global.console, obj.log.apply(obj, $externalize(i, sliceType)));
-	};
-	QUnitAssert.ptr.prototype.DeepEqual = function(actual, expected, message) {
-		var actual, expected, message, qa;
-		qa = $clone(this, QUnitAssert);
-		return !!(qa.Object.deepEqual($externalize(actual, $emptyInterface), $externalize(expected, $emptyInterface), $externalize(message, $String)));
-	};
-	QUnitAssert.prototype.DeepEqual = function(actual, expected, message) { return this.$val.DeepEqual(actual, expected, message); };
-	QUnitAssert.ptr.prototype.Equal = function(actual, expected, message) {
-		var actual, expected, message, qa;
-		qa = $clone(this, QUnitAssert);
-		log(new sliceType([new $String("---> qunit: "), actual, expected, new $js.container.ptr(qa.Object.equal($externalize(actual, $emptyInterface), $externalize(expected, $emptyInterface), $externalize(message, $String))), new $Bool(!!(qa.Object.equal($externalize(actual, $emptyInterface), $externalize(expected, $emptyInterface), $externalize(message, $String))))]));
-		return !!(qa.Object.equal($externalize(actual, $emptyInterface), $externalize(expected, $emptyInterface), $externalize(message, $String)));
-	};
-	QUnitAssert.prototype.Equal = function(actual, expected, message) { return this.$val.Equal(actual, expected, message); };
-	QUnitAssert.ptr.prototype.NotDeepEqual = function(actual, expected, message) {
-		var actual, expected, message, qa;
-		qa = $clone(this, QUnitAssert);
-		return !!(qa.Object.notDeepEqual($externalize(actual, $emptyInterface), $externalize(expected, $emptyInterface), $externalize(message, $String)));
-	};
-	QUnitAssert.prototype.NotDeepEqual = function(actual, expected, message) { return this.$val.NotDeepEqual(actual, expected, message); };
-	QUnitAssert.ptr.prototype.NotEqual = function(actual, expected, message) {
-		var actual, expected, message, qa;
-		qa = $clone(this, QUnitAssert);
-		return !!(qa.Object.notEqual($externalize(actual, $emptyInterface), $externalize(expected, $emptyInterface), $externalize(message, $String)));
-	};
-	QUnitAssert.prototype.NotEqual = function(actual, expected, message) { return this.$val.NotEqual(actual, expected, message); };
-	QUnitAssert.ptr.prototype.NotPropEqual = function(actual, expected, message) {
-		var actual, expected, message, qa;
-		qa = $clone(this, QUnitAssert);
-		return !!(qa.Object.notPropEqual($externalize(actual, $emptyInterface), $externalize(expected, $emptyInterface), $externalize(message, $String)));
-	};
-	QUnitAssert.prototype.NotPropEqual = function(actual, expected, message) { return this.$val.NotPropEqual(actual, expected, message); };
-	QUnitAssert.ptr.prototype.PropEqual = function(actual, expected, message) {
-		var actual, expected, message, qa;
-		qa = $clone(this, QUnitAssert);
-		return !!(qa.Object.propEqual($externalize(actual, $emptyInterface), $externalize(expected, $emptyInterface), $externalize(message, $String)));
-	};
-	QUnitAssert.prototype.PropEqual = function(actual, expected, message) { return this.$val.PropEqual(actual, expected, message); };
-	QUnitAssert.ptr.prototype.NotStrictEqual = function(actual, expected, message) {
-		var actual, expected, message, qa;
-		qa = $clone(this, QUnitAssert);
-		return !!(qa.Object.notStrictEqual($externalize(actual, $emptyInterface), $externalize(expected, $emptyInterface), $externalize(message, $String)));
-	};
-	QUnitAssert.prototype.NotStrictEqual = function(actual, expected, message) { return this.$val.NotStrictEqual(actual, expected, message); };
-	QUnitAssert.ptr.prototype.Ok = function(state, message) {
-		var message, qa, state;
-		qa = $clone(this, QUnitAssert);
-		return !!(qa.Object.ok($externalize(state, $emptyInterface), $externalize(message, $String)));
-	};
-	QUnitAssert.prototype.Ok = function(state, message) { return this.$val.Ok(state, message); };
-	QUnitAssert.ptr.prototype.StrictEqual = function(actual, expected, message) {
-		var actual, expected, message, qa;
-		qa = $clone(this, QUnitAssert);
-		return !!(qa.Object.strictEqual($externalize(actual, $emptyInterface), $externalize(expected, $emptyInterface), $externalize(message, $String)));
-	};
-	QUnitAssert.prototype.StrictEqual = function(actual, expected, message) { return this.$val.StrictEqual(actual, expected, message); };
-	QUnitAssert.ptr.prototype.ThrowsExpected = function(block, expected, message) {
-		var block, expected, message, qa;
-		qa = $clone(this, QUnitAssert);
-		return qa.Object.throwsExpected($externalize(block, funcType), $externalize(expected, $emptyInterface), $externalize(message, $String));
-	};
-	QUnitAssert.prototype.ThrowsExpected = function(block, expected, message) { return this.$val.ThrowsExpected(block, expected, message); };
-	QUnitAssert.ptr.prototype.Throws = function(block, message) {
-		var block, message, qa;
-		qa = $clone(this, QUnitAssert);
-		return qa.Object.throws($externalize(block, funcType), $externalize(message, $String));
-	};
-	QUnitAssert.prototype.Throws = function(block, message) { return this.$val.Throws(block, message); };
-	Test = $pkg.Test = function(name, testFn) {
-		var name, testFn;
-		$global.QUnit.test($externalize(name, $String), $externalize((function(e) {
-			var e;
-			testFn(new QUnitAssert.ptr(e));
-		}), funcType$1));
-	};
-	Module = $pkg.Module = function(name) {
-		var name;
-		return $global.QUnit.module($externalize(name, $String));
-	};
-	QUnitAssert.methods = [{prop: "DeepEqual", name: "DeepEqual", pkg: "", typ: $funcType([$emptyInterface, $emptyInterface, $String], [$Bool], false)}, {prop: "Equal", name: "Equal", pkg: "", typ: $funcType([$emptyInterface, $emptyInterface, $String], [$Bool], false)}, {prop: "NotDeepEqual", name: "NotDeepEqual", pkg: "", typ: $funcType([$emptyInterface, $emptyInterface, $String], [$Bool], false)}, {prop: "NotEqual", name: "NotEqual", pkg: "", typ: $funcType([$emptyInterface, $emptyInterface, $String], [$Bool], false)}, {prop: "NotPropEqual", name: "NotPropEqual", pkg: "", typ: $funcType([$emptyInterface, $emptyInterface, $String], [$Bool], false)}, {prop: "PropEqual", name: "PropEqual", pkg: "", typ: $funcType([$emptyInterface, $emptyInterface, $String], [$Bool], false)}, {prop: "NotStrictEqual", name: "NotStrictEqual", pkg: "", typ: $funcType([$emptyInterface, $emptyInterface, $String], [$Bool], false)}, {prop: "Ok", name: "Ok", pkg: "", typ: $funcType([$emptyInterface, $String], [$Bool], false)}, {prop: "StrictEqual", name: "StrictEqual", pkg: "", typ: $funcType([$emptyInterface, $emptyInterface, $String], [$Bool], false)}, {prop: "ThrowsExpected", name: "ThrowsExpected", pkg: "", typ: $funcType([funcType, $emptyInterface, $String], [js.Object], false)}, {prop: "Throws", name: "Throws", pkg: "", typ: $funcType([funcType, $String], [js.Object], false)}];
-	QUnitAssert.init([{prop: "Object", name: "", pkg: "", typ: js.Object, tag: ""}]);
-	$pkg.$init = function() {
-		$pkg.$init = function() {};
-		/* */ var $r, $s = 0; var $init_qunit = function() { while (true) { switch ($s) { case 0:
-		$r = js.$init($BLOCKING); /* */ $s = 1; case 1: if ($r && $r.$blocking) { $r = $r(); }
-		/* */ } return; } }; $init_qunit.$blocking = true; return $init_qunit;
-	};
-	return $pkg;
-})();
 $packages["main"] = (function() {
-	var $pkg = {}, fmt, chrome, qunit, sliceType, main;
+	var $pkg = {}, fmt, chrome, sliceType, main;
 	fmt = $packages["fmt"];
 	chrome = $packages["github.com/fabioberger/chrome"];
-	qunit = $packages["github.com/fabioberger/qunit"];
 	sliceType = $sliceType($emptyInterface);
 	main = function() {
 		var c;
 		c = chrome.NewChrome();
-		qunit.Module("Chrome-Background");
 		fmt.Println(new sliceType([new $String("We are running")]));
 		c.Runtime.OnMessage((function(message, sender, sendResponse) {
 			var _key, _map, message, resp, sendResponse, sender;
 			fmt.Println(new sliceType([new $String("Got in here")]));
-			qunit.Test("Runtime.OnMessage()", (function(assert) {
-				var assert;
-				assert.Equal(message, new $String("hello"), "OnMessage");
-			}));
 			resp = (_map = new $Map(), _key = "farewell", _map[_key] = { k: _key, v: new $String("goodbye") }, _map);
 			sendResponse(new chrome.Object(resp));
 		}));
@@ -16225,7 +16131,6 @@ $packages["main"] = (function() {
 		/* */ var $r, $s = 0; var $init_main = function() { while (true) { switch ($s) { case 0:
 		$r = fmt.$init($BLOCKING); /* */ $s = 1; case 1: if ($r && $r.$blocking) { $r = $r(); }
 		$r = chrome.$init($BLOCKING); /* */ $s = 2; case 2: if ($r && $r.$blocking) { $r = $r(); }
-		$r = qunit.$init($BLOCKING); /* */ $s = 3; case 3: if ($r && $r.$blocking) { $r = $r(); }
 		main();
 		/* */ } return; } }; $init_main.$blocking = true; return $init_main;
 	};
