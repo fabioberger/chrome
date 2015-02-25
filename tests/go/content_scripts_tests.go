@@ -9,10 +9,13 @@ import (
 func main() {
 	c := chrome.NewChrome()
 
+	/*
+	* Runtime Events
+	 */
+
 	// Listen for OnMessage Event
-	fmt.Println("We are running")
 	c.Runtime.OnMessage(func(message interface{}, sender chrome.MessageSender, sendResponse func(interface{})) {
-		fmt.Println("Got in here")
+		fmt.Println("Runtime.OnMessage received: ", message.(map[string]interface{}))
 		resp := chrome.Object{
 			"farewell": "goodbye",
 		}
