@@ -13,7 +13,7 @@
   "content_scripts": [
     {
       "matches": ["http://*/*"],
-      "js": ["background_tests.js"]
+      "js": ["content_scripts_tests.js"]
     }
   ],
   "permissions": [

@@ -3,9 +3,9 @@ Gopherjs Chrome Bindings
 
 [![GoDoc](http://godoc.org/github.com/fabioberger/chrome?status.svg)](https://godoc.org/github.com/fabioberger/chrome)
 
-Write Chrome extensions in Go! 
+Write Chrome extensions in Go!
 
-With the help of the Gopherjs transpiler, you can now write Go code which will be converted into javascript in order to run in the browser. This library contains the necessary bindings to interact with the Chrome Javascript API in an easy and intuitive way so that you can write Chrome Extensions and Chrome OS apps in Go.
+With the help of the [Gopherjs transpiler](https://github.com/gopherjs/gopherjs), you can now write Go code which will be converted into javascript and run in the browser. This library contains the necessary bindings to interact with the Chrome Javascript API in an easy and intuitive way so that you can write Chrome Extensions and Chrome OS apps in Go.
 
 # Installation
 
@@ -29,7 +29,7 @@ import "github.com/fabioberger/chrome"
 
 # Sample Extension
 
-The lovely people at Google's Chrome team have written a [great post](https://developer.chrome.com/extensions/getstarted) on how to get started building chrome extensions. Within the examples folder you will find a [Go version](https://github.com/fabioberger/chrome/tree/master/examples/getting-started-sample) of the JS sample extension they cover in their post. 
+The lovely people at Google's Chrome team have written a [great post](https://developer.chrome.com/extensions/getstarted) on how to get started building chrome extensions. Within the examples folder you will find a [Go version](https://github.com/fabioberger/chrome/tree/master/examples/getting-started-sample) of the JS sample extension they cover in their post.
 
 In order to run this sample extension, simply navigate to ```chrome://extensions``` from within your chrome browser and click ```Load unpacked extension...``` and open the examples/getting-started-sample folder. This should install the chrome extension. Now visit any webpage and click on the globe-like icon on the top right of your chrome browser.
 
@@ -128,23 +128,25 @@ func main() {
 		notification := "Tab with id: " + strconv.Itoa(tab.Id) + " created!"
 		dom.GetWindow().Document().GetElementByID("notification").SetInnerHTML(notification)
 	})
-	
+
 }
 ```
-This program imports Dominikh's [dom](https://github.com/dominikh/go-js-dom) package for easy dom manipulation and the chrome bindings. We first instantiate the chrome object with "chrome.NewChrome()" and call methods on its properties, in this case "Tabs.Create". 
+This program imports Dominikh's [dom](https://github.com/dominikh/go-js-dom) package for easy dom manipulation and the chrome bindings. We first instantiate the chrome object with "chrome.NewChrome()" and call methods on its properties, in this case "Tabs.Create".
 
 Whereas in javascript you would write:
 
 ```js
 chrome.tabs.create(tabDetails, function(tab) {
-	console.log(tab)})
+	console.log(tab)
+})
 ```
 
 in Go, you can now write:
 
 ```go
 C.Tabs.Create(tabDetails, func(tab chrome.Tab) {
-	fmt.Println(tab)})
+	fmt.Println(tab)
+})
 ```
 
 The rest of the script calls Create() on the Tab property, creating a new non-active tab. Once the tab has been created, the callback function is called and the newly created Tab struct is returned. We then simply append a nice message to the notification header included in the popup.html  file.
@@ -159,14 +161,10 @@ This will create an app.js file within our main project folder that will be incl
 
 In order to run your newly created chrome extension, upload the containing folder from the "chrome://extensions" page by clicking "Load unpacked extension...". Then click on the puzzle piece icon in the top right of your chrome browser. Et Voila!
 
-# Additional Usage Examples
-
-Coming soon!
-
 # Tests
 
-Because of the immense amount of endpoints in the Chrome API, as well as the many different requirements for the endpoints, the tests are still a work in progress. 
+Because of the immense amount of endpoints in the Chrome API, as well as the many different requirements for the endpoints, the tests are still a work in progress.
 
-To run the tests, install the ```tests``` folder as a chrome extension by navigating to ```chrome://extensions``` in Chrome and clicking ```Load unpacked extension...``` and navigating to the "tests" folder. Once you have done time, simply click the ```T``` icon on the top right of your chrome browser and the test suite will run within the displayed popup. 
+To run the tests, install the ```tests``` folder as a chrome extension by navigating to ```chrome://extensions``` in Chrome and clicking ```Load unpacked extension...``` and navigating to the "tests" folder. Once you have done time, simply click the ```T``` icon on the top right of your chrome browser and the test suite will run within the displayed popup.
 
 Feel free to add more tests to this extension and submit a pull request!

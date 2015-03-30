@@ -78,6 +78,6 @@ func (b *BrowserAction) Disable(tabId int) {
  */
 
 // OnClicked fired when a browser action icon is clicked. This event will not fire if the browser action has a popup.
-func (b *BrowserAction) OnClicked(callback func(tab Object)) {
+func (b *BrowserAction) OnClicked(callback func(tab Tab)) {
 	b.o.Get("onClicked").Call("addListener", callback)
 }
