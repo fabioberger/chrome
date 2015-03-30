@@ -31,6 +31,8 @@ import "github.com/fabioberger/chrome"
 
 The lovely people at Google's Chrome team have written a [great post](https://developer.chrome.com/extensions/getstarted) on how to get started building chrome extensions. Within the examples folder you will find a [Go version](https://github.com/fabioberger/chrome/tree/master/examples/getting-started-sample) of the JS sample extension they cover in their post.
 
+![](./resources/sample-chrome-extension.png)
+
 In order to run this sample extension, simply navigate to ```chrome://extensions``` from within your chrome browser and click ```Load unpacked extension...``` and open the examples/getting-started-sample folder. This should install the chrome extension. Now visit any webpage and click on the globe-like icon on the top right of your chrome browser.
 
 # Creating a New Extension
