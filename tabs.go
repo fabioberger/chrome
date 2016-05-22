@@ -93,7 +93,7 @@ func (t *Tabs) Highlight(highlightInfo interface{}, callback func(js.Object)) {
 
 // Update modifies the properties of a tab. Properties that are not specified in updateProperties are not modified.
 func (t *Tabs) Update(tabId int, updateProperties interface{}, callback func(tab Tab)) {
-	t.o.Call("highlight", updateProperties, callback)
+	t.o.Call("update", updateProperties, callback)
 }
 
 // Move moves one or more tabs to a new position within its window, or to a new window.

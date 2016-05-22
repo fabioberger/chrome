@@ -33,7 +33,11 @@ func (m *Omnibox) SetDefaultSuggestion(suggestion Object) {
 // OnInputStarted user has started a keyword input session by typing the extension's keyword.
 // This is guaranteed to be sent exactly once per input session, and before any onInputChanged events.
 func (m *Omnibox) OnInputStarted(callback func()) {
-	m.o.Get("onInputStarted").Call("addListener", callback)
+	m.o.Get("onInputStarted").Call("addListener", func() {
+		go func() {
+			callback()
+		}()
+	})
 }
 
 // OnInputChanged user has changed what is typed into the omnibox.
