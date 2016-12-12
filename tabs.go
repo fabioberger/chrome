@@ -212,7 +212,7 @@ func (t *Tabs) OnRemoved(callback func(tabId int, removeInfo Object)) {
 
 // OnReplaced fired when a tab is replaced with another tab due to prerendering or instant.
 func (t *Tabs) OnReplaced(callback func(addedTabId int, removedTabId int)) {
-	t.o.Get("OnReplaced").Call("addListener", callback)
+	t.o.Get("onReplaced").Call("addListener", callback)
 }
 
 // OnZoomChange fired when a tab is zoomed.
