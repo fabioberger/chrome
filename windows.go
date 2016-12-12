@@ -23,7 +23,7 @@ func NewWindows(windowsObj *js.Object) *Windows {
  */
 
 type Window struct {
-	js.Object
+	*js.Object
 	Id          int    `js:"id"`
 	Focused     bool   `js:"focused"`
 	Top         int    `js:"top"`
