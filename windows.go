@@ -92,10 +92,10 @@ func (w *Windows) OnRemoved(callback func(windowId int)) {
 	w.o.Get("onRemoved").Call("addListener", callback)
 }
 
-// onFocusChanged fired when the currently focused window changes.
+// OnFocusChanged fired when the currently focused window changes.
 // Will be chrome.windows.WINDOW_ID_NONE if all chrome windows have lost focus.
 // Note: On some Linux window managers, WINDOW_ID_NONE will always be sent immediately
 // preceding a switch from one chrome window to another.
-func (w *Windows) onFocusChanged(callback func(windowId int)) {
+func (w *Windows) OnFocusChanged(callback func(windowId int)) {
 	w.o.Get("onFocusChanged").Call("addListener", callback)
 }
