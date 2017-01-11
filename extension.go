@@ -34,7 +34,7 @@ func (e *Extension) GetViews(fetchProperties Object) []Window {
 	windowObjs := e.o.Call("getViews", fetchProperties)
 	for i := 0; i < windowObjs.Length(); i++ {
 		window := windowObjs.Index(i)
-		windows = append(windows, Window{Object: *window})
+		windows = append(windows, Window{Object: window})
 	}
 	return windows
 }
@@ -42,7 +42,7 @@ func (e *Extension) GetViews(fetchProperties Object) []Window {
 // GetBackgroundPage returns the JavaScript 'window' object for the background page running inside
 // the current extension. Returns null if the extension has no background page.
 func (e *Extension) GetBackgroundPage() Window {
-	return Window{Object: *e.o.Call("getBackgroundPage")}
+	return Window{Object: e.o.Call("getBackgroundPage")}
 }
 
 // GetExtensionTabs returns an array of the JavaScript 'window' objects for each of the tabs running inside
@@ -52,7 +52,7 @@ func (e *Extension) GetExtensionTabs(windowId int) []Window {
 	windowObjs := e.o.Call("getExtensionTabs", windowId)
 	for i := 0; i < windowObjs.Length(); i++ {
 		window := windowObjs.Index(i)
-		windows = append(windows, Window{Object: *window})
+		windows = append(windows, Window{Object: window})
 	}
 	return windows
 }
