@@ -146,7 +146,7 @@ chrome.tabs.create(tabDetails, function(tab) {
 in Go, you can now write:
 
 ```go
-C.Tabs.Create(tabDetails, func(tab chrome.Tab) {
+c.Tabs.Create(tabDetails, func(tab chrome.Tab) {
 	fmt.Println(tab)
 })
 ```
